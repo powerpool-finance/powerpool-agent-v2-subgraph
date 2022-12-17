@@ -1,0 +1,26 @@
+specVersion: 0.0.5
+description: PowerPool Agent V2 Subgraph
+repository: https://github.com/powerpool-finance/powerpool-agent-v2-subgraph
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: PPAgentV2
+    network: mainnet
+    source:
+      address: "0x000000000000774D54F4064ec64bEaAdeF498Ae8"
+      abi: PPAgentV2
+      startBlock: 16034970
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/mappings/execution.ts
+      entities:
+        - Execution
+      abis:
+        - name: PPAgentV2
+          file: ./abis/PPAgentV2.json
+      eventHandlers:
+        - event: Execute(indexed bytes32,indexed address,uint256,uint256,uint256,uint256,uint256,bytes32)
+          handler: handleExecution

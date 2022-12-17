@@ -1,0 +1,18 @@
+{
+  "name": "powerpool-agent-v2-subgraph",
+  "version": "0.1.0",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy --product hosted-service polipaul/agent-v2-dev"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "^0.37.1",
+    "@graphprotocol/graph-ts": "^0.29.0"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "babel-register": "^6.26.0",
+    "node-fetch": "^2.6.1"
+  }
+}

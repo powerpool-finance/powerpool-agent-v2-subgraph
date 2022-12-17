@@ -1,0 +1,8 @@
+type Execution @entity {
+    id: ID!
+    timestamp: BigInt!
+    block: BigInt!
+    transactionHash: Bytes!
+    keeperId: BigInt!
+    keeperWorker: Bytes!
+}
