@@ -2,7 +2,20 @@ type Execution @entity {
     id: ID!
     timestamp: BigInt!
     block: BigInt!
-    transactionHash: Bytes!
+    txHash: Bytes!
     keeperId: BigInt!
     keeperWorker: Bytes!
+
+    jobKey: Bytes!
+    job: Bytes!
+    binJobAfter: Bytes!
+    compensation: BigInt!
+
+    jobGasUsed: BigInt!
+    txGasLimit: BigInt!
+    baseFee: BigInt!
+    gasPrice: BigInt!
+
+    txIndex: BigInt!
+    txNonce: BigInt!
 }
