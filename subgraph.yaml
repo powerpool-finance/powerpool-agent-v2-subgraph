@@ -24,3 +24,22 @@ dataSources:
       eventHandlers:
         - event: Execute(indexed bytes32,indexed address,uint256,uint256,uint256,uint256,uint256,bytes32)
           handler: handleExecution
+        - event: RegisterJob(indexed bytes32,indexed address,indexed uint256,address,(address,bytes4,bool,bool,uint16,uint16,uint32,uint256,uint8,uint24))
+          handler: handleRegisterJob
+        - event: JobUpdate(indexed bytes32,uint256,uint256,uint256,uint256,uint256)
+          handler: handleJobUpdate
+        - event: SetJobConfig(indexed bytes32,bool,bool,bool)
+          handler: handleSetJobConfig
+        - event:  InitiateJobTransfer(indexed bytes32,indexed address,indexed address)
+          handler: handleInitiateJobTransfer
+        - event: AcceptJobTransfer(indexed bytes32,indexed address)
+          handler: handleAcceptJobTransfer
+
+        - event: DepositJobCredits(indexed bytes32,indexed address,uint256,uint256)
+          handler: handleDepositJobCredits
+        - event: WithdrawJobCredits(indexed bytes32,indexed address,indexed address,uint256)
+          handler: handleWithdrawJobCredits
+        - event: DepositJobOwnerCredits(indexed address,indexed address,uint256,uint256)
+          handler: handleDepositJobOwnerCredits
+        - event:  WithdrawJobOwnerCredits(indexed address,indexed address,uint256)
+          handler: handleWithdrawJobOwnerCredits

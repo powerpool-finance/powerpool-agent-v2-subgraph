@@ -6,8 +6,8 @@ type Execution @entity {
     keeperId: BigInt!
     keeperWorker: Bytes!
 
-    jobKey: Bytes!
-    job: Bytes!
+    job: Job!
+    jobAddress: Bytes!
     binJobAfter: Bytes!
     compensation: BigInt!
 
@@ -18,4 +18,44 @@ type Execution @entity {
 
     txIndex: BigInt!
     txNonce: BigInt!
+
+}
+
+type Job @entity {
+    "jobKey"
+    id: ID!
+    active: Boolean!
+    jobAddress: Bytes!
+    jobId: BigInt!
+    owner: JobOwner!
+    pendingOwner: JobOwner
+    jobSelector: Bytes!
+
+    maxBaseFeeGwei: BigInt!
+    rewardPct: BigInt!
+    fixedReward: BigInt!
+    calldataSource: BigInt!
+    intervalSeconds: BigInt!
+
+    credits: BigInt!
+    lastExecutionAt: BigInt!
+    minKeeperCVP: BigInt!
+
+    # Flags
+    useJobOwnerCredits: Boolean!
+    assertResolverSelector: Boolean!
+
+    # Optinal
+    preDefinedCalldata: Bytes
+    resolverAddress: Bytes
+    resolverCalldata: Bytes
+
+    executions: [Execution!]! @derivedFrom(field: "job")
+}
+
+type JobOwner @entity {
+    id: ID!
+    credits: BigInt!
+
+    jobs: [Job!]! @derivedFrom(field: "owner")
 }
