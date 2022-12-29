@@ -1,5 +1,5 @@
 import {BigInt, Bytes} from "@graphprotocol/graph-ts";
-import {Job, JobOwner} from "../../generated/schema";
+import {Job, JobOwner} from "../generated/schema";
 
 export const BIG_INT_ZERO = BigInt.zero();
 
