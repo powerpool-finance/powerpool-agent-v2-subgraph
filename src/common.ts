@@ -1,22 +1,22 @@
 import {BigInt, Bytes} from "@graphprotocol/graph-ts";
-import {Job, JobOwner} from "../generated/schema";
+import {Job, JobOwner, Keeper} from "../generated/schema";
 
 export const BIG_INT_ZERO = BigInt.zero();
 
-export function createJobByKey(jobKey: string): Job {
-  let pool = Job.load(jobKey)
-  if (pool) {
+export function createJob(jobKey: string): Job {
+  let job = Job.load(jobKey)
+  if (job) {
     throw new Error(`Job with a key ${jobKey} already exists`);
   }
   return new Job(jobKey);
 }
 
 export function getJobByKey(jobKey: string): Job {
-  let pool = Job.load(jobKey)
-  if (!pool) {
+  let job = Job.load(jobKey)
+  if (!job) {
     throw new Error(`Job with a key ${jobKey} should exist`);
   }
-  return pool
+  return job
 }
 
 export function getOrCreateJobOwner(ownerAddress: string): JobOwner {
@@ -26,4 +26,20 @@ export function getOrCreateJobOwner(ownerAddress: string): JobOwner {
     jobOwner.credits = BIG_INT_ZERO;
   }
   return jobOwner;
+}
+
+export function createKeeper(id: string): Keeper {
+  let keeper = Keeper.load(id)
+  if (keeper) {
+    throw new Error(`Keeper with address ${id} already exists`);
+  }
+  return new Keeper(id);
+}
+
+export function getKeeper(id: string): Keeper {
+  let keeper = Keeper.load(id)
+  if (!keeper) {
+    throw new Error(`Keeper with address ${id} does not exists`);
+  }
+  return keeper;
 }

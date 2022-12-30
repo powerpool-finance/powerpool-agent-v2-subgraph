@@ -1,11 +1,21 @@
 import {
-  AcceptJobTransfer, DepositJobCredits, DepositJobOwnerCredits, Execute,
-  InitiateJobTransfer,
+  AcceptJobTransfer,
+  DepositJobCredits,
+  DepositJobOwnerCredits,
+  Execute, FinalizeRedeem,
+  InitiateJobTransfer, InitiateRedeem,
   JobUpdate,
+  RegisterAsKeeper,
   RegisterJob,
-  SetJobConfig, SetJobPreDefinedCalldata, SetJobResolver, WithdrawJobCredits, WithdrawJobOwnerCredits
+  SetJobConfig,
+  SetJobPreDefinedCalldata,
+  SetJobResolver,
+  SetWorkerAddress, Slash, Stake,
+  WithdrawCompensation,
+  WithdrawJobCredits,
+  WithdrawJobOwnerCredits
 } from "../generated/PPAgentV2/PPAgentV2";
-import {BIG_INT_ZERO, createJobByKey, getJobByKey, getOrCreateJobOwner} from "./common";
+import {BIG_INT_ZERO, createJob, createKeeper, getJobByKey, getOrCreateJobOwner} from "./common";
 import {Execution} from "../generated/schema";
 import {BigInt} from "@graphprotocol/graph-ts";
 
@@ -18,7 +28,7 @@ export function handleExecution(event: Execute): void {
   execution.block = event.block.number;
   execution.timestamp = event.block.timestamp;
   execution.keeperWorker = event.transaction.from;
-  execution.keeperId = event.params.keeperId;
+  execution.keeper = event.params.keeperId.toString();
 
   execution.job = jobKey;
   execution.jobAddress = event.params.job;
@@ -48,7 +58,7 @@ export function handleExecution(event: Execute): void {
 
 export function handleRegisterJob(event: RegisterJob): void {
   const jobKey = event.params.jobKey.toHexString();
-  const job = createJobByKey(jobKey);
+  const job = createJob(jobKey);
 
   job.active = true;
   job.jobAddress = event.params.jobAddress;
@@ -146,4 +156,71 @@ export function handleSetJobResolver(event: SetJobResolver): void {
   job.resolverCalldata = event.params.resolverCalldata;
 
   job.save();
+}
+
+export function handleRegisterAsKeeper(event: RegisterAsKeeper): void {
+  const keeper = createKeeper(event.params.keeperId.toString());
+
+  keeper.admin = event.params.keeperAdmin;
+  keeper.worker = event.params.keeperWorker;
+
+  keeper.slashedStake = BIG_INT_ZERO;
+  keeper.currentStake = BIG_INT_ZERO;
+  keeper.compensation = BIG_INT_ZERO;
+  keeper.pendingWithdrawalAmount = BIG_INT_ZERO;
+  keeper.pendingWithdrawalEndAt = BIG_INT_ZERO;
+
+  keeper.save();
+}
+
+export function handleSetWorkerAddress(event: SetWorkerAddress): void {
+  const keeper = createKeeper(event.params.keeperId.toString());
+  keeper.worker = event.params.worker;
+  keeper.save();
+}
+
+// TODO: handle compensation increment on execute
+export function handleWithdrawCompensation(event: WithdrawCompensation): void {
+  const keeper = createKeeper(event.params.keeperId.toString());
+  keeper.compensation = keeper.compensation.minus(event.params.amount);
+  keeper.save();
+}
+
+export function handleStake(event: Stake): void {
+  const keeper = createKeeper(event.params.keeperId.toString());
+  keeper.compensation = keeper.compensation.plus(event.params.amount);
+  keeper.save();
+}
+
+export function handleSlash(event: Slash): void {
+  const keeper = createKeeper(event.params.keeperId.toString());
+
+  keeper.currentStake = keeper.currentStake.minus(event.params.currentAmount);
+  keeper.slashedStake = keeper.slashedStake.plus(event.params.currentAmount);
+
+  keeper.pendingWithdrawalAmount = keeper.pendingWithdrawalAmount.minus(event.params.pendingAmount);
+
+  keeper.save();
+}
+
+export function handleInitiateRedeem(event: InitiateRedeem): void {
+  const keeper = createKeeper(event.params.keeperId.toString());
+
+  const stakeOfToReduceAmount = event.params.redeemAmount.minus(keeper.slashedStake);
+  keeper.currentStake = keeper.currentStake.minus(stakeOfToReduceAmount);
+  keeper.pendingWithdrawalAmount = keeper.pendingWithdrawalAmount.plus(stakeOfToReduceAmount);
+
+  keeper.slashedStake = BIG_INT_ZERO;
+  // TODO: track pendingWithdrawalAfter using a global singleton
+
+  keeper.save();
+}
+
+export function handleFinalizeRedeem(event: FinalizeRedeem): void {
+  const keeper = createKeeper(event.params.keeperId.toString());
+
+  keeper.pendingWithdrawalAmount = BIG_INT_ZERO;
+  keeper.pendingWithdrawalEndAt = BIG_INT_ZERO;
+
+  keeper.save();
 }

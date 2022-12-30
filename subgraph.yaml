@@ -48,3 +48,18 @@ dataSources:
           handler: handleSetJobPreDefinedCalldata
         - event:  SetJobResolver(indexed bytes32,address,bytes)
           handler: handleSetJobResolver
+
+        - event:  RegisterAsKeeper(indexed uint256,indexed address,indexed address)
+          handler: handleRegisterAsKeeper
+        - event:  SetWorkerAddress(indexed uint256,indexed address,indexed address)
+          handler: handleSetWorkerAddress
+        - event:  Stake(indexed uint256,uint256,address)
+          handler: handleStake
+        - event:  InitiateRedeem(indexed uint256,uint256,uint256,uint256)
+          handler: handleInitiateRedeem
+        - event:  FinalizeRedeem(indexed uint256,indexed address,uint256)
+          handler: handleFinalizeRedeem
+        - event:  WithdrawCompensation(indexed uint256,indexed address,uint256)
+          handler: handleWithdrawCompensation
+        - event:  Slash(indexed uint256,indexed address,uint256,uint256)
+          handler: handleSlash

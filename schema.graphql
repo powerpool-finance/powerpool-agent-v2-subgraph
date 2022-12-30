@@ -3,7 +3,7 @@ type Execution @entity {
     timestamp: BigInt!
     block: BigInt!
     txHash: Bytes!
-    keeperId: BigInt!
+    keeper: Keeper!
     keeperWorker: Bytes!
 
     job: Job!
@@ -58,4 +58,15 @@ type JobOwner @entity {
     credits: BigInt!
 
     jobs: [Job!]! @derivedFrom(field: "owner")
+}
+
+type Keeper @entity {
+    id: ID!
+    admin: Bytes!
+    worker: Bytes!
+    currentStake: BigInt!
+    slashedStake: BigInt!
+    compensation: BigInt!
+    pendingWithdrawalAmount: BigInt!
+    pendingWithdrawalEndAt: BigInt!
 }
