@@ -15,7 +15,7 @@ import {
   WithdrawJobCredits,
   WithdrawJobOwnerCredits
 } from "../generated/PPAgentV2/PPAgentV2";
-import {BIG_INT_ZERO, createJob, createKeeper, getJobByKey, getOrCreateJobOwner} from "./common";
+import {BIG_INT_ZERO, createJob, createKeeper, getJobByKey, getKeeper, getOrCreateJobOwner} from "./common";
 import {Execution} from "../generated/schema";
 import {BigInt} from "@graphprotocol/graph-ts";
 
@@ -174,26 +174,26 @@ export function handleRegisterAsKeeper(event: RegisterAsKeeper): void {
 }
 
 export function handleSetWorkerAddress(event: SetWorkerAddress): void {
-  const keeper = createKeeper(event.params.keeperId.toString());
+  const keeper = getKeeper(event.params.keeperId.toString());
   keeper.worker = event.params.worker;
   keeper.save();
 }
 
 // TODO: handle compensation increment on execute
 export function handleWithdrawCompensation(event: WithdrawCompensation): void {
-  const keeper = createKeeper(event.params.keeperId.toString());
+  const keeper = getKeeper(event.params.keeperId.toString());
   keeper.compensation = keeper.compensation.minus(event.params.amount);
   keeper.save();
 }
 
 export function handleStake(event: Stake): void {
-  const keeper = createKeeper(event.params.keeperId.toString());
+  const keeper = getKeeper(event.params.keeperId.toString());
   keeper.compensation = keeper.compensation.plus(event.params.amount);
   keeper.save();
 }
 
 export function handleSlash(event: Slash): void {
-  const keeper = createKeeper(event.params.keeperId.toString());
+  const keeper = getKeeper(event.params.keeperId.toString());
 
   keeper.currentStake = keeper.currentStake.minus(event.params.currentAmount);
   keeper.slashedStake = keeper.slashedStake.plus(event.params.currentAmount);
@@ -204,7 +204,7 @@ export function handleSlash(event: Slash): void {
 }
 
 export function handleInitiateRedeem(event: InitiateRedeem): void {
-  const keeper = createKeeper(event.params.keeperId.toString());
+  const keeper = getKeeper(event.params.keeperId.toString());
 
   const stakeOfToReduceAmount = event.params.redeemAmount.minus(keeper.slashedStake);
   keeper.currentStake = keeper.currentStake.minus(stakeOfToReduceAmount);
@@ -217,7 +217,7 @@ export function handleInitiateRedeem(event: InitiateRedeem): void {
 }
 
 export function handleFinalizeRedeem(event: FinalizeRedeem): void {
-  const keeper = createKeeper(event.params.keeperId.toString());
+  const keeper = getKeeper(event.params.keeperId.toString());
 
   keeper.pendingWithdrawalAmount = BIG_INT_ZERO;
   keeper.pendingWithdrawalEndAt = BIG_INT_ZERO;
