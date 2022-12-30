@@ -3,7 +3,7 @@ import {
   InitiateJobTransfer,
   JobUpdate,
   RegisterJob,
-  SetJobConfig, WithdrawJobCredits, WithdrawJobOwnerCredits
+  SetJobConfig, SetJobPreDefinedCalldata, SetJobResolver, WithdrawJobCredits, WithdrawJobOwnerCredits
 } from "../generated/PPAgentV2/PPAgentV2";
 import {BIG_INT_ZERO, createJobByKey, getJobByKey, getOrCreateJobOwner} from "./common";
 import {Execution} from "../generated/schema";
@@ -96,9 +96,7 @@ export function handleSetJobConfig(event: SetJobConfig): void {
 
 export function handleInitiateJobTransfer(event: InitiateJobTransfer): void {
   const job = getJobByKey(event.params.jobKey.toHexString());
-
   job.pendingOwner = event.params.to.toHexString();
-
   job.save();
 }
 
@@ -113,32 +111,39 @@ export function handleAcceptJobTransfer(event: AcceptJobTransfer): void {
 
 export function handleDepositJobCredits(event: DepositJobCredits): void {
   const job = getJobByKey(event.params.jobKey.toHexString());
-
   job.credits = job.credits.plus(event.params.amount);
-
   job.save();
 }
 
 export function handleWithdrawJobCredits(event: WithdrawJobCredits): void {
   const job = getJobByKey(event.params.jobKey.toHexString());
-
   job.credits = job.credits.minus(event.params.amount);
-
   job.save();
 }
 
 export function handleDepositJobOwnerCredits(event: DepositJobOwnerCredits): void {
   const jobOwner = getOrCreateJobOwner(event.params.jobOwner.toHexString());
-
   jobOwner.credits = jobOwner.credits.plus(event.params.amount);
-
   jobOwner.save();
 }
 
 export function handleWithdrawJobOwnerCredits(event: WithdrawJobOwnerCredits): void {
   const jobOwner = getOrCreateJobOwner(event.params.jobOwner.toHexString());
-
   jobOwner.credits = jobOwner.credits.minus(event.params.amount);
-
   jobOwner.save();
+}
+
+export function handleSetJobPreDefinedCalldata(event: SetJobPreDefinedCalldata): void {
+  const job = getJobByKey(event.params.jobKey.toHexString());
+  job.preDefinedCalldata = event.params.preDefinedCalldata;
+  job.save();
+}
+
+export function handleSetJobResolver(event: SetJobResolver): void {
+  const job = getJobByKey(event.params.jobKey.toHexString());
+
+  job.resolverAddress = event.params.resolverAddress;
+  job.resolverCalldata = event.params.resolverCalldata;
+
+  job.save();
 }

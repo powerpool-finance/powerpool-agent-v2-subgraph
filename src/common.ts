@@ -22,7 +22,8 @@ export function getJobByKey(jobKey: string): Job {
 export function getOrCreateJobOwner(ownerAddress: string): JobOwner {
   let jobOwner = JobOwner.load(ownerAddress)
   if (!jobOwner) {
-    return new JobOwner(ownerAddress);
+    jobOwner = new JobOwner(ownerAddress);
+    jobOwner.credits = BIG_INT_ZERO;
   }
   return jobOwner;
 }

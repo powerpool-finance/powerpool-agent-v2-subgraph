@@ -43,3 +43,8 @@ dataSources:
           handler: handleDepositJobOwnerCredits
         - event:  WithdrawJobOwnerCredits(indexed address,indexed address,uint256)
           handler: handleWithdrawJobOwnerCredits
+
+        - event:  SetJobPreDefinedCalldata(indexed bytes32,bytes)
+          handler: handleSetJobPreDefinedCalldata
+        - event:  SetJobResolver(indexed bytes32,address,bytes)
+          handler: handleSetJobResolver
