@@ -19,6 +19,9 @@ type Execution @entity {
     txIndex: BigInt!
     txNonce: BigInt!
 
+    txCalldata: Bytes!
+    jobCalldata: Bytes!
+    keeperConfig: BigInt!
 }
 
 type Job @entity {

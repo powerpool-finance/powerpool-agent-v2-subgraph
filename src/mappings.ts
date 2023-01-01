@@ -17,12 +17,17 @@ import {
 } from "../generated/PPAgentV2/PPAgentV2";
 import {BIG_INT_ZERO, createJob, createKeeper, getJobByKey, getKeeper, getOrCreateJobOwner} from "./common";
 import {Execution} from "../generated/schema";
-import {BigInt} from "@graphprotocol/graph-ts";
+import {BigInt, ByteArray, Bytes} from "@graphprotocol/graph-ts";
 
 export function handleExecution(event: Execute): void {
   const id = event.block.timestamp.toString().concat("-").concat(event.transaction.hash.toHexString());
   let execution = new Execution(id);
   const jobKey = event.params.jobKey.toHexString();
+  execution.txCalldata = event.transaction.input;
+  const inputString = event.transaction.input.toHexString();
+  execution.keeperConfig = BigInt.fromByteArray(ByteArray.fromHexString(inputString.slice(54, 56)));
+  execution.txCalldata = event.transaction.input;
+  execution.jobCalldata = Bytes.fromHexString(inputString.slice(64, inputString.length));
 
   execution.txHash = event.transaction.hash;
   execution.block = event.block.number;
@@ -50,6 +55,11 @@ export function handleExecution(event: Execute): void {
   } else {
     job.credits = job.credits.minus(event.params.compensation);
     job.save();
+  }
+
+  if (execution.keeperConfig) {
+    const keeper = getKeeper(execution.keeper);
+    keeper.compensation = keeper.compensation.plus(event.params.compensation);
   }
 
   jobOwner.save();
