@@ -18,7 +18,7 @@ import {
 import {
   BIG_INT_ONE,
   BIG_INT_ZERO,
-  createJob, createJobDeposit, createJobWithdrawal,
+  createJob, createJobDeposit, createJobOwnerDeposit, createJobOwnerWithdrawal, createJobWithdrawal,
   createKeeper,
   getJobByKey,
   getKeeper,
@@ -143,14 +143,14 @@ export function handleAcceptJobTransfer(event: AcceptJobTransfer): void {
 export function handleDepositJobCredits(event: DepositJobCredits): void {
   const job = getJobByKey(event.params.jobKey.toHexString());
 
-  const jobDepositKey = event.params.jobKey.toHexString().concat(job.depositCount.toString());
-  const jobDeposit = createJobDeposit(jobDepositKey);
-  jobDeposit.job = event.params.jobKey.toHexString();
-  jobDeposit.depositor = event.params.depositor;
-  jobDeposit.amount = event.params.amount;
-  jobDeposit.fee = event.params.fee;
-  jobDeposit.total = event.params.fee.plus(event.params.amount);
-  jobDeposit.save();
+  const depositKey = event.params.jobKey.toHexString().concat(job.depositCount.toString());
+  const deposit = createJobDeposit(depositKey);
+  deposit.job = event.params.jobKey.toHexString();
+  deposit.depositor = event.params.depositor;
+  deposit.amount = event.params.amount;
+  deposit.fee = event.params.fee;
+  deposit.total = event.params.fee.plus(event.params.amount);
+  deposit.save();
 
   job.credits = job.credits.plus(event.params.amount);
   job.depositCount = job.depositCount.plus(BIG_INT_ONE);
@@ -160,13 +160,13 @@ export function handleDepositJobCredits(event: DepositJobCredits): void {
 export function handleWithdrawJobCredits(event: WithdrawJobCredits): void {
   const job = getJobByKey(event.params.jobKey.toHexString());
 
-  const jobWithdrawalKey = event.params.jobKey.toHexString().concat(job.withdrawalCount.toString());
-  const jobWithdrawal = createJobWithdrawal(jobWithdrawalKey);
-  jobWithdrawal.job = event.params.jobKey.toHexString();
-  jobWithdrawal.owner = event.params.owner;
-  jobWithdrawal.to = event.params.to;
-  jobWithdrawal.amount = event.params.amount;
-  jobWithdrawal.save();
+  const withdrawalKey = event.params.jobKey.toHexString().concat(job.withdrawalCount.toString());
+  const withdrawal = createJobWithdrawal(withdrawalKey);
+  withdrawal.job = event.params.jobKey.toHexString();
+  withdrawal.owner = event.params.owner;
+  withdrawal.to = event.params.to;
+  withdrawal.amount = event.params.amount;
+  withdrawal.save();
 
   job.credits = job.credits.minus(event.params.amount);
   job.withdrawalCount = job.withdrawalCount.plus(BIG_INT_ONE);
@@ -175,12 +175,29 @@ export function handleWithdrawJobCredits(event: WithdrawJobCredits): void {
 
 export function handleDepositJobOwnerCredits(event: DepositJobOwnerCredits): void {
   const jobOwner = getOrCreateJobOwner(event.params.jobOwner.toHexString());
+
+  const depositKey = event.params.jobOwner.toHexString().concat(jobOwner.depositCount.toString());
+  const deposit = createJobOwnerDeposit(depositKey);
+  deposit.jobOwner = event.params.jobOwner.toHexString();
+  deposit.amount = event.params.amount;
+  deposit.fee = event.params.fee;
+  deposit.total = event.params.fee.plus(event.params.amount);
+  deposit.save();
+
   jobOwner.credits = jobOwner.credits.plus(event.params.amount);
   jobOwner.save();
 }
 
 export function handleWithdrawJobOwnerCredits(event: WithdrawJobOwnerCredits): void {
   const jobOwner = getOrCreateJobOwner(event.params.jobOwner.toHexString());
+
+  const withdrawalKey = event.params.jobOwner.toHexString().concat(jobOwner.withdrawalCount.toString());
+  const withdrawal = createJobOwnerWithdrawal(withdrawalKey);
+  withdrawal.jobOwner = event.params.jobOwner.toHexString();
+  withdrawal.to = event.params.to;
+  withdrawal.amount = event.params.amount;
+  withdrawal.save();
+
   jobOwner.credits = jobOwner.credits.minus(event.params.amount);
   jobOwner.save();
 }

@@ -1,3 +1,5 @@
+### JOB ###
+
 type Execution @entity {
     id: ID!
     timestamp: BigInt!
@@ -61,13 +63,6 @@ type Job @entity {
     withdrawals: [JobWithdrawal!]! @derivedFrom(field: "job")
 }
 
-type JobOwner @entity {
-    id: ID!
-    credits: BigInt!
-
-    jobs: [Job!]! @derivedFrom(field: "owner")
-}
-
 type JobDeposit @entity {
     id: ID!
     job: Job!
@@ -87,6 +82,41 @@ type JobWithdrawal @entity {
 
     amount: BigInt!
 }
+
+### JOB OWNER ###
+
+type JobOwner @entity {
+    id: ID!
+    credits: BigInt!
+
+    depositCount: BigInt!
+    withdrawalCount: BigInt!
+
+    jobs: [Job!]! @derivedFrom(field: "owner")
+    deposits: [JobOwnerDeposit!]! @derivedFrom(field: "jobOwner")
+    withdrawals: [JobOwnerWithdrawal!]! @derivedFrom(field: "jobOwner")
+}
+
+type JobOwnerDeposit @entity {
+    id: ID!
+    jobOwner: JobOwner!
+    depositor: Bytes!
+
+    amount: BigInt!
+    fee: BigInt!
+    "total = amount + fee"
+    total: BigInt!
+}
+
+type JobOwnerWithdrawal @entity {
+    id: ID!
+    jobOwner: JobOwner!
+    to: Bytes!
+
+    amount: BigInt!
+}
+
+### KEEPER ###
 
 type Keeper @entity {
     id: ID!
