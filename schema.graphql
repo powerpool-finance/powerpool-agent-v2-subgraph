@@ -53,7 +53,12 @@ type Job @entity {
     resolverAddress: Bytes
     resolverCalldata: Bytes
 
+    depositCount: BigInt!
+    withdrawalCount: BigInt!
+
     executions: [Execution!]! @derivedFrom(field: "job")
+    deposits: [JobDeposit!]! @derivedFrom(field: "job")
+    withdrawals: [JobWithdrawal!]! @derivedFrom(field: "job")
 }
 
 type JobOwner @entity {
@@ -61,6 +66,26 @@ type JobOwner @entity {
     credits: BigInt!
 
     jobs: [Job!]! @derivedFrom(field: "owner")
+}
+
+type JobDeposit @entity {
+    id: ID!
+    job: Job!
+    depositor: Bytes!
+
+    amount: BigInt!
+    fee: BigInt!
+    "total = amount + fee"
+    total: BigInt!
+}
+
+type JobWithdrawal @entity {
+    id: ID!
+    job: Job!
+    owner: Bytes!
+    to: Bytes!
+
+    amount: BigInt!
 }
 
 type Keeper @entity {

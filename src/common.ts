@@ -1,7 +1,8 @@
 import {BigInt, Bytes} from "@graphprotocol/graph-ts";
-import {Job, JobOwner, Keeper} from "../generated/schema";
+import {Job, JobDeposit, JobOwner, JobWithdrawal, Keeper} from "../generated/schema";
 
 export const BIG_INT_ZERO = BigInt.zero();
+export const BIG_INT_ONE = BigInt.fromI32(1);
 
 export function createJob(jobKey: string): Job {
   let job = Job.load(jobKey)
@@ -42,4 +43,20 @@ export function getKeeper(id: string): Keeper {
     throw new Error(`Keeper with address ${id} does not exists`);
   }
   return keeper;
+}
+
+export function createJobDeposit(id: string): JobDeposit {
+  let jobDeposit = JobDeposit.load(id)
+  if (jobDeposit) {
+    throw new Error(`JobDeposit with the key ${id} already exists`);
+  }
+  return new JobDeposit(id);
+}
+
+export function createJobWithdrawal(id: string): JobWithdrawal {
+  let jobWithdrawal = JobWithdrawal.load(id)
+  if (jobWithdrawal) {
+    throw new Error(`JobWithdrawal with the key ${id} already exists`);
+  }
+  return new JobWithdrawal(id);
 }

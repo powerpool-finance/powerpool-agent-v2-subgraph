@@ -15,7 +15,15 @@ import {
   WithdrawJobCredits,
   WithdrawJobOwnerCredits
 } from "../generated/PPAgentV2/PPAgentV2";
-import {BIG_INT_ZERO, createJob, createKeeper, getJobByKey, getKeeper, getOrCreateJobOwner} from "./common";
+import {
+  BIG_INT_ONE,
+  BIG_INT_ZERO,
+  createJob, createJobDeposit, createJobWithdrawal,
+  createKeeper,
+  getJobByKey,
+  getKeeper,
+  getOrCreateJobOwner
+} from "./common";
 import {Execution} from "../generated/schema";
 import {BigInt, ByteArray, Bytes} from "@graphprotocol/graph-ts";
 
@@ -89,6 +97,9 @@ export function handleRegisterJob(event: RegisterJob): void {
   job.useJobOwnerCredits = event.params.params.useJobOwnerCredits;
   job.assertResolverSelector = event.params.params.assertResolverSelector;
 
+  job.depositCount = BIG_INT_ZERO;
+  job.withdrawalCount = BIG_INT_ZERO;
+
   job.save();
 }
 
@@ -131,13 +142,34 @@ export function handleAcceptJobTransfer(event: AcceptJobTransfer): void {
 
 export function handleDepositJobCredits(event: DepositJobCredits): void {
   const job = getJobByKey(event.params.jobKey.toHexString());
+
+  const jobDepositKey = event.params.jobKey.toHexString().concat(job.depositCount.toString());
+  const jobDeposit = createJobDeposit(jobDepositKey);
+  jobDeposit.job = event.params.jobKey.toHexString();
+  jobDeposit.depositor = event.params.depositor;
+  jobDeposit.amount = event.params.amount;
+  jobDeposit.fee = event.params.fee;
+  jobDeposit.total = event.params.fee.plus(event.params.amount);
+  jobDeposit.save();
+
   job.credits = job.credits.plus(event.params.amount);
+  job.depositCount = job.depositCount.plus(BIG_INT_ONE);
   job.save();
 }
 
 export function handleWithdrawJobCredits(event: WithdrawJobCredits): void {
   const job = getJobByKey(event.params.jobKey.toHexString());
+
+  const jobWithdrawalKey = event.params.jobKey.toHexString().concat(job.withdrawalCount.toString());
+  const jobWithdrawal = createJobWithdrawal(jobWithdrawalKey);
+  jobWithdrawal.job = event.params.jobKey.toHexString();
+  jobWithdrawal.owner = event.params.owner;
+  jobWithdrawal.to = event.params.to;
+  jobWithdrawal.amount = event.params.amount;
+  jobWithdrawal.save();
+
   job.credits = job.credits.minus(event.params.amount);
+  job.withdrawalCount = job.withdrawalCount.plus(BIG_INT_ONE);
   job.save();
 }
 
@@ -189,7 +221,6 @@ export function handleSetWorkerAddress(event: SetWorkerAddress): void {
   keeper.save();
 }
 
-// TODO: handle compensation increment on execute
 export function handleWithdrawCompensation(event: WithdrawCompensation): void {
   const keeper = getKeeper(event.params.keeperId.toString());
   keeper.compensation = keeper.compensation.minus(event.params.amount);
