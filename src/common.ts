@@ -1,5 +1,6 @@
-import {BigInt, Bytes} from "@graphprotocol/graph-ts";
+import {Address, BigInt, Bytes} from "@graphprotocol/graph-ts";
 import {
+  Agent,
   Job,
   JobDeposit,
   JobOwner,
@@ -11,6 +12,9 @@ import {
 
 export const BIG_INT_ZERO = BigInt.zero();
 export const BIG_INT_ONE = BigInt.fromI32(1);
+export const ZERO_ADDRESS = Address.zero();
+
+const AGENT_ID = "Agent";
 
 export function createJob(jobKey: string): Job {
   let job = Job.load(jobKey)
@@ -104,9 +108,24 @@ export function createKeeperRedeemInit(id: string): KeeperRedeemInit {
 }
 
 export function createKeeperRedeemFinalize(id: string): KeeperRedeemFinalize {
-  let init = KeeperRedeemFinalize.load(id)
-  if (init) {
+  let finalize = KeeperRedeemFinalize.load(id)
+  if (finalize) {
     throw new Error(`KeeperRedeemFinalize with the key ${id} already exists`);
   }
   return new KeeperRedeemFinalize(id);
+}
+
+export function getOrCreateAgent(): Agent {
+  let agent = Agent.load(AGENT_ID);
+  if (!agent) {
+    agent = new Agent(AGENT_ID);
+    agent.owner = ZERO_ADDRESS;
+    agent.cvp = ZERO_ADDRESS;
+    agent.feeTotal = BIG_INT_ZERO;
+    agent.feePpm = BIG_INT_ZERO;
+    agent.minKeeperCVP = BIG_INT_ZERO;
+    agent.lastKeeperId = BIG_INT_ZERO;
+    agent.pendingWithdrawalTimeoutSeconds = BIG_INT_ZERO;
+  }
+  return agent;
 }

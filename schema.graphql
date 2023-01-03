@@ -126,7 +126,7 @@ type Keeper @entity {
     slashedStake: BigInt!
     compensation: BigInt!
     pendingWithdrawalAmount: BigInt!
-    pendingWithdrawalEndAt: BigInt!
+    pendingWithdrawalEndsAt: BigInt!
 
     stakeCount: BigInt!
     redeemInitCount: BigInt!
@@ -149,6 +149,7 @@ type KeeperRedeemInit @entity {
     keeper: Keeper!
     initiatedAt: BigInt!
     availableAt: BigInt!
+    cooldownSeconds: BigInt!
 
     inputAmount: BigInt!
     stakeReduction: BigInt!
@@ -161,4 +162,20 @@ type KeeperRedeemFinalize @entity {
     to: Bytes!
 
     amount: BigInt!
+}
+
+### AGENT (SINGLETON) ###
+
+type Agent @entity {
+    id: ID!
+    owner: Bytes!
+    cvp: Bytes!
+
+    minKeeperCVP: BigInt!
+    pendingWithdrawalTimeoutSeconds: BigInt!
+
+    feePpm: BigInt!
+    feeTotal: BigInt!
+
+    lastKeeperId: BigInt!
 }

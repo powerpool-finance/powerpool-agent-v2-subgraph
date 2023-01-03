@@ -4,9 +4,9 @@ import {
   DepositJobOwnerCredits,
   Execute, FinalizeRedeem,
   InitiateJobTransfer, InitiateRedeem,
-  JobUpdate,
+  JobUpdate, OwnershipTransferred, PPAgentV2,
   RegisterAsKeeper,
-  RegisterJob,
+  RegisterJob, SetAgentParams,
   SetJobConfig,
   SetJobPreDefinedCalldata,
   SetJobResolver,
@@ -21,11 +21,11 @@ import {
   createJob, createJobDeposit, createJobOwnerDeposit, createJobOwnerWithdrawal, createJobWithdrawal,
   createKeeper, createKeeperRedeemFinalize, createKeeperRedeemInit, createKeeperStake,
   getJobByKey,
-  getKeeper,
-  getOrCreateJobOwner
+  getKeeper, getOrCreateAgent,
+  getOrCreateJobOwner, ZERO_ADDRESS
 } from "./common";
 import {Execution} from "../generated/schema";
-import {BigInt, ByteArray, Bytes} from "@graphprotocol/graph-ts";
+import {log, BigInt, ByteArray, Bytes} from "@graphprotocol/graph-ts";
 
 export function handleExecution(event: Execute): void {
   const id = event.block.timestamp.toString().concat("-").concat(event.transaction.hash.toHexString());
@@ -220,7 +220,8 @@ export function handleSetJobResolver(event: SetJobResolver): void {
 }
 
 export function handleRegisterAsKeeper(event: RegisterAsKeeper): void {
-  const keeper = createKeeper(event.params.keeperId.toString());
+  const keeperId = event.params.keeperId.toString();
+  const keeper = createKeeper(keeperId);
 
   keeper.admin = event.params.keeperAdmin;
   keeper.worker = event.params.keeperWorker;
@@ -229,13 +230,17 @@ export function handleRegisterAsKeeper(event: RegisterAsKeeper): void {
   keeper.currentStake = BIG_INT_ZERO;
   keeper.compensation = BIG_INT_ZERO;
   keeper.pendingWithdrawalAmount = BIG_INT_ZERO;
-  keeper.pendingWithdrawalEndAt = BIG_INT_ZERO;
+  keeper.pendingWithdrawalEndsAt = BIG_INT_ZERO;
 
   keeper.stakeCount = BIG_INT_ZERO;
   keeper.redeemInitCount = BIG_INT_ZERO;
   keeper.redeemFinalizeCount = BIG_INT_ZERO;
 
   keeper.save();
+
+  const agent = getOrCreateAgent();
+  agent.lastKeeperId = event.params.keeperId;
+  agent.save();
 }
 
 export function handleSetWorkerAddress(event: SetWorkerAddress): void {
@@ -278,6 +283,7 @@ export function handleSlash(event: Slash): void {
 
 export function handleInitiateRedeem(event: InitiateRedeem): void {
   const keeper = getKeeper(event.params.keeperId.toString());
+  const agent = getOrCreateAgent();
 
   const initKey = keeper.id.toString().concat("-").concat(keeper.redeemInitCount.toString());
   const init = createKeeperRedeemInit(initKey);
@@ -286,16 +292,16 @@ export function handleInitiateRedeem(event: InitiateRedeem): void {
   init.slashedStakeReduction = event.params.slashedStakeAmount;
   init.stakeReduction = event.params.stakeAmount;
   init.initiatedAt = event.block.timestamp;
-  init.availableAt = event.block.timestamp;
-  // TODO: track pendingWithdrawalAfter using a global singleton
+  init.availableAt = event.block.timestamp.plus(agent.pendingWithdrawalTimeoutSeconds);
+  init.cooldownSeconds = agent.pendingWithdrawalTimeoutSeconds;
   init.save();
 
   const stakeOfToReduceAmount = event.params.redeemAmount.minus(keeper.slashedStake);
   keeper.currentStake = keeper.currentStake.minus(stakeOfToReduceAmount);
   keeper.pendingWithdrawalAmount = keeper.pendingWithdrawalAmount.plus(stakeOfToReduceAmount);
+  keeper.pendingWithdrawalEndsAt = event.block.timestamp.plus(agent.pendingWithdrawalTimeoutSeconds);
 
   keeper.slashedStake = BIG_INT_ZERO;
-  // TODO: track pendingWithdrawalAfter using a global singleton
 
   keeper.redeemInitCount = keeper.redeemInitCount.plus(BIG_INT_ONE);
 
@@ -313,8 +319,48 @@ export function handleFinalizeRedeem(event: FinalizeRedeem): void {
   finalize.save();
 
   keeper.pendingWithdrawalAmount = BIG_INT_ZERO;
-  keeper.pendingWithdrawalEndAt = BIG_INT_ZERO;
+  keeper.pendingWithdrawalEndsAt = BIG_INT_ZERO;
   keeper.redeemFinalizeCount = keeper.redeemFinalizeCount.plus(BIG_INT_ONE);
 
   keeper.save();
+}
+
+export function handleOwnershipTransferred(event: OwnershipTransferred): void {
+  const agent = getOrCreateAgent();
+
+  // Init block
+  if (agent.owner == ZERO_ADDRESS) {
+    const agentContract = PPAgentV2.bind(event.address);
+
+    // Fetch CVP
+    const res1 = agentContract.try_CVP();
+    if (res1.reverted) {
+      throw new Error('Init: Unable to fetch CVP');
+    }
+    agent.cvp = res1.value;
+
+    // Fetch minKeeperCVP
+    const res2 = agentContract.try_getConfig();
+    if (res2.reverted) {
+      throw new Error('Init: Unable to fetch config');
+    }
+    agent.minKeeperCVP = res2.value.getMinKeeperCvp_();
+    agent.pendingWithdrawalTimeoutSeconds = res2.value.getPendingWithdrawalTimeoutSeconds_();
+    agent.feePpm = res2.value.getFeePpm_();
+    agent.feeTotal = res2.value.getFeeTotal_();
+    agent.lastKeeperId = res2.value.getLastKeeperId_();
+  }
+
+  agent.owner = event.params.newOwner;
+  agent.save();
+}
+
+export function handleSetAgentParams(event: SetAgentParams): void {
+  const agent = getOrCreateAgent();
+
+  agent.minKeeperCVP = event.params.minKeeperCvp_;
+  agent.pendingWithdrawalTimeoutSeconds = event.params.timeoutSeconds_;
+  agent.feePpm = event.params.feePct_; // the event has misspelled name "feePct_" but actually means "feePpm_"
+
+  agent.save();
 }
