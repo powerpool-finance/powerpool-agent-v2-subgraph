@@ -127,4 +127,38 @@ type Keeper @entity {
     compensation: BigInt!
     pendingWithdrawalAmount: BigInt!
     pendingWithdrawalEndAt: BigInt!
+
+    stakeCount: BigInt!
+    redeemInitCount: BigInt!
+    redeemFinalizeCount: BigInt!
+
+    stakes: [KeeperStake!]! @derivedFrom(field: "keeper")
+    redeemInitiated: [KeeperRedeemInit!]! @derivedFrom(field: "keeper")
+    redeemFinalized: [KeeperRedeemFinalize!]! @derivedFrom(field: "keeper")
+}
+
+type KeeperStake @entity {
+    id: ID!
+    keeper: Keeper!
+    staker: Bytes!
+    amount: BigInt!
+}
+
+type KeeperRedeemInit @entity {
+    id: ID!
+    keeper: Keeper!
+    initiatedAt: BigInt!
+    availableAt: BigInt!
+
+    inputAmount: BigInt!
+    stakeReduction: BigInt!
+    slashedStakeReduction: BigInt!
+}
+
+type KeeperRedeemFinalize @entity {
+    id: ID!
+    keeper: Keeper!
+    to: Bytes!
+
+    amount: BigInt!
 }

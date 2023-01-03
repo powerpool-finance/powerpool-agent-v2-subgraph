@@ -6,7 +6,7 @@ import {
   JobOwnerDeposit,
   JobOwnerWithdrawal,
   JobWithdrawal,
-  Keeper
+  Keeper, KeeperRedeemFinalize, KeeperRedeemInit, KeeperStake
 } from "../generated/schema";
 
 export const BIG_INT_ZERO = BigInt.zero();
@@ -85,4 +85,28 @@ export function createJobOwnerWithdrawal(id: string): JobOwnerWithdrawal {
     throw new Error(`JobOwnerWithdrawal with the key ${id} already exists`);
   }
   return new JobOwnerWithdrawal(id);
+}
+
+export function createKeeperStake(id: string): KeeperStake {
+  let stake = KeeperStake.load(id)
+  if (stake) {
+    throw new Error(`KeeperStake with the key ${id} already exists`);
+  }
+  return new KeeperStake(id);
+}
+
+export function createKeeperRedeemInit(id: string): KeeperRedeemInit {
+  let init = KeeperRedeemInit.load(id)
+  if (init) {
+    throw new Error(`KeeperRedeemInit with the key ${id} already exists`);
+  }
+  return new KeeperRedeemInit(id);
+}
+
+export function createKeeperRedeemFinalize(id: string): KeeperRedeemFinalize {
+  let init = KeeperRedeemFinalize.load(id)
+  if (init) {
+    throw new Error(`KeeperRedeemFinalize with the key ${id} already exists`);
+  }
+  return new KeeperRedeemFinalize(id);
 }

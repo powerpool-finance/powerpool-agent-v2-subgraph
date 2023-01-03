@@ -19,7 +19,7 @@ import {
   BIG_INT_ONE,
   BIG_INT_ZERO,
   createJob, createJobDeposit, createJobOwnerDeposit, createJobOwnerWithdrawal, createJobWithdrawal,
-  createKeeper,
+  createKeeper, createKeeperRedeemFinalize, createKeeperRedeemInit, createKeeperStake,
   getJobByKey,
   getKeeper,
   getOrCreateJobOwner
@@ -143,7 +143,7 @@ export function handleAcceptJobTransfer(event: AcceptJobTransfer): void {
 export function handleDepositJobCredits(event: DepositJobCredits): void {
   const job = getJobByKey(event.params.jobKey.toHexString());
 
-  const depositKey = event.params.jobKey.toHexString().concat(job.depositCount.toString());
+  const depositKey = event.params.jobKey.toHexString().concat("-").concat(job.depositCount.toString());
   const deposit = createJobDeposit(depositKey);
   deposit.job = event.params.jobKey.toHexString();
   deposit.depositor = event.params.depositor;
@@ -160,7 +160,7 @@ export function handleDepositJobCredits(event: DepositJobCredits): void {
 export function handleWithdrawJobCredits(event: WithdrawJobCredits): void {
   const job = getJobByKey(event.params.jobKey.toHexString());
 
-  const withdrawalKey = event.params.jobKey.toHexString().concat(job.withdrawalCount.toString());
+  const withdrawalKey = event.params.jobKey.toHexString().concat("-").concat(job.withdrawalCount.toString());
   const withdrawal = createJobWithdrawal(withdrawalKey);
   withdrawal.job = event.params.jobKey.toHexString();
   withdrawal.owner = event.params.owner;
@@ -176,7 +176,7 @@ export function handleWithdrawJobCredits(event: WithdrawJobCredits): void {
 export function handleDepositJobOwnerCredits(event: DepositJobOwnerCredits): void {
   const jobOwner = getOrCreateJobOwner(event.params.jobOwner.toHexString());
 
-  const depositKey = event.params.jobOwner.toHexString().concat(jobOwner.depositCount.toString());
+  const depositKey = event.params.jobOwner.toHexString().concat("-").concat(jobOwner.depositCount.toString());
   const deposit = createJobOwnerDeposit(depositKey);
   deposit.jobOwner = event.params.jobOwner.toHexString();
   deposit.amount = event.params.amount;
@@ -185,13 +185,14 @@ export function handleDepositJobOwnerCredits(event: DepositJobOwnerCredits): voi
   deposit.save();
 
   jobOwner.credits = jobOwner.credits.plus(event.params.amount);
+  jobOwner.depositCount = jobOwner.depositCount.plus(BIG_INT_ONE);
   jobOwner.save();
 }
 
 export function handleWithdrawJobOwnerCredits(event: WithdrawJobOwnerCredits): void {
   const jobOwner = getOrCreateJobOwner(event.params.jobOwner.toHexString());
 
-  const withdrawalKey = event.params.jobOwner.toHexString().concat(jobOwner.withdrawalCount.toString());
+  const withdrawalKey = event.params.jobOwner.toHexString().concat("-").concat(jobOwner.withdrawalCount.toString());
   const withdrawal = createJobOwnerWithdrawal(withdrawalKey);
   withdrawal.jobOwner = event.params.jobOwner.toHexString();
   withdrawal.to = event.params.to;
@@ -199,6 +200,7 @@ export function handleWithdrawJobOwnerCredits(event: WithdrawJobOwnerCredits): v
   withdrawal.save();
 
   jobOwner.credits = jobOwner.credits.minus(event.params.amount);
+  jobOwner.withdrawalCount = jobOwner.withdrawalCount.plus(BIG_INT_ONE);
   jobOwner.save();
 }
 
@@ -229,6 +231,10 @@ export function handleRegisterAsKeeper(event: RegisterAsKeeper): void {
   keeper.pendingWithdrawalAmount = BIG_INT_ZERO;
   keeper.pendingWithdrawalEndAt = BIG_INT_ZERO;
 
+  keeper.stakeCount = BIG_INT_ZERO;
+  keeper.redeemInitCount = BIG_INT_ZERO;
+  keeper.redeemFinalizeCount = BIG_INT_ZERO;
+
   keeper.save();
 }
 
@@ -246,7 +252,16 @@ export function handleWithdrawCompensation(event: WithdrawCompensation): void {
 
 export function handleStake(event: Stake): void {
   const keeper = getKeeper(event.params.keeperId.toString());
+
+  const stakeKey = event.params.keeperId.toString().concat("-").concat(keeper.stakeCount.toString());
+  const stake = createKeeperStake(stakeKey);
+  stake.keeper = event.params.keeperId.toString();
+  stake.staker = event.params.staker;
+  stake.amount = event.params.amount;
+  stake.save();
+
   keeper.compensation = keeper.compensation.plus(event.params.amount);
+  keeper.stakeCount = keeper.stakeCount.plus(BIG_INT_ONE);
   keeper.save();
 }
 
@@ -264,6 +279,17 @@ export function handleSlash(event: Slash): void {
 export function handleInitiateRedeem(event: InitiateRedeem): void {
   const keeper = getKeeper(event.params.keeperId.toString());
 
+  const initKey = keeper.id.toString().concat("-").concat(keeper.redeemInitCount.toString());
+  const init = createKeeperRedeemInit(initKey);
+  init.keeper = event.params.keeperId.toString();
+  init.inputAmount = event.params.redeemAmount;
+  init.slashedStakeReduction = event.params.slashedStakeAmount;
+  init.stakeReduction = event.params.stakeAmount;
+  init.initiatedAt = event.block.timestamp;
+  init.availableAt = event.block.timestamp;
+  // TODO: track pendingWithdrawalAfter using a global singleton
+  init.save();
+
   const stakeOfToReduceAmount = event.params.redeemAmount.minus(keeper.slashedStake);
   keeper.currentStake = keeper.currentStake.minus(stakeOfToReduceAmount);
   keeper.pendingWithdrawalAmount = keeper.pendingWithdrawalAmount.plus(stakeOfToReduceAmount);
@@ -271,14 +297,24 @@ export function handleInitiateRedeem(event: InitiateRedeem): void {
   keeper.slashedStake = BIG_INT_ZERO;
   // TODO: track pendingWithdrawalAfter using a global singleton
 
+  keeper.redeemInitCount = keeper.redeemInitCount.plus(BIG_INT_ONE);
+
   keeper.save();
 }
 
 export function handleFinalizeRedeem(event: FinalizeRedeem): void {
   const keeper = getKeeper(event.params.keeperId.toString());
 
+  const finalizeKey = keeper.id.toString().concat("-").concat(keeper.redeemFinalizeCount.toString());
+  const finalize = createKeeperRedeemFinalize(finalizeKey);
+  finalize.keeper = event.params.keeperId.toString();
+  finalize.to = event.params.beneficiary;
+  finalize.amount = event.params.amount;
+  finalize.save();
+
   keeper.pendingWithdrawalAmount = BIG_INT_ZERO;
   keeper.pendingWithdrawalEndAt = BIG_INT_ZERO;
+  keeper.redeemFinalizeCount = keeper.redeemFinalizeCount.plus(BIG_INT_ONE);
 
   keeper.save();
 }
