@@ -24,6 +24,7 @@ dataSources:
       eventHandlers:
         - event: Execute(indexed bytes32,indexed address,uint256,uint256,uint256,uint256,uint256,bytes32)
           handler: handleExecution
+          receipt: true
         - event: RegisterJob(indexed bytes32,indexed address,indexed uint256,address,(address,bytes4,bool,bool,uint16,uint16,uint32,uint256,uint8,uint24))
           handler: handleRegisterJob
         - event: JobUpdate(indexed bytes32,uint256,uint256,uint256,uint256,uint256)

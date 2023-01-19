@@ -16,7 +16,7 @@ import {
   WithdrawJobOwnerCredits
 } from "../generated/PPAgentV2/PPAgentV2";
 import {
-  BIG_INT_ONE,
+  BIG_INT_ONE, BIG_INT_TWO,
   BIG_INT_ZERO,
   createJob, createJobDeposit, createJobOwnerDeposit, createJobOwnerWithdrawal, createJobWithdrawal,
   createKeeper, createKeeperRedeemFinalize, createKeeperRedeemInit, createKeeperStake,
@@ -26,6 +26,8 @@ import {
 } from "./common";
 import {Execution} from "../generated/schema";
 import {log, BigInt, ByteArray, Bytes} from "@graphprotocol/graph-ts";
+
+const FLAG_ACCRUE_REWARD = BIG_INT_TWO;
 
 export function handleExecution(event: Execute): void {
   const id = event.block.timestamp.toString().concat("-").concat(event.transaction.hash.toHexString());
@@ -49,9 +51,14 @@ export function handleExecution(event: Execute): void {
   execution.compensation = event.params.compensation;
 
   execution.jobGasUsed = event.params.gasUsed;
+  execution.txGasUsed = event.receipt!.gasUsed;
   execution.txGasLimit = event.transaction.gasLimit;
   execution.baseFee = event.params.baseFee;
   execution.gasPrice = event.params.gasPrice;
+  execution.profit = BIG_INT_ZERO;
+  if (execution.txGasUsed.gt(BIG_INT_ZERO)) {
+    execution.profit = event.params.compensation.minus(execution.gasPrice.times(execution.txGasUsed));
+  }
 
   execution.txIndex = event.transaction.index;
   execution.txNonce = event.transaction.nonce;
@@ -65,13 +72,16 @@ export function handleExecution(event: Execute): void {
     job.save();
   }
 
-  if (execution.keeperConfig) {
-    const keeper = getKeeper(execution.keeper);
+  const keeper = getKeeper(execution.keeper);
+  if (execution.keeperConfig.bitAnd(FLAG_ACCRUE_REWARD) != BIG_INT_ZERO) {
     keeper.compensation = keeper.compensation.plus(event.params.compensation);
   }
+  keeper.profit = keeper.profit.plus(execution.profit);
+  keeper.executionCount = keeper.executionCount.plus(BIG_INT_ONE);
 
   jobOwner.save();
   execution.save();
+  keeper.save();
 }
 
 export function handleRegisterJob(event: RegisterJob): void {
@@ -231,6 +241,8 @@ export function handleRegisterAsKeeper(event: RegisterAsKeeper): void {
   keeper.compensation = BIG_INT_ZERO;
   keeper.pendingWithdrawalAmount = BIG_INT_ZERO;
   keeper.pendingWithdrawalEndsAt = BIG_INT_ZERO;
+  keeper.profit = BIG_INT_ZERO;
+  keeper.executionCount = BIG_INT_ZERO;
 
   keeper.stakeCount = BIG_INT_ZERO;
   keeper.redeemInitCount = BIG_INT_ZERO;

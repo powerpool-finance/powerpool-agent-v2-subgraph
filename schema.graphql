@@ -14,9 +14,11 @@ type Execution @entity {
     compensation: BigInt!
 
     jobGasUsed: BigInt!
+    txGasUsed: BigInt!
     txGasLimit: BigInt!
     baseFee: BigInt!
     gasPrice: BigInt!
+    profit: BigInt!
 
     txIndex: BigInt!
     txNonce: BigInt!
@@ -127,6 +129,8 @@ type Keeper @entity {
     compensation: BigInt!
     pendingWithdrawalAmount: BigInt!
     pendingWithdrawalEndsAt: BigInt!
+    profit: BigInt!
+    executionCount: BigInt!
 
     stakeCount: BigInt!
     redeemInitCount: BigInt!
