@@ -1,0 +1,71 @@
+specVersion: 0.0.5
+description: PowerPool Agent V2 Goerli Subgraph
+repository: https://github.com/powerpool-finance/powerpool-agent-v2-subgraph
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: PPAgentV2
+    network: goerli
+    source:
+      address: "0x96cb9B293eB7695904B4Ea0FA73eB3650e07e8E4"
+      abi: PPAgentV2
+      startBlock: 7977609
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/mappings.ts
+      entities:
+        - Execution
+      abis:
+        - name: PPAgentV2
+          file: ./abis/PPAgentV2.json
+      eventHandlers:
+        - event: Execute(indexed bytes32,indexed address,uint256,uint256,uint256,uint256,uint256,bytes32)
+          handler: handleExecution
+          receipt: true
+        - event: RegisterJob(indexed bytes32,indexed address,indexed uint256,address,(address,bytes4,bool,bool,uint16,uint16,uint32,uint256,uint8,uint24))
+          handler: handleRegisterJob
+        - event: JobUpdate(indexed bytes32,uint256,uint256,uint256,uint256,uint256)
+          handler: handleJobUpdate
+        - event: SetJobConfig(indexed bytes32,bool,bool,bool)
+          handler: handleSetJobConfig
+        - event:  InitiateJobTransfer(indexed bytes32,indexed address,indexed address)
+          handler: handleInitiateJobTransfer
+        - event: AcceptJobTransfer(indexed bytes32,indexed address)
+          handler: handleAcceptJobTransfer
+
+        - event: DepositJobCredits(indexed bytes32,indexed address,uint256,uint256)
+          handler: handleDepositJobCredits
+        - event: WithdrawJobCredits(indexed bytes32,indexed address,indexed address,uint256)
+          handler: handleWithdrawJobCredits
+        - event: DepositJobOwnerCredits(indexed address,indexed address,uint256,uint256)
+          handler: handleDepositJobOwnerCredits
+        - event:  WithdrawJobOwnerCredits(indexed address,indexed address,uint256)
+          handler: handleWithdrawJobOwnerCredits
+
+        - event:  SetJobPreDefinedCalldata(indexed bytes32,bytes)
+          handler: handleSetJobPreDefinedCalldata
+        - event:  SetJobResolver(indexed bytes32,address,bytes)
+          handler: handleSetJobResolver
+
+        - event:  RegisterAsKeeper(indexed uint256,indexed address,indexed address)
+          handler: handleRegisterAsKeeper
+        - event:  SetWorkerAddress(indexed uint256,indexed address,indexed address)
+          handler: handleSetWorkerAddress
+        - event:  Stake(indexed uint256,uint256,address)
+          handler: handleStake
+        - event:  InitiateRedeem(indexed uint256,uint256,uint256,uint256)
+          handler: handleInitiateRedeem
+        - event:  FinalizeRedeem(indexed uint256,indexed address,uint256)
+          handler: handleFinalizeRedeem
+        - event:  WithdrawCompensation(indexed uint256,indexed address,uint256)
+          handler: handleWithdrawCompensation
+        - event:  Slash(indexed uint256,indexed address,uint256,uint256)
+          handler: handleSlash
+
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event:  SetAgentParams(uint256,uint256,uint256)
+          handler: handleSetAgentParams
