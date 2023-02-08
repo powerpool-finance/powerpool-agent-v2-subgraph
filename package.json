@@ -4,7 +4,8 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --product hosted-service polipaul/agent-v2-dev"
+    "deploy": "graph deploy --product hosted-service polipaul/agent-v2-dev",
+    "deploy-goerli": "graph deploy --product hosted-service polipaul/agent-v2-goerli-dev"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.37.1",

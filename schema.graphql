@@ -11,14 +11,16 @@ type Execution @entity {
     job: Job!
     jobAddress: Bytes!
     binJobAfter: Bytes!
+
     compensation: BigInt!
+    expenses: BigInt!
+    profit: BigInt!
 
     jobGasUsed: BigInt!
     txGasUsed: BigInt!
     txGasLimit: BigInt!
     baseFee: BigInt!
     gasPrice: BigInt!
-    profit: BigInt!
 
     txIndex: BigInt!
     txNonce: BigInt!
@@ -126,11 +128,14 @@ type Keeper @entity {
     worker: Bytes!
     currentStake: BigInt!
     slashedStake: BigInt!
-    compensation: BigInt!
+    compensationsToWithdraw: BigInt!
     pendingWithdrawalAmount: BigInt!
     pendingWithdrawalEndsAt: BigInt!
-    profit: BigInt!
     executionCount: BigInt!
+
+    compensations: BigInt!
+    expenses: BigInt!
+    profit: BigInt!
 
     stakeCount: BigInt!
     redeemInitCount: BigInt!

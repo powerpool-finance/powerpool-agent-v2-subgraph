@@ -57,7 +57,8 @@ export function handleExecution(event: Execute): void {
   execution.gasPrice = event.params.gasPrice;
   execution.profit = BIG_INT_ZERO;
   if (execution.txGasUsed.gt(BIG_INT_ZERO)) {
-    execution.profit = event.params.compensation.minus(execution.gasPrice.times(execution.txGasUsed));
+    execution.expenses = execution.gasPrice.times(execution.txGasUsed);
+    execution.profit = event.params.compensation.minus(execution.expenses);
   }
 
   execution.txIndex = event.transaction.index;
@@ -74,9 +75,13 @@ export function handleExecution(event: Execute): void {
 
   const keeper = getKeeper(execution.keeper);
   if (execution.keeperConfig.bitAnd(FLAG_ACCRUE_REWARD) != BIG_INT_ZERO) {
-    keeper.compensation = keeper.compensation.plus(event.params.compensation);
+    keeper.compensationsToWithdraw = keeper.compensationsToWithdraw.plus(event.params.compensation);
   }
+
+  keeper.compensations = keeper.compensations.plus(execution.compensation);
+  keeper.expenses = keeper.expenses.plus(execution.expenses);
   keeper.profit = keeper.profit.plus(execution.profit);
+
   keeper.executionCount = keeper.executionCount.plus(BIG_INT_ONE);
 
   jobOwner.save();
@@ -238,10 +243,12 @@ export function handleRegisterAsKeeper(event: RegisterAsKeeper): void {
 
   keeper.slashedStake = BIG_INT_ZERO;
   keeper.currentStake = BIG_INT_ZERO;
-  keeper.compensation = BIG_INT_ZERO;
+  keeper.compensationsToWithdraw = BIG_INT_ZERO;
+  keeper.compensations = BIG_INT_ZERO;
+  keeper.expenses = BIG_INT_ZERO;
+  keeper.profit = BIG_INT_ZERO;
   keeper.pendingWithdrawalAmount = BIG_INT_ZERO;
   keeper.pendingWithdrawalEndsAt = BIG_INT_ZERO;
-  keeper.profit = BIG_INT_ZERO;
   keeper.executionCount = BIG_INT_ZERO;
 
   keeper.stakeCount = BIG_INT_ZERO;
@@ -263,7 +270,7 @@ export function handleSetWorkerAddress(event: SetWorkerAddress): void {
 
 export function handleWithdrawCompensation(event: WithdrawCompensation): void {
   const keeper = getKeeper(event.params.keeperId.toString());
-  keeper.compensation = keeper.compensation.minus(event.params.amount);
+  keeper.compensationsToWithdraw = keeper.compensationsToWithdraw.minus(event.params.amount);
   keeper.save();
 }
 
@@ -277,7 +284,7 @@ export function handleStake(event: Stake): void {
   stake.amount = event.params.amount;
   stake.save();
 
-  keeper.compensation = keeper.compensation.plus(event.params.amount);
+  keeper.currentStake = keeper.currentStake.plus(event.params.amount);
   keeper.stakeCount = keeper.stakeCount.plus(BIG_INT_ONE);
   keeper.save();
 }
