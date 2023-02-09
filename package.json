@@ -5,7 +5,7 @@
     "codegen": "graph codegen",
     "build": "graph build",
     "deploy": "graph deploy --product hosted-service polipaul/agent-v2-dev",
-    "deploy-goerli": "graph deploy --product hosted-service polipaul/agent-v2-goerli-dev"
+    "deploy-goerli": "graph deploy --product hosted-service polipaul/agent-v2-goerli-dev subgraph.goerli.yaml"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.37.1",
