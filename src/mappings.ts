@@ -165,6 +165,7 @@ export function handleDepositJobCredits(event: DepositJobCredits): void {
   deposit.amount = event.params.amount;
   deposit.fee = event.params.fee;
   deposit.total = event.params.fee.plus(event.params.amount);
+  deposit.timestamp = event.block.timestamp;
   deposit.save();
 
   job.credits = job.credits.plus(event.params.amount);
@@ -181,6 +182,7 @@ export function handleWithdrawJobCredits(event: WithdrawJobCredits): void {
   withdrawal.owner = event.params.owner;
   withdrawal.to = event.params.to;
   withdrawal.amount = event.params.amount;
+  withdrawal.timestamp = event.block.timestamp;
   withdrawal.save();
 
   job.credits = job.credits.minus(event.params.amount);
@@ -197,6 +199,7 @@ export function handleDepositJobOwnerCredits(event: DepositJobOwnerCredits): voi
   deposit.amount = event.params.amount;
   deposit.fee = event.params.fee;
   deposit.total = event.params.fee.plus(event.params.amount);
+  deposit.timestamp = event.block.timestamp;
   deposit.save();
 
   jobOwner.credits = jobOwner.credits.plus(event.params.amount);
@@ -212,6 +215,7 @@ export function handleWithdrawJobOwnerCredits(event: WithdrawJobOwnerCredits): v
   withdrawal.jobOwner = event.params.jobOwner.toHexString();
   withdrawal.to = event.params.to;
   withdrawal.amount = event.params.amount;
+  withdrawal.timestamp = event.block.timestamp;
   withdrawal.save();
 
   jobOwner.credits = jobOwner.credits.minus(event.params.amount);
@@ -282,6 +286,7 @@ export function handleStake(event: Stake): void {
   stake.keeper = event.params.keeperId.toString();
   stake.staker = event.params.staker;
   stake.amount = event.params.amount;
+  stake.timestamp = event.block.timestamp;
   stake.save();
 
   keeper.currentStake = keeper.currentStake.plus(event.params.amount);
@@ -335,6 +340,7 @@ export function handleFinalizeRedeem(event: FinalizeRedeem): void {
   finalize.keeper = event.params.keeperId.toString();
   finalize.to = event.params.beneficiary;
   finalize.amount = event.params.amount;
+  finalize.timestamp = event.block.timestamp;
   finalize.save();
 
   keeper.pendingWithdrawalAmount = BIG_INT_ZERO;

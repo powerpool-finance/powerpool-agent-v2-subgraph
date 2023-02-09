@@ -71,6 +71,7 @@ type JobDeposit @entity {
     id: ID!
     job: Job!
     depositor: Bytes!
+    timestamp: BigInt!
 
     amount: BigInt!
     fee: BigInt!
@@ -83,6 +84,7 @@ type JobWithdrawal @entity {
     job: Job!
     owner: Bytes!
     to: Bytes!
+    timestamp: BigInt!
 
     amount: BigInt!
 }
@@ -105,6 +107,7 @@ type JobOwnerDeposit @entity {
     id: ID!
     jobOwner: JobOwner!
     depositor: Bytes!
+    timestamp: BigInt!
 
     amount: BigInt!
     fee: BigInt!
@@ -116,6 +119,7 @@ type JobOwnerWithdrawal @entity {
     id: ID!
     jobOwner: JobOwner!
     to: Bytes!
+    timestamp: BigInt!
 
     amount: BigInt!
 }
@@ -151,6 +155,7 @@ type KeeperStake @entity {
     keeper: Keeper!
     staker: Bytes!
     amount: BigInt!
+    timestamp: BigInt!
 }
 
 type KeeperRedeemInit @entity {
@@ -169,6 +174,7 @@ type KeeperRedeemFinalize @entity {
     id: ID!
     keeper: Keeper!
     to: Bytes!
+    timestamp: BigInt!
 
     amount: BigInt!
 }
