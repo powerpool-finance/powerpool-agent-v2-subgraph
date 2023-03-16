@@ -8,7 +8,7 @@ import {
   JobOwnerWithdrawal,
   JobWithdrawal,
   Keeper, KeeperRedeemFinalize, KeeperRedeemInit, KeeperStake
-} from "../generated/schema";
+} from "../../generated/schema";
 
 export const BIG_INT_ZERO = BigInt.zero();
 export const BIG_INT_ONE = BigInt.fromI32(1);
@@ -120,6 +120,7 @@ export function getOrCreateAgent(): Agent {
   let agent = Agent.load(AGENT_ID);
   if (!agent) {
     agent = new Agent(AGENT_ID);
+    agent.jobsCount = BIG_INT_ONE;
     agent.owner = ZERO_ADDRESS;
     agent.cvp = ZERO_ADDRESS;
     agent.feeTotal = BIG_INT_ZERO;

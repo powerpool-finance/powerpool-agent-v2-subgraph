@@ -5,22 +5,22 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: PPAgentV2
+    name: PPAgentV2Light
     network: goerli
     source:
       address: "0x96cb9B293eB7695904B4Ea0FA73eB3650e07e8E4"
-      abi: PPAgentV2
+      abi: PPAgentV2Light
       startBlock: 7977609
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
-      file: ./src/mappings.ts
+      file: ./src/mappings-light.ts
       entities:
         - Execution
       abis:
-        - name: PPAgentV2
-          file: ./abis/PPAgentV2.json
+        - name: PPAgentV2Light
+          file: ./abis/PPAgentV2Light.json
       eventHandlers:
         - event: Execute(indexed bytes32,indexed address,uint256,uint256,uint256,uint256,uint256,bytes32)
           handler: handleExecution
@@ -31,7 +31,7 @@ dataSources:
           handler: handleJobUpdate
         - event: SetJobConfig(indexed bytes32,bool,bool,bool)
           handler: handleSetJobConfig
-        - event:  InitiateJobTransfer(indexed bytes32,indexed address,indexed address)
+        - event: InitiateJobTransfer(indexed bytes32,indexed address,indexed address)
           handler: handleInitiateJobTransfer
         - event: AcceptJobTransfer(indexed bytes32,indexed address)
           handler: handleAcceptJobTransfer
@@ -67,5 +67,5 @@ dataSources:
 
         - event: OwnershipTransferred(indexed address,indexed address)
           handler: handleOwnershipTransferred
-        - event:  SetAgentParams(uint256,uint256,uint256)
+        - event: SetAgentParams(uint256,uint256,uint256)
           handler: handleSetAgentParams

@@ -4,8 +4,10 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --product hosted-service polipaul/agent-v2-dev",
-    "deploy-goerli": "graph deploy --product hosted-service polipaul/agent-v2-goerli-dev subgraph.goerli.yaml"
+    "build-randao": "graph build subgraph.goerli.randao.yaml",
+    "deploy-mainnet-light": "graph deploy --product hosted-service polipaul/agent-v2-dev",
+    "deploy-goerli-light": "graph deploy --product hosted-service polipaul/agent-v2-goerli-dev subgraph.goerli.yaml",
+    "deploy-goerli-randao": "graph deploy --product hosted-service polipaul/agent-v2-goerli-dev-randao subgraph.goerli.randao.yaml"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.37.1",

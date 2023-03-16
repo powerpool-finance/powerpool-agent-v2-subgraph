@@ -4,7 +4,7 @@ import {
   DepositJobOwnerCredits,
   Execute, FinalizeRedeem,
   InitiateJobTransfer, InitiateRedeem,
-  JobUpdate, OwnershipTransferred, PPAgentV2,
+  JobUpdate, OwnershipTransferred, PPAgentV2Light,
   RegisterAsKeeper,
   RegisterJob, SetAgentParams,
   SetJobConfig,
@@ -14,7 +14,7 @@ import {
   WithdrawCompensation,
   WithdrawJobCredits,
   WithdrawJobOwnerCredits
-} from "../generated/PPAgentV2/PPAgentV2";
+} from "../../generated/PPAgentV2Light/PPAgentV2Light";
 import {
   BIG_INT_ONE, BIG_INT_TWO,
   BIG_INT_ZERO,
@@ -23,13 +23,13 @@ import {
   getJobByKey,
   getKeeper, getOrCreateAgent,
   getOrCreateJobOwner, ZERO_ADDRESS
-} from "./common";
-import {Execution} from "../generated/schema";
+} from "./initializers";
+import {Execution} from "../../generated/schema";
 import {log, BigInt, ByteArray, Bytes} from "@graphprotocol/graph-ts";
 
 const FLAG_ACCRUE_REWARD = BIG_INT_TWO;
 
-export function handleExecution(event: Execute): void {
+export function commonHandleExecution(event: Execute): void {
   const id = event.block.timestamp.toString().concat("-").concat(event.transaction.hash.toHexString());
   let execution = new Execution(id);
   const jobKey = event.params.jobKey.toHexString();
@@ -89,7 +89,7 @@ export function handleExecution(event: Execute): void {
   keeper.save();
 }
 
-export function handleRegisterJob(event: RegisterJob): void {
+export function commonHandleRegisterJob(event: RegisterJob): void {
   const jobKey = event.params.jobKey.toHexString();
   const job = createJob(jobKey);
 
@@ -116,9 +116,13 @@ export function handleRegisterJob(event: RegisterJob): void {
   job.withdrawalCount = BIG_INT_ZERO;
 
   job.save();
+
+  const agent = getOrCreateAgent();
+  agent.jobsCount = agent.jobsCount.plus(BIG_INT_ONE);
+  agent.save();
 }
 
-export function handleJobUpdate(event: JobUpdate): void {
+export function commonHandleJobUpdate(event: JobUpdate): void {
   const job = getJobByKey(event.params.jobKey.toHexString());
 
   job.minKeeperCVP = event.params.jobMinCvp;
@@ -130,7 +134,7 @@ export function handleJobUpdate(event: JobUpdate): void {
   job.save();
 }
 
-export function handleSetJobConfig(event: SetJobConfig): void {
+export function commonHandleSetJobConfig(event: SetJobConfig): void {
   const job = getJobByKey(event.params.jobKey.toHexString());
 
   job.active = event.params.isActive_;
@@ -140,13 +144,13 @@ export function handleSetJobConfig(event: SetJobConfig): void {
   job.save();
 }
 
-export function handleInitiateJobTransfer(event: InitiateJobTransfer): void {
+export function commonHandleInitiateJobTransfer(event: InitiateJobTransfer): void {
   const job = getJobByKey(event.params.jobKey.toHexString());
   job.pendingOwner = event.params.to.toHexString();
   job.save();
 }
 
-export function handleAcceptJobTransfer(event: AcceptJobTransfer): void {
+export function commonHandleAcceptJobTransfer(event: AcceptJobTransfer): void {
   const job = getJobByKey(event.params.jobKey_.toHexString());
 
   job.owner = event.params.to_.toHexString();
@@ -155,7 +159,7 @@ export function handleAcceptJobTransfer(event: AcceptJobTransfer): void {
   job.save();
 }
 
-export function handleDepositJobCredits(event: DepositJobCredits): void {
+export function commonHandleDepositJobCredits(event: DepositJobCredits): void {
   const job = getJobByKey(event.params.jobKey.toHexString());
 
   const depositKey = event.params.jobKey.toHexString().concat("-").concat(job.depositCount.toString());
@@ -173,7 +177,7 @@ export function handleDepositJobCredits(event: DepositJobCredits): void {
   job.save();
 }
 
-export function handleWithdrawJobCredits(event: WithdrawJobCredits): void {
+export function commonHandleWithdrawJobCredits(event: WithdrawJobCredits): void {
   const job = getJobByKey(event.params.jobKey.toHexString());
 
   const withdrawalKey = event.params.jobKey.toHexString().concat("-").concat(job.withdrawalCount.toString());
@@ -190,7 +194,7 @@ export function handleWithdrawJobCredits(event: WithdrawJobCredits): void {
   job.save();
 }
 
-export function handleDepositJobOwnerCredits(event: DepositJobOwnerCredits): void {
+export function commonHandleDepositJobOwnerCredits(event: DepositJobOwnerCredits): void {
   const jobOwner = getOrCreateJobOwner(event.params.jobOwner.toHexString());
 
   const depositKey = event.params.jobOwner.toHexString().concat("-").concat(jobOwner.depositCount.toString());
@@ -200,6 +204,7 @@ export function handleDepositJobOwnerCredits(event: DepositJobOwnerCredits): voi
   deposit.fee = event.params.fee;
   deposit.total = event.params.fee.plus(event.params.amount);
   deposit.timestamp = event.block.timestamp;
+  deposit.depositor = event.params.depositor;
   deposit.save();
 
   jobOwner.credits = jobOwner.credits.plus(event.params.amount);
@@ -207,7 +212,7 @@ export function handleDepositJobOwnerCredits(event: DepositJobOwnerCredits): voi
   jobOwner.save();
 }
 
-export function handleWithdrawJobOwnerCredits(event: WithdrawJobOwnerCredits): void {
+export function commonHandleWithdrawJobOwnerCredits(event: WithdrawJobOwnerCredits): void {
   const jobOwner = getOrCreateJobOwner(event.params.jobOwner.toHexString());
 
   const withdrawalKey = event.params.jobOwner.toHexString().concat("-").concat(jobOwner.withdrawalCount.toString());
@@ -223,13 +228,13 @@ export function handleWithdrawJobOwnerCredits(event: WithdrawJobOwnerCredits): v
   jobOwner.save();
 }
 
-export function handleSetJobPreDefinedCalldata(event: SetJobPreDefinedCalldata): void {
+export function commonHandleSetJobPreDefinedCalldata(event: SetJobPreDefinedCalldata): void {
   const job = getJobByKey(event.params.jobKey.toHexString());
   job.preDefinedCalldata = event.params.preDefinedCalldata;
   job.save();
 }
 
-export function handleSetJobResolver(event: SetJobResolver): void {
+export function commonHandleSetJobResolver(event: SetJobResolver): void {
   const job = getJobByKey(event.params.jobKey.toHexString());
 
   job.resolverAddress = event.params.resolverAddress;
@@ -238,10 +243,11 @@ export function handleSetJobResolver(event: SetJobResolver): void {
   job.save();
 }
 
-export function handleRegisterAsKeeper(event: RegisterAsKeeper): void {
+export function commonHandleRegisterAsKeeper(event: RegisterAsKeeper): void {
   const keeperId = event.params.keeperId.toString();
   const keeper = createKeeper(keeperId);
 
+  keeper.numericalId = BigInt.fromString(keeperId);
   keeper.admin = event.params.keeperAdmin;
   keeper.worker = event.params.keeperWorker;
 
@@ -266,19 +272,19 @@ export function handleRegisterAsKeeper(event: RegisterAsKeeper): void {
   agent.save();
 }
 
-export function handleSetWorkerAddress(event: SetWorkerAddress): void {
+export function commonHandleSetWorkerAddress(event: SetWorkerAddress): void {
   const keeper = getKeeper(event.params.keeperId.toString());
   keeper.worker = event.params.worker;
   keeper.save();
 }
 
-export function handleWithdrawCompensation(event: WithdrawCompensation): void {
+export function commonHandleWithdrawCompensation(event: WithdrawCompensation): void {
   const keeper = getKeeper(event.params.keeperId.toString());
   keeper.compensationsToWithdraw = keeper.compensationsToWithdraw.minus(event.params.amount);
   keeper.save();
 }
 
-export function handleStake(event: Stake): void {
+export function commonHandleStake(event: Stake): void {
   const keeper = getKeeper(event.params.keeperId.toString());
 
   const stakeKey = event.params.keeperId.toString().concat("-").concat(keeper.stakeCount.toString());
@@ -294,7 +300,7 @@ export function handleStake(event: Stake): void {
   keeper.save();
 }
 
-export function handleSlash(event: Slash): void {
+export function commonHandleSlash(event: Slash): void {
   const keeper = getKeeper(event.params.keeperId.toString());
 
   keeper.currentStake = keeper.currentStake.minus(event.params.currentAmount);
@@ -305,7 +311,7 @@ export function handleSlash(event: Slash): void {
   keeper.save();
 }
 
-export function handleInitiateRedeem(event: InitiateRedeem): void {
+export function commonHandleInitiateRedeem(event: InitiateRedeem): void {
   const keeper = getKeeper(event.params.keeperId.toString());
   const agent = getOrCreateAgent();
 
@@ -332,7 +338,7 @@ export function handleInitiateRedeem(event: InitiateRedeem): void {
   keeper.save();
 }
 
-export function handleFinalizeRedeem(event: FinalizeRedeem): void {
+export function commonHandleFinalizeRedeem(event: FinalizeRedeem): void {
   const keeper = getKeeper(event.params.keeperId.toString());
 
   const finalizeKey = keeper.id.toString().concat("-").concat(keeper.redeemFinalizeCount.toString());
@@ -350,12 +356,12 @@ export function handleFinalizeRedeem(event: FinalizeRedeem): void {
   keeper.save();
 }
 
-export function handleOwnershipTransferred(event: OwnershipTransferred): void {
+export function commonHandleOwnershipTransferred(event: OwnershipTransferred): void {
   const agent = getOrCreateAgent();
 
   // Init block
   if (agent.owner == ZERO_ADDRESS) {
-    const agentContract = PPAgentV2.bind(event.address);
+    const agentContract = PPAgentV2Light.bind(event.address);
 
     // Fetch CVP
     const res1 = agentContract.try_CVP();
@@ -374,13 +380,14 @@ export function handleOwnershipTransferred(event: OwnershipTransferred): void {
     agent.feePpm = res2.value.getFeePpm_();
     agent.feeTotal = res2.value.getFeeTotal_();
     agent.lastKeeperId = res2.value.getLastKeeperId_();
+    agent.jobsCount = BIG_INT_ZERO;
   }
 
   agent.owner = event.params.newOwner;
   agent.save();
 }
 
-export function handleSetAgentParams(event: SetAgentParams): void {
+export function commonHandleSetAgentParams(event: SetAgentParams): void {
   const agent = getOrCreateAgent();
 
   agent.minKeeperCVP = event.params.minKeeperCvp_;

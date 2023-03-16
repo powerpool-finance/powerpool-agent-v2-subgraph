@@ -1,28 +1,30 @@
 specVersion: 0.0.5
-description: PowerPool Agent V2 Subgraph
+description: PowerPool Agent V2 Randao Goerli Subgraph
 repository: https://github.com/powerpool-finance/powerpool-agent-v2-subgraph
 schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: PPAgentV2Light
-    network: mainnet
+    name: PPAgentV2Randao
+    network: goerli
     source:
-      address: "0x000000000000774D54F4064ec64bEaAdeF498Ae8"
-      abi: PPAgentV2Light
-      startBlock: 16034970
+      address: "0xd0f154e58ba7b89fe0e466955bc63d772f4c3662"
+      abi: PPAgentV2Randao
+      startBlock: 8655391
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
-      file: ./src/mappings-light.ts
+      file: ./src/mappings-randao.ts
       entities:
         - Execution
       abis:
         - name: PPAgentV2Light
           file: ./abis/PPAgentV2Light.json
+        - name: PPAgentV2Randao
+          file: ./abis/PPAgentV2Randao.json
       eventHandlers:
-        - event: Execute(indexed bytes32,indexed address,uint256,uint256,uint256,uint256,uint256,bytes32)
+        - event: Execute(indexed bytes32,indexed address,indexed uint256,uint256,uint256,uint256,uint256,bytes32)
           handler: handleExecution
           receipt: true
         - event: RegisterJob(indexed bytes32,indexed address,indexed uint256,address,(address,bytes4,bool,bool,uint16,uint16,uint32,uint256,uint8,uint24))
@@ -31,7 +33,7 @@ dataSources:
           handler: handleJobUpdate
         - event: SetJobConfig(indexed bytes32,bool,bool,bool)
           handler: handleSetJobConfig
-        - event:  InitiateJobTransfer(indexed bytes32,indexed address,indexed address)
+        - event: InitiateJobTransfer(indexed bytes32,indexed address,indexed address)
           handler: handleInitiateJobTransfer
         - event: AcceptJobTransfer(indexed bytes32,indexed address)
           handler: handleAcceptJobTransfer
@@ -67,5 +69,5 @@ dataSources:
 
         - event: OwnershipTransferred(indexed address,indexed address)
           handler: handleOwnershipTransferred
-        - event:  SetAgentParams(uint256,uint256,uint256)
+        - event: SetAgentParams(uint256,uint256,uint256)
           handler: handleSetAgentParams
