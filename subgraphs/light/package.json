@@ -1,0 +1,13 @@
+{
+  "name": "subgraph-light",
+  "version": "0.1.0",
+  "files": [
+    "generated"
+  ],
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy-mainnet": "graph deploy --product hosted-service polipaul/agent-v2-dev",
+    "deploy-goerli": "graph deploy --product hosted-service polipaul/agent-v2-goerli-dev subgraphs/light/subgraph.goerli.yaml"
+  }
+}

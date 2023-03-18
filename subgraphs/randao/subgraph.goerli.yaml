@@ -15,14 +15,14 @@ dataSources:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
-      file: ./src/mappings-randao.ts
+      file: ./src/mappings.ts
       entities:
         - Execution
       abis:
         - name: PPAgentV2Light
-          file: ./abis/PPAgentV2Light.json
+          file: ../../abis/PPAgentV2Light.json
         - name: PPAgentV2Randao
-          file: ./abis/PPAgentV2Randao.json
+          file: ../../abis/PPAgentV2Randao.json
       eventHandlers:
         - event: Execute(indexed bytes32,indexed address,indexed uint256,uint256,uint256,uint256,uint256,bytes32)
           handler: handleExecution
@@ -71,3 +71,7 @@ dataSources:
           handler: handleOwnershipTransferred
         - event: SetAgentParams(uint256,uint256,uint256)
           handler: handleSetAgentParams
+
+        # Randao events
+        - event: SetRdConfig((uint8,uint24,uint16,uint24,uint16,uint16,uint40,uint16,uint32,uint8))
+          handler: handleSetRdConfig

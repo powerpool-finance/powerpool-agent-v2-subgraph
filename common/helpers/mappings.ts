@@ -4,9 +4,9 @@ import {
   DepositJobOwnerCredits,
   Execute, FinalizeRedeem,
   InitiateJobTransfer, InitiateRedeem,
-  JobUpdate, OwnershipTransferred, PPAgentV2Light,
+  JobUpdate,
   RegisterAsKeeper,
-  RegisterJob, SetAgentParams,
+  RegisterJob,
   SetJobConfig,
   SetJobPreDefinedCalldata,
   SetJobResolver,
@@ -14,18 +14,18 @@ import {
   WithdrawCompensation,
   WithdrawJobCredits,
   WithdrawJobOwnerCredits
-} from "../../generated/PPAgentV2Light/PPAgentV2Light";
+} from "subgraph-light/generated/PPAgentV2Light/PPAgentV2Light";
 import {
   BIG_INT_ONE, BIG_INT_TWO,
   BIG_INT_ZERO,
   createJob, createJobDeposit, createJobOwnerDeposit, createJobOwnerWithdrawal, createJobWithdrawal,
   createKeeper, createKeeperRedeemFinalize, createKeeperRedeemInit, createKeeperStake,
   getJobByKey,
-  getKeeper, getOrCreateAgent,
-  getOrCreateJobOwner, ZERO_ADDRESS
+  getKeeper,
+  getOrCreateJobOwner
 } from "./initializers";
-import {Execution} from "../../generated/schema";
-import {log, BigInt, ByteArray, Bytes} from "@graphprotocol/graph-ts";
+import {Execution} from "subgraph-light/generated/schema";
+import {BigInt, ByteArray, Bytes} from "@graphprotocol/graph-ts";
 
 const FLAG_ACCRUE_REWARD = BIG_INT_TWO;
 
@@ -116,10 +116,6 @@ export function commonHandleRegisterJob(event: RegisterJob): void {
   job.withdrawalCount = BIG_INT_ZERO;
 
   job.save();
-
-  const agent = getOrCreateAgent();
-  agent.jobsCount = agent.jobsCount.plus(BIG_INT_ONE);
-  agent.save();
 }
 
 export function commonHandleJobUpdate(event: JobUpdate): void {
@@ -266,10 +262,6 @@ export function commonHandleRegisterAsKeeper(event: RegisterAsKeeper): void {
   keeper.redeemFinalizeCount = BIG_INT_ZERO;
 
   keeper.save();
-
-  const agent = getOrCreateAgent();
-  agent.lastKeeperId = event.params.keeperId;
-  agent.save();
 }
 
 export function commonHandleSetWorkerAddress(event: SetWorkerAddress): void {
@@ -311,9 +303,8 @@ export function commonHandleSlash(event: Slash): void {
   keeper.save();
 }
 
-export function commonHandleInitiateRedeem(event: InitiateRedeem): void {
+export function commonHandleInitiateRedeem(event: InitiateRedeem, pendingWithdrawalTimeoutSeconds: BigInt): void {
   const keeper = getKeeper(event.params.keeperId.toString());
-  const agent = getOrCreateAgent();
 
   const initKey = keeper.id.toString().concat("-").concat(keeper.redeemInitCount.toString());
   const init = createKeeperRedeemInit(initKey);
@@ -322,14 +313,14 @@ export function commonHandleInitiateRedeem(event: InitiateRedeem): void {
   init.slashedStakeReduction = event.params.slashedStakeAmount;
   init.stakeReduction = event.params.stakeAmount;
   init.initiatedAt = event.block.timestamp;
-  init.availableAt = event.block.timestamp.plus(agent.pendingWithdrawalTimeoutSeconds);
-  init.cooldownSeconds = agent.pendingWithdrawalTimeoutSeconds;
+  init.availableAt = event.block.timestamp.plus(pendingWithdrawalTimeoutSeconds);
+  init.cooldownSeconds = pendingWithdrawalTimeoutSeconds;
   init.save();
 
   const stakeOfToReduceAmount = event.params.redeemAmount.minus(keeper.slashedStake);
   keeper.currentStake = keeper.currentStake.minus(stakeOfToReduceAmount);
   keeper.pendingWithdrawalAmount = keeper.pendingWithdrawalAmount.plus(stakeOfToReduceAmount);
-  keeper.pendingWithdrawalEndsAt = event.block.timestamp.plus(agent.pendingWithdrawalTimeoutSeconds);
+  keeper.pendingWithdrawalEndsAt = event.block.timestamp.plus(pendingWithdrawalTimeoutSeconds);
 
   keeper.slashedStake = BIG_INT_ZERO;
 
@@ -354,45 +345,4 @@ export function commonHandleFinalizeRedeem(event: FinalizeRedeem): void {
   keeper.redeemFinalizeCount = keeper.redeemFinalizeCount.plus(BIG_INT_ONE);
 
   keeper.save();
-}
-
-export function commonHandleOwnershipTransferred(event: OwnershipTransferred): void {
-  const agent = getOrCreateAgent();
-
-  // Init block
-  if (agent.owner == ZERO_ADDRESS) {
-    const agentContract = PPAgentV2Light.bind(event.address);
-
-    // Fetch CVP
-    const res1 = agentContract.try_CVP();
-    if (res1.reverted) {
-      throw new Error('Init: Unable to fetch CVP');
-    }
-    agent.cvp = res1.value;
-
-    // Fetch minKeeperCVP
-    const res2 = agentContract.try_getConfig();
-    if (res2.reverted) {
-      throw new Error('Init: Unable to fetch config');
-    }
-    agent.minKeeperCVP = res2.value.getMinKeeperCvp_();
-    agent.pendingWithdrawalTimeoutSeconds = res2.value.getPendingWithdrawalTimeoutSeconds_();
-    agent.feePpm = res2.value.getFeePpm_();
-    agent.feeTotal = res2.value.getFeeTotal_();
-    agent.lastKeeperId = res2.value.getLastKeeperId_();
-    agent.jobsCount = BIG_INT_ZERO;
-  }
-
-  agent.owner = event.params.newOwner;
-  agent.save();
-}
-
-export function commonHandleSetAgentParams(event: SetAgentParams): void {
-  const agent = getOrCreateAgent();
-
-  agent.minKeeperCVP = event.params.minKeeperCvp_;
-  agent.pendingWithdrawalTimeoutSeconds = event.params.timeoutSeconds_;
-  agent.feePpm = event.params.feePct_; // the event has misspelled name "feePct_" but actually means "feePpm_"
-
-  agent.save();
 }

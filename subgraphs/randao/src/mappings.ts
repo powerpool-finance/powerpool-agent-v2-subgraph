@@ -19,8 +19,8 @@ import {
   InitiateRedeem as InitiateRedeemRandao,
   FinalizeRedeem as FinalizeRedeemRandao,
   OwnershipTransferred as OwnershipTransferredRandao,
-  SetAgentParams as SetAgentParamsRandao,
-} from "../generated/PPAgentV2Randao/PPAgentV2Randao";
+  SetAgentParams as SetAgentParamsRandao, SetRdConfig, PPAgentV2Randao,
+} from "subgraph-randao/generated/PPAgentV2Randao/PPAgentV2Randao";
 import {
   Execute as ExecuteLight,
   RegisterJob as RegisterJobLight,
@@ -41,25 +41,28 @@ import {
   Slash as SlashLight,
   InitiateRedeem as InitiateRedeemLight,
   FinalizeRedeem as FinalizeRedeemLight,
-  OwnershipTransferred as OwnershipTransferredLight,
-  SetAgentParams as SetAgentParamsLight,
-} from "../generated/PPAgentV2Light/PPAgentV2Light";
+} from "subgraph-light/generated/PPAgentV2Light/PPAgentV2Light";
 import {
   commonHandleAcceptJobTransfer,
   commonHandleDepositJobCredits,
   commonHandleDepositJobOwnerCredits,
   commonHandleExecution, commonHandleFinalizeRedeem,
   commonHandleInitiateJobTransfer, commonHandleInitiateRedeem,
-  commonHandleJobUpdate, commonHandleOwnershipTransferred,
+  commonHandleJobUpdate,
   commonHandleRegisterAsKeeper,
-  commonHandleRegisterJob, commonHandleSetAgentParams,
+  commonHandleRegisterJob,
   commonHandleSetJobConfig,
   commonHandleSetJobPreDefinedCalldata,
   commonHandleSetJobResolver,
   commonHandleSetWorkerAddress, commonHandleSlash, commonHandleStake, commonHandleWithdrawCompensation,
   commonHandleWithdrawJobCredits,
   commonHandleWithdrawJobOwnerCredits,
-} from "./common/mappings";
+} from "../../../common/helpers/mappings";
+import {BigInt} from "@graphprotocol/graph-ts";
+import {getOrCreateRandaoAgent} from "./initializers";
+import {
+  BIG_INT_ONE, ZERO_ADDRESS,
+} from "../../../common/helpers/initializers";
 
 export function handleExecution(event: ExecuteRandao): void {
   const fakeEvent: ExecuteLight = new ExecuteLight(
@@ -75,6 +78,10 @@ export function handleRegisterJob(event: RegisterJobRandao): void {
     event.parameters, event.receipt
   );
   commonHandleRegisterJob(fakeEvent);
+
+  const agent = getOrCreateRandaoAgent();
+  agent.jobsCount = agent.jobsCount.plus(BIG_INT_ONE);
+  agent.save();
 }
 
 export function handleJobUpdate(event: JobUpdateRandao): void {
@@ -166,6 +173,10 @@ export function handleRegisterAsKeeper(event: RegisterAsKeeperRandao): void {
     event.parameters, event.receipt
   );
   commonHandleRegisterAsKeeper(fakeEvent);
+
+  const agent = getOrCreateRandaoAgent();
+  agent.lastKeeperId = event.params.keeperId;
+  agent.save();
 }
 
 export function handleSetWorkerAddress(event: SetWorkerAddressRandao): void {
@@ -205,7 +216,8 @@ export function handleInitiateRedeem(event: InitiateRedeemRandao): void {
     event.address, event.logIndex, event.transactionLogIndex, event.logType, event.block, event.transaction,
     event.parameters, event.receipt
   );
-  commonHandleInitiateRedeem(fakeEvent);
+  const agent = getOrCreateRandaoAgent();
+  commonHandleInitiateRedeem(fakeEvent, agent.pendingWithdrawalTimeoutSeconds);
 }
 
 export function handleFinalizeRedeem(event: FinalizeRedeemRandao): void {
@@ -218,17 +230,42 @@ export function handleFinalizeRedeem(event: FinalizeRedeemRandao): void {
 
 
 export function handleOwnershipTransferred(event: OwnershipTransferredRandao): void {
-  const fakeEvent: OwnershipTransferredLight = new OwnershipTransferredLight(
-    event.address, event.logIndex, event.transactionLogIndex, event.logType, event.block, event.transaction,
-    event.parameters, event.receipt
-  );
-  commonHandleOwnershipTransferred(fakeEvent);
+  const agent = getOrCreateRandaoAgent();
+
+  // Init block
+  if (agent.owner == ZERO_ADDRESS) {
+    const agentContract = PPAgentV2Randao.bind(event.address);
+
+    // Fetch CVP
+    const res1 = agentContract.try_CVP();
+    if (res1.reverted) {
+      throw new Error('Init: Unable to fetch CVP');
+    }
+    agent.cvp = res1.value;
+  }
+
+  agent.owner = event.params.newOwner;
+  agent.save();
 }
 
 export function handleSetAgentParams(event: SetAgentParamsRandao): void {
-  const fakeEvent: SetAgentParamsLight = new SetAgentParamsLight(
-    event.address, event.logIndex, event.transactionLogIndex, event.logType, event.block, event.transaction,
-    event.parameters, event.receipt
-  );
-  commonHandleSetAgentParams(fakeEvent);
+  const agent = getOrCreateRandaoAgent();
+
+  agent.minKeeperCVP = event.params.minKeeperCvp_;
+  agent.pendingWithdrawalTimeoutSeconds = event.params.timeoutSeconds_;
+  agent.feePpm = event.params.feePpm_;
+
+  agent.save();
 }
+
+/****** RANDAO-SPECIFIC HANDLERS ******/
+export function handleSetRdConfig(event: SetRdConfig): void {
+  const randaoAgent = getOrCreateRandaoAgent();
+  randaoAgent.slashingEpochBlocks = BigInt.fromI32(event.params.rdConfig.slashingEpochBlocks);
+  randaoAgent.period1 = BigInt.fromI32(event.params.rdConfig.period2);
+  randaoAgent.period2 = BigInt.fromI32(event.params.rdConfig.period2);
+  randaoAgent.save();
+}
+
+// export function handleSetRdConfig(event: SetRdConfig): void {
+// }

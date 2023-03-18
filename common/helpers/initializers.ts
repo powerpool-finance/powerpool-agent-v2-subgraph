@@ -7,8 +7,11 @@ import {
   JobOwnerDeposit,
   JobOwnerWithdrawal,
   JobWithdrawal,
-  Keeper, KeeperRedeemFinalize, KeeperRedeemInit, KeeperStake
-} from "../../generated/schema";
+  Keeper,
+  KeeperRedeemFinalize,
+  KeeperRedeemInit,
+  KeeperStake
+} from "subgraph-light/generated/schema";
 
 export const BIG_INT_ZERO = BigInt.zero();
 export const BIG_INT_ONE = BigInt.fromI32(1);
@@ -114,20 +117,4 @@ export function createKeeperRedeemFinalize(id: string): KeeperRedeemFinalize {
     throw new Error(`KeeperRedeemFinalize with the key ${id} already exists`);
   }
   return new KeeperRedeemFinalize(id);
-}
-
-export function getOrCreateAgent(): Agent {
-  let agent = Agent.load(AGENT_ID);
-  if (!agent) {
-    agent = new Agent(AGENT_ID);
-    agent.jobsCount = BIG_INT_ONE;
-    agent.owner = ZERO_ADDRESS;
-    agent.cvp = ZERO_ADDRESS;
-    agent.feeTotal = BIG_INT_ZERO;
-    agent.feePpm = BIG_INT_ZERO;
-    agent.minKeeperCVP = BIG_INT_ZERO;
-    agent.lastKeeperId = BIG_INT_ZERO;
-    agent.pendingWithdrawalTimeoutSeconds = BIG_INT_ZERO;
-  }
-  return agent;
 }

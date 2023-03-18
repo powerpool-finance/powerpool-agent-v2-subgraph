@@ -1,0 +1,217 @@
+### JOB ###
+
+type Execution @entity {
+    id: ID!
+    timestamp: BigInt!
+    block: BigInt!
+    txHash: Bytes!
+    keeper: Keeper!
+    keeperWorker: Bytes!
+
+    job: Job!
+    jobAddress: Bytes!
+    binJobAfter: Bytes!
+
+    compensation: BigInt!
+    expenses: BigInt!
+    profit: BigInt!
+
+    jobGasUsed: BigInt!
+    txGasUsed: BigInt!
+    txGasLimit: BigInt!
+    baseFee: BigInt!
+    gasPrice: BigInt!
+
+    txIndex: BigInt!
+    txNonce: BigInt!
+
+    txCalldata: Bytes!
+    jobCalldata: Bytes!
+    keeperConfig: BigInt!
+}
+
+type Job @entity {
+    "jobKey"
+    id: ID!
+    active: Boolean!
+    jobAddress: Bytes!
+    jobId: BigInt!
+    owner: JobOwner!
+    pendingOwner: JobOwner
+    jobSelector: Bytes!
+
+    maxBaseFeeGwei: BigInt!
+    rewardPct: BigInt!
+    fixedReward: BigInt!
+    calldataSource: BigInt!
+    intervalSeconds: BigInt!
+
+    credits: BigInt!
+    lastExecutionAt: BigInt!
+    minKeeperCVP: BigInt!
+
+    # Flags
+    useJobOwnerCredits: Boolean!
+    assertResolverSelector: Boolean!
+
+    # Optinal
+    preDefinedCalldata: Bytes
+    resolverAddress: Bytes
+    resolverCalldata: Bytes
+
+    depositCount: BigInt!
+    withdrawalCount: BigInt!
+
+    # randao fields
+    assignedKeeperId: Keeper
+
+    executions: [Execution!]! @derivedFrom(field: "job")
+    deposits: [JobDeposit!]! @derivedFrom(field: "job")
+    withdrawals: [JobWithdrawal!]! @derivedFrom(field: "job")
+}
+
+type JobDeposit @entity {
+    id: ID!
+    job: Job!
+    depositor: Bytes!
+    timestamp: BigInt!
+
+    amount: BigInt!
+    fee: BigInt!
+    "total = amount + fee"
+    total: BigInt!
+}
+
+type JobWithdrawal @entity {
+    id: ID!
+    job: Job!
+    owner: Bytes!
+    to: Bytes!
+    timestamp: BigInt!
+
+    amount: BigInt!
+}
+
+### JOB OWNER ###
+
+type JobOwner @entity {
+    id: ID!
+    credits: BigInt!
+
+    depositCount: BigInt!
+    withdrawalCount: BigInt!
+
+    jobs: [Job!]! @derivedFrom(field: "owner")
+    deposits: [JobOwnerDeposit!]! @derivedFrom(field: "jobOwner")
+    withdrawals: [JobOwnerWithdrawal!]! @derivedFrom(field: "jobOwner")
+}
+
+type JobOwnerDeposit @entity {
+    id: ID!
+    jobOwner: JobOwner!
+    depositor: Bytes!
+    timestamp: BigInt!
+
+    amount: BigInt!
+    fee: BigInt!
+    "total = amount + fee"
+    total: BigInt!
+}
+
+type JobOwnerWithdrawal @entity {
+    id: ID!
+    jobOwner: JobOwner!
+    to: Bytes!
+    timestamp: BigInt!
+
+    amount: BigInt!
+}
+
+### KEEPER ###
+
+type Keeper @entity {
+    id: ID!
+    numericalId: BigInt!
+    admin: Bytes!
+    worker: Bytes!
+    currentStake: BigInt!
+    slashedStake: BigInt!
+    compensationsToWithdraw: BigInt!
+    pendingWithdrawalAmount: BigInt!
+    pendingWithdrawalEndsAt: BigInt!
+    executionCount: BigInt!
+
+    compensations: BigInt!
+    expenses: BigInt!
+    profit: BigInt!
+
+    stakeCount: BigInt!
+    redeemInitCount: BigInt!
+    redeemFinalizeCount: BigInt!
+
+    # randao fields
+    stakes: [KeeperStake!]! @derivedFrom(field: "keeper")
+    redeemInitiated: [KeeperRedeemInit!]! @derivedFrom(field: "keeper")
+    redeemFinalized: [KeeperRedeemFinalize!]! @derivedFrom(field: "keeper")
+
+    # randao fields
+    assignedJobs: [Job!]! @derivedFrom(field: "assignedKeeperId")
+}
+
+type KeeperStake @entity {
+    id: ID!
+    keeper: Keeper!
+    staker: Bytes!
+    amount: BigInt!
+    timestamp: BigInt!
+}
+
+type KeeperRedeemInit @entity {
+    id: ID!
+    keeper: Keeper!
+    initiatedAt: BigInt!
+    availableAt: BigInt!
+    cooldownSeconds: BigInt!
+
+    inputAmount: BigInt!
+    stakeReduction: BigInt!
+    slashedStakeReduction: BigInt!
+}
+
+type KeeperRedeemFinalize @entity {
+    id: ID!
+    keeper: Keeper!
+    to: Bytes!
+    timestamp: BigInt!
+
+    amount: BigInt!
+}
+
+### AGENT (SINGLETON) ###
+
+type Agent @entity {
+    id: ID!
+    owner: Bytes!
+    cvp: Bytes!
+
+    minKeeperCVP: BigInt!
+    pendingWithdrawalTimeoutSeconds: BigInt!
+
+    feePpm: BigInt!
+    feeTotal: BigInt!
+
+    jobsCount: BigInt!
+    lastKeeperId: BigInt!
+
+    # Randao field
+    slashingEpochBlocks: BigInt!
+    period1: BigInt!
+    period2: BigInt!
+    slashingFeeFixedCVP: BigInt!
+    slashingFeeBps: BigInt!
+    jobMinCreditsFinney: BigInt!
+    agentMaxCvpStake: BigInt!
+    jobCompensationMultiplierBps: BigInt!
+    stakeDivisor: BigInt!
+    keeperActivationTimeoutHours: BigInt!
+}
