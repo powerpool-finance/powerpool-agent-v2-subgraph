@@ -8,9 +8,10 @@ dataSources:
     name: PPAgentV2Randao
     network: goerli
     source:
-      address: "0xd0f154e58ba7b89fe0e466955bc63d772f4c3662"
+      address: "0x5AcC2815b69B2230C22c624b3daFA4122e1ff5CD"
       abi: PPAgentV2Randao
-      startBlock: 8655391
+      startBlock: 8707484
+
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -75,3 +76,9 @@ dataSources:
         # Randao events
         - event: SetRdConfig((uint8,uint24,uint16,uint24,uint16,uint16,uint40,uint16,uint32,uint8))
           handler: handleSetRdConfig
+        - event: KeeperJobLock(indexed uint256,indexed bytes32)
+          handler: handleKeeperJobLock
+        - event: KeeperJobUnlock(indexed uint256,indexed bytes32)
+          handler: handleKeeperJobUnlock
+        - event: JobKeeperUnassigned(indexed bytes32)
+          handler: handleJobKeeperUnassigned

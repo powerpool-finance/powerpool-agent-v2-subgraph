@@ -1,4 +1,4 @@
-import {Agent} from "../generated/schema";
+import {Agent, Job} from "../generated/schema";
 
 const AGENT_ID = "Agent";
 import {
@@ -20,3 +20,12 @@ export function getOrCreateAgent(): Agent {
   }
   return agent;
 }
+
+export function getJobByKey(jobKey: string): Job {
+  let job = Job.load(jobKey)
+  if (!job) {
+    throw new Error(`Job with a key ${jobKey} should exist`);
+  }
+  return job
+}
+

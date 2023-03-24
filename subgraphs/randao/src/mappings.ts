@@ -19,7 +19,12 @@ import {
   InitiateRedeem as InitiateRedeemRandao,
   FinalizeRedeem as FinalizeRedeemRandao,
   OwnershipTransferred as OwnershipTransferredRandao,
-  SetAgentParams as SetAgentParamsRandao, SetRdConfig, PPAgentV2Randao,
+  SetAgentParams as SetAgentParamsRandao,
+  SetRdConfig,
+  PPAgentV2Randao,
+  KeeperJobLock,
+  KeeperJobUnlock,
+  JobKeeperUnassigned,
 } from "subgraph-randao/generated/PPAgentV2Randao/PPAgentV2Randao";
 import {
   Execute as ExecuteLight,
@@ -59,7 +64,7 @@ import {
   commonHandleWithdrawJobOwnerCredits,
 } from "../../../common/helpers/mappings";
 import {BigInt} from "@graphprotocol/graph-ts";
-import {getOrCreateRandaoAgent} from "./initializers";
+import {getOrCreateRandaoAgent, getJobByKey} from "./initializers";
 import {
   BIG_INT_ONE, ZERO_ADDRESS,
 } from "../../../common/helpers/initializers";
@@ -262,10 +267,32 @@ export function handleSetAgentParams(event: SetAgentParamsRandao): void {
 export function handleSetRdConfig(event: SetRdConfig): void {
   const randaoAgent = getOrCreateRandaoAgent();
   randaoAgent.slashingEpochBlocks = BigInt.fromI32(event.params.rdConfig.slashingEpochBlocks);
-  randaoAgent.period1 = BigInt.fromI32(event.params.rdConfig.period2);
+  randaoAgent.period1 = BigInt.fromI32(event.params.rdConfig.period1);
   randaoAgent.period2 = BigInt.fromI32(event.params.rdConfig.period2);
+  randaoAgent.slashingFeeFixedCVP = BigInt.fromI32(event.params.rdConfig.slashingFeeFixedCVP);
+  randaoAgent.slashingFeeBps = BigInt.fromI32(event.params.rdConfig.slashingFeeBps);
+  randaoAgent.jobMinCreditsFinney = BigInt.fromI32(event.params.rdConfig.jobMinCreditsFinney);
+  randaoAgent.agentMaxCvpStake = event.params.rdConfig.agentMaxCvpStake;
+  randaoAgent.jobCompensationMultiplierBps = BigInt.fromI32(event.params.rdConfig.jobCompensationMultiplierBps);
+  randaoAgent.stakeDivisor = event.params.rdConfig.stakeDivisor;
+  randaoAgent.keeperActivationTimeoutHours = BigInt.fromI32(event.params.rdConfig.keeperActivationTimeoutHours);
   randaoAgent.save();
 }
 
-// export function handleSetRdConfig(event: SetRdConfig): void {
-// }
+export function handleKeeperJobLock(event: KeeperJobLock): void {
+  const job = getJobByKey(event.params.jobKey.toHexString());
+  job.assignedKeeperId = event.params.keeperId.toHexString();
+  job.save();
+}
+
+export function handleKeeperJobUnlock(event: KeeperJobUnlock): void {
+  const job = getJobByKey(event.params.jobKey.toHexString());
+  job.assignedKeeperId = null;
+  job.save();
+}
+
+export function handleJobKeeperUnassigned(event: JobKeeperUnassigned): void {
+  const job = getJobByKey(event.params.jobKey.toHexString());
+  job.assignedKeeperId = null;
+  job.save();
+}

@@ -1,4 +1,4 @@
-import {Agent as RandaoAgent} from "../generated/schema";
+import {Agent as RandaoAgent, Job} from "../generated/schema";
 import {
   BIG_INT_ONE,
   BIG_INT_ZERO,
@@ -35,3 +35,12 @@ export function getOrCreateRandaoAgent(): RandaoAgent {
 
   return randaoAgent;
 }
+
+export function getJobByKey(jobKey: string): Job {
+  let job = Job.load(jobKey)
+  if (!job) {
+    throw new Error(`Job with a key ${jobKey} should exist`);
+  }
+  return job
+}
+

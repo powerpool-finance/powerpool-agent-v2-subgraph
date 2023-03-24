@@ -70,8 +70,12 @@ export function commonHandleExecution(event: Execute): void {
     jobOwner.credits = jobOwner.credits.minus(event.params.compensation);
   } else {
     job.credits = job.credits.minus(event.params.compensation);
-    job.save();
   }
+  job.totalCompensations = job.totalCompensations.plus(event.params.compensation);
+  job.totalExpenses = job.totalExpenses.plus(execution.expenses);
+  job.totalProfit = job.totalProfit.plus(execution.profit);
+  job.executionCount = job.executionCount.plus(BIG_INT_ONE);
+  job.save();
 
   const keeper = getKeeper(execution.keeper);
   if (execution.keeperConfig.bitAnd(FLAG_ACCRUE_REWARD) != BIG_INT_ZERO) {
@@ -112,6 +116,9 @@ export function commonHandleRegisterJob(event: RegisterJob): void {
   job.useJobOwnerCredits = event.params.params.useJobOwnerCredits;
   job.assertResolverSelector = event.params.params.assertResolverSelector;
 
+  job.totalCompensations = BIG_INT_ZERO;
+
+  job.executionCount = BIG_INT_ZERO;
   job.depositCount = BIG_INT_ZERO;
   job.withdrawalCount = BIG_INT_ZERO;
 

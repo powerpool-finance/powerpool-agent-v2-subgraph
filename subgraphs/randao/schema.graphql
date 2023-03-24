@@ -59,8 +59,13 @@ type Job @entity {
     resolverAddress: Bytes
     resolverCalldata: Bytes
 
+    executionCount: BigInt!
     depositCount: BigInt!
     withdrawalCount: BigInt!
+
+    totalExpenses: BigInt!
+    totalCompensations: BigInt!
+    totalProfit: BigInt!
 
     # randao fields
     assignedKeeperId: Keeper
