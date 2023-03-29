@@ -117,6 +117,8 @@ export function commonHandleRegisterJob(event: RegisterJob): void {
   job.assertResolverSelector = event.params.params.assertResolverSelector;
 
   job.totalCompensations = BIG_INT_ZERO;
+  job.totalProfit = BIG_INT_ZERO;
+  job.totalExpenses = BIG_INT_ZERO;
 
   job.executionCount = BIG_INT_ZERO;
   job.depositCount = BIG_INT_ZERO;
