@@ -22,9 +22,7 @@ import {
   SetAgentParams as SetAgentParamsRandao,
   SetRdConfig,
   PPAgentV2Randao,
-  KeeperJobLock,
-  KeeperJobUnlock,
-  JobKeeperUnassigned,
+  JobKeeperChanged,
 } from "subgraph-randao/generated/PPAgentV2Randao/PPAgentV2Randao";
 import {
   Execute as ExecuteLight,
@@ -66,7 +64,7 @@ import {
 import {BigInt} from "@graphprotocol/graph-ts";
 import {getOrCreateRandaoAgent, getJobByKey} from "./initializers";
 import {
-  BIG_INT_ONE, ZERO_ADDRESS,
+  BIG_INT_ONE, BIG_INT_ZERO, ZERO_ADDRESS,
 } from "../../../common/helpers/initializers";
 
 export function handleExecution(event: ExecuteRandao): void {
@@ -279,20 +277,12 @@ export function handleSetRdConfig(event: SetRdConfig): void {
   randaoAgent.save();
 }
 
-export function handleKeeperJobLock(event: KeeperJobLock): void {
+export function handleJobKeeperChanged(event: JobKeeperChanged): void {
   const job = getJobByKey(event.params.jobKey.toHexString());
-  job.assignedKeeperId = event.params.keeperId.toHexString();
-  job.save();
-}
-
-export function handleKeeperJobUnlock(event: KeeperJobUnlock): void {
-  const job = getJobByKey(event.params.jobKey.toHexString());
-  job.assignedKeeperId = null;
-  job.save();
-}
-
-export function handleJobKeeperUnassigned(event: JobKeeperUnassigned): void {
-  const job = getJobByKey(event.params.jobKey.toHexString());
-  job.assignedKeeperId = null;
+  if (event.params.keeperTo == BIG_INT_ZERO) {
+    job.assignedKeeperId = null;
+  } else {
+    job.assignedKeeperId = event.params.keeperTo.toHexString();
+  }
   job.save();
 }

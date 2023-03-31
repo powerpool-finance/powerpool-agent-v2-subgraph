@@ -49,6 +49,11 @@
   },
   {
     "inputs": [],
+    "name": "CantAssignKeeper",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "CantRelease",
     "type": "error"
   },
@@ -60,17 +65,6 @@
   {
     "inputs": [],
     "name": "CreditsWithdrawalUnderflow",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "expectedKeeperId",
-        "type": "uint256"
-      }
-    ],
-    "name": "ExecutionRevertedOnlyNextKeeper",
     "type": "error"
   },
   {
@@ -685,7 +679,7 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256",
         "name": "keeperId",
         "type": "uint256"
@@ -778,7 +772,7 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256",
         "name": "keeperId",
         "type": "uint256"
@@ -854,7 +848,7 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256",
         "name": "keeperId",
         "type": "uint256"
@@ -939,9 +933,21 @@
         "internalType": "bytes32",
         "name": "jobKey",
         "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "keeperFrom",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "keeperTo",
+        "type": "uint256"
       }
     ],
-    "name": "JobKeeperUnassigned",
+    "name": "JobKeeperChanged",
     "type": "event"
   },
   {
@@ -985,44 +991,6 @@
       }
     ],
     "name": "JobUpdate",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "keeperId",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "jobKey",
-        "type": "bytes32"
-      }
-    ],
-    "name": "KeeperJobLock",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "keeperId",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "jobKey",
-        "type": "bytes32"
-      }
-    ],
-    "name": "KeeperJobUnlock",
     "type": "event"
   },
   {
@@ -1315,7 +1283,7 @@
           }
         ],
         "indexed": false,
-        "internalType": "struct PPAgentV2Randao.RandaoConfig",
+        "internalType": "struct IPPAgentV2RandaoViewer.RandaoConfig",
         "name": "rdConfig",
         "type": "tuple"
       }
@@ -1546,7 +1514,7 @@
     "name": "CVP",
     "outputs": [
       {
-        "internalType": "contract IERC20",
+        "internalType": "address",
         "name": "",
         "type": "address"
       }
@@ -2074,6 +2042,71 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getRdConfig",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint8",
+            "name": "slashingEpochBlocks",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint24",
+            "name": "period1",
+            "type": "uint24"
+          },
+          {
+            "internalType": "uint16",
+            "name": "period2",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint24",
+            "name": "slashingFeeFixedCVP",
+            "type": "uint24"
+          },
+          {
+            "internalType": "uint16",
+            "name": "slashingFeeBps",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "jobMinCreditsFinney",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint40",
+            "name": "agentMaxCvpStake",
+            "type": "uint40"
+          },
+          {
+            "internalType": "uint16",
+            "name": "jobCompensationMultiplierBps",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint32",
+            "name": "stakeDivisor",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint8",
+            "name": "keeperActivationTimeoutHours",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct IPPAgentV2RandaoViewer.RandaoConfig",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -2203,7 +2236,7 @@
             "type": "uint8"
           }
         ],
-        "internalType": "struct PPAgentV2Randao.RandaoConfig",
+        "internalType": "struct IPPAgentV2RandaoViewer.RandaoConfig",
         "name": "rdConfig_",
         "type": "tuple"
       }
@@ -2442,64 +2475,6 @@
         "internalType": "address",
         "name": "",
         "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "rdConfig",
-    "outputs": [
-      {
-        "internalType": "uint8",
-        "name": "slashingEpochBlocks",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint24",
-        "name": "period1",
-        "type": "uint24"
-      },
-      {
-        "internalType": "uint16",
-        "name": "period2",
-        "type": "uint16"
-      },
-      {
-        "internalType": "uint24",
-        "name": "slashingFeeFixedCVP",
-        "type": "uint24"
-      },
-      {
-        "internalType": "uint16",
-        "name": "slashingFeeBps",
-        "type": "uint16"
-      },
-      {
-        "internalType": "uint16",
-        "name": "jobMinCreditsFinney",
-        "type": "uint16"
-      },
-      {
-        "internalType": "uint40",
-        "name": "agentMaxCvpStake",
-        "type": "uint40"
-      },
-      {
-        "internalType": "uint16",
-        "name": "jobCompensationMultiplierBps",
-        "type": "uint16"
-      },
-      {
-        "internalType": "uint32",
-        "name": "stakeDivisor",
-        "type": "uint32"
-      },
-      {
-        "internalType": "uint8",
-        "name": "keeperActivationTimeoutHours",
-        "type": "uint8"
       }
     ],
     "stateMutability": "view",
@@ -2801,7 +2776,7 @@
             "type": "uint8"
           }
         ],
-        "internalType": "struct PPAgentV2Randao.RandaoConfig",
+        "internalType": "struct IPPAgentV2RandaoViewer.RandaoConfig",
         "name": "rdConfig_",
         "type": "tuple"
       }
@@ -2827,6 +2802,25 @@
     "name": "setWorkerAddress",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "jobKey_",
+        "type": "bytes32"
+      }
+    ],
+    "name": "shouldAssignKeeper",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
