@@ -213,6 +213,7 @@ export function commonHandleDepositJobOwnerCredits(event: DepositJobOwnerCredits
   deposit.save();
 
   jobOwner.credits = jobOwner.credits.plus(event.params.amount);
+  jobOwner.credits_hex = jobOwner.credits.toHexString();
   jobOwner.depositCount = jobOwner.depositCount.plus(BIG_INT_ONE);
   jobOwner.save();
 }
