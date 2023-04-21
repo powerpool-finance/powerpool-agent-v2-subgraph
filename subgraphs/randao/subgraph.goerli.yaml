@@ -78,3 +78,5 @@ dataSources:
           handler: handleSetRdConfig
         - event: JobKeeperChanged(indexed bytes32,indexed uint256,indexed uint256)
           handler: handleJobKeeperChanged
+        - event: InitiateSlashing(indexed bytes32,indexed uint256,bool,uint256)
+          handler: handleInitiateSlashing

@@ -69,6 +69,10 @@ type Job @entity {
 
     # randao fields
     assignedKeeperId: Keeper
+    jobCreatedAt: BigInt!
+    jobNextKeeperId: BigInt!
+    jobReservedSlasherId: BigInt!
+    jobSlashingPossibleAfter: BigInt!
 
     executions: [Execution!]! @derivedFrom(field: "job")
     deposits: [JobDeposit!]! @derivedFrom(field: "job")
@@ -102,6 +106,7 @@ type JobWithdrawal @entity {
 type JobOwner @entity {
     id: ID!
     credits: BigInt!
+    credits_hex: String!
 
     depositCount: BigInt!
     withdrawalCount: BigInt!

@@ -67,6 +67,11 @@ type Job @entity {
     totalCompensations: BigInt!
     totalProfit: BigInt!
 
+    jobReservedSlasherId: BigInt!
+    jobNextKeeperId: BigInt!
+    jobSlashingPossibleAfter: BigInt!
+    jobCreatedAt: BigInt!
+
     executions: [Execution!]! @derivedFrom(field: "job")
     deposits: [JobDeposit!]! @derivedFrom(field: "job")
     withdrawals: [JobWithdrawal!]! @derivedFrom(field: "job")
@@ -99,6 +104,7 @@ type JobWithdrawal @entity {
 type JobOwner @entity {
     id: ID!
     credits: BigInt!
+    credits_hex: String!
 
     depositCount: BigInt!
     withdrawalCount: BigInt!
