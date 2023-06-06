@@ -104,7 +104,6 @@ type JobWithdrawal @entity {
 type JobOwner @entity {
     id: ID!
     credits: BigInt!
-    credits_hex: String!
 
     depositCount: BigInt!
     withdrawalCount: BigInt!
