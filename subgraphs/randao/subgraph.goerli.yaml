@@ -8,9 +8,9 @@ dataSources:
     name: PPAgentV2Randao
     network: goerli
     source:
-      address: "0xa45B8e6D417Aed09D59950B8E587fC99a00c74c3"
+      address: "0xc6420892469D344d207c701B64e578Df39Bf0918"
       abi: PPAgentV2Randao
-      startBlock: 8766880
+      startBlock: 8848050
 
     mapping:
       kind: ethereum/events
