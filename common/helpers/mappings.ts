@@ -124,6 +124,11 @@ export function commonHandleRegisterJob(event: RegisterJob): void {
   job.depositCount = BIG_INT_ZERO;
   job.withdrawalCount = BIG_INT_ZERO;
 
+  job.jobCreatedAt = event.block.timestamp;
+  job.jobNextKeeperId = BIG_INT_ZERO;
+  job.jobReservedSlasherId = BIG_INT_ZERO;
+  job.jobSlashingPossibleAfter = BIG_INT_ZERO;
+
   job.save();
 }
 

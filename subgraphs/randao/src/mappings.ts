@@ -22,7 +22,7 @@ import {
   SetAgentParams as SetAgentParamsRandao,
   SetRdConfig,
   PPAgentV2Randao,
-  JobKeeperChanged,
+  JobKeeperChanged, InitiateSlashing,
 } from "subgraph-randao/generated/PPAgentV2Randao/PPAgentV2Randao";
 import {
   Execute as ExecuteLight,
@@ -279,10 +279,14 @@ export function handleSetRdConfig(event: SetRdConfig): void {
 
 export function handleJobKeeperChanged(event: JobKeeperChanged): void {
   const job = getJobByKey(event.params.jobKey.toHexString());
-  if (event.params.keeperTo == BIG_INT_ZERO) {
-    job.assignedKeeperId = null;
-  } else {
-    job.assignedKeeperId = event.params.keeperTo.toHexString();
-  }
+  job.jobNextKeeperId = event.params.keeperTo;
+  job.save();
+}
+
+export function handleInitiateSlashing(event: InitiateSlashing): void {
+  const job = getJobByKey(event.params.jobKey.toHexString());
+  job.jobReservedSlasherId = event.params.slasherKeeperId;
+  job.jobSlashingPossibleAfter = event.params.jobSlashingPossibleAfter;
+
   job.save();
 }
