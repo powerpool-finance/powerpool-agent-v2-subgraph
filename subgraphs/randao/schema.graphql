@@ -68,7 +68,6 @@ type Job @entity {
     totalProfit: BigInt!
 
     # randao fields
-    assignedKeeperId: Keeper
     jobCreatedAt: BigInt!
     jobNextKeeperId: BigInt!
     jobReservedSlasherId: BigInt!
@@ -162,9 +161,6 @@ type Keeper @entity {
     stakes: [KeeperStake!]! @derivedFrom(field: "keeper")
     redeemInitiated: [KeeperRedeemInit!]! @derivedFrom(field: "keeper")
     redeemFinalized: [KeeperRedeemFinalize!]! @derivedFrom(field: "keeper")
-
-    # randao fields
-    assignedJobs: [Job!]! @derivedFrom(field: "assignedKeeperId")
 }
 
 type KeeperStake @entity {
