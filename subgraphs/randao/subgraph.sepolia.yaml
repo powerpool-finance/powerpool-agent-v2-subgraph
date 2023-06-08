@@ -1,5 +1,5 @@
 specVersion: 0.0.5
-description: PowerPool Agent V2 Randao Goerli Subgraph
+description: PowerPool Agent V2 Randao Sepolia Subgraph
 repository: https://github.com/powerpool-finance/powerpool-agent-v2-subgraph
 schema:
   file: ./schema.graphql
@@ -8,9 +8,9 @@ dataSources:
     name: PPAgentV2Randao
     network: sepolia
     source:
-      address: "0xBC0F07D7eb26f9EC9D330289f440133465002F76"
+      address: "0x4d9bC98452820FD96B2C31741e8C4DdcC795bEce"
       abi: PPAgentV2Randao
-      startBlock: 3179879
+      startBlock: 3311189
 
     mapping:
       kind: ethereum/events
@@ -78,3 +78,5 @@ dataSources:
           handler: handleSetRdConfig
         - event: JobKeeperChanged(indexed bytes32,indexed uint256,indexed uint256)
           handler: handleJobKeeperChanged
+        - event: InitiateSlashing(indexed bytes32,indexed uint256,bool,uint256)
+          handler: handleInitiateSlashing
