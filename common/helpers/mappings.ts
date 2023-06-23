@@ -257,7 +257,7 @@ export function commonHandleRegisterAsKeeper(event: RegisterAsKeeper): void {
   const keeperId = event.params.keeperId.toString();
   const keeper = createKeeper(keeperId);
 
-  keeper.active = false;
+  keeper.active = true;
   keeper.numericalId = BigInt.fromString(keeperId);
   keeper.admin = event.params.keeperAdmin;
   keeper.worker = event.params.keeperWorker;
