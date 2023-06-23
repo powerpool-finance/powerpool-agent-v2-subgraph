@@ -14,7 +14,7 @@
     "deploy-gnosis-dev": "graph deploy --product hosted-service polipaul/agent-v2-gnosis-dev-randao subgraph.gnosis.yaml",
     "deploy-sepolia-prod": "graph deploy --studio pp-agent-v2-randao-sepolia subgraph.sepolia.yaml",
     "deploy-sepolia-b7-prod": "graph deploy --studio pp-agent-v2-randao-sepolia-b7 subgraph.sepolia.b7.yaml",
-    "deploy-sepolia-test-defibrain88": "graph deploy --studio ppv2r-sepolia-test-defibrain88 subgraph.sepolia.b7.yaml",
+    "deploy-sepolia-test-defibrain88": "graph deploy --studio ppv2r-sepolia-test-defibrain88 subgraph.sepolia.defibrain88.yaml",
     "deploy-goerli-prod": "graph deploy --studio pp-agent-v2-randao-goerli subgraph.goerli.yaml"
   }
 }
