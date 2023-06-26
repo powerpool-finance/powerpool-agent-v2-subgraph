@@ -22,7 +22,11 @@ import {
   SetAgentParams as SetAgentParamsRandao,
   SetRdConfig,
   PPAgentV2Randao,
-  JobKeeperChanged, InitiateSlashing,
+  JobKeeperChanged,
+  InitiateSlashing,
+  DisableKeeper,
+  InitiateKeeperActivation,
+  FinalizeKeeperActivation,
 } from "subgraph-randao/generated/PPAgentV2Randao/PPAgentV2Randao";
 import {
   Execute as ExecuteLight,
@@ -64,7 +68,7 @@ import {
 import {BigInt} from "@graphprotocol/graph-ts";
 import {getOrCreateRandaoAgent, getJobByKey} from "./initializers";
 import {
-  BIG_INT_ONE, BIG_INT_ZERO, ZERO_ADDRESS,
+  BIG_INT_ONE, BIG_INT_ZERO, getKeeper, ZERO_ADDRESS,
 } from "../../../common/helpers/initializers";
 
 export function handleExecution(event: ExecuteRandao): void {
@@ -289,4 +293,26 @@ export function handleInitiateSlashing(event: InitiateSlashing): void {
   job.jobSlashingPossibleAfter = event.params.jobSlashingPossibleAfter;
 
   job.save();
+}
+
+export function handleDisableKeeper(event: DisableKeeper): void {
+  const keeper = getKeeper(event.params.keeperId.toString());
+  keeper.active = false;
+
+  keeper.save();
+}
+
+export function handleInitKeeperActivation(event: InitiateKeeperActivation): void {
+  const keeper = getKeeper(event.params.keeperId.toString());
+  keeper.keeperActivationCanBeFinalizedAt = event.params.canBeFinalizedAt;
+
+  keeper.save();
+}
+
+export function handleFinalizeKeeperActivation(event: FinalizeKeeperActivation): void {
+  const keeper = getKeeper(event.params.keeperId.toString());
+  keeper.keeperActivationCanBeFinalizedAt = BIG_INT_ZERO;
+  keeper.active = true;
+
+  keeper.save();
 }

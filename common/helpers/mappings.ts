@@ -257,6 +257,7 @@ export function commonHandleRegisterAsKeeper(event: RegisterAsKeeper): void {
   const keeperId = event.params.keeperId.toString();
   const keeper = createKeeper(keeperId);
 
+  keeper.active = true;
   keeper.numericalId = BigInt.fromString(keeperId);
   keeper.admin = event.params.keeperAdmin;
   keeper.worker = event.params.keeperWorker;
@@ -269,6 +270,7 @@ export function commonHandleRegisterAsKeeper(event: RegisterAsKeeper): void {
   keeper.profit = BIG_INT_ZERO;
   keeper.pendingWithdrawalAmount = BIG_INT_ZERO;
   keeper.pendingWithdrawalEndsAt = BIG_INT_ZERO;
+  keeper.keeperActivationCanBeFinalizedAt = BIG_INT_ZERO;
   keeper.executionCount = BIG_INT_ZERO;
 
   keeper.stakeCount = BIG_INT_ZERO;

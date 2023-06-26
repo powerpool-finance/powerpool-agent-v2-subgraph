@@ -139,6 +139,8 @@ type JobOwnerWithdrawal @entity {
 
 type Keeper @entity {
     id: ID!
+    active: Boolean!
+    keeperActivationCanBeFinalizedAt: BigInt!
     numericalId: BigInt!
     admin: Bytes!
     worker: Bytes!
