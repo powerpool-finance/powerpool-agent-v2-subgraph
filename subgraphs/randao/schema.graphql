@@ -76,6 +76,18 @@ type Job @entity {
     executions: [Execution!]! @derivedFrom(field: "job")
     deposits: [JobDeposit!]! @derivedFrom(field: "job")
     withdrawals: [JobWithdrawal!]! @derivedFrom(field: "job")
+    executionReverts: [ExecutionRevert!]! @derivedFrom(field: "job")
+}
+
+type ExecutionRevert @entity {
+    id: ID!
+    txHash: Bytes!
+    txIndex: BigInt!
+    txNonce: BigInt!
+    executionResponse: Bytes!
+
+    job: Job!
+    keeper: Keeper!
 }
 
 type JobDeposit @entity {
@@ -163,6 +175,8 @@ type Keeper @entity {
     stakes: [KeeperStake!]! @derivedFrom(field: "keeper")
     redeemInitiated: [KeeperRedeemInit!]! @derivedFrom(field: "keeper")
     redeemFinalized: [KeeperRedeemFinalize!]! @derivedFrom(field: "keeper")
+
+    executionReverts: [ExecutionRevert!]! @derivedFrom(field: "keeper")
 }
 
 type KeeperStake @entity {

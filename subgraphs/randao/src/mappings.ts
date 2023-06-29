@@ -27,6 +27,7 @@ import {
   DisableKeeper,
   InitiateKeeperActivation,
   FinalizeKeeperActivation,
+  ExecutionReverted,
 } from "subgraph-randao/generated/PPAgentV2Randao/PPAgentV2Randao";
 import {
   Execute as ExecuteLight,
@@ -66,7 +67,7 @@ import {
   commonHandleWithdrawJobOwnerCredits,
 } from "../../../common/helpers/mappings";
 import {BigInt} from "@graphprotocol/graph-ts";
-import {getOrCreateRandaoAgent, getJobByKey} from "./initializers";
+import {getOrCreateRandaoAgent, getJobByKey, createExecutionRevert} from "./initializers";
 import {
   BIG_INT_ONE, BIG_INT_ZERO, getKeeper, ZERO_ADDRESS,
 } from "../../../common/helpers/initializers";
@@ -315,4 +316,11 @@ export function handleFinalizeKeeperActivation(event: FinalizeKeeperActivation):
   keeper.active = true;
 
   keeper.save();
+}
+
+export function handleExecutionReverted(event: ExecutionReverted): void {
+  // const job = getJobByKey(event.params.jobKey.toHexString());
+  const revert = createExecutionRevert(event);
+
+  revert.save();
 }

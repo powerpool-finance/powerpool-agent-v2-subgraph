@@ -8,7 +8,7 @@ dataSources:
     name: PPAgentV2Randao
     network: sepolia
     source:
-      address: "0x910C4874260384eB0F068211d6EB04ff5C29441d"
+      address: "0x1bf75be3fad196ec1cc9f7d93f24428183c322b8"
       abi: PPAgentV2Randao
       startBlock: 3680575
 
@@ -72,6 +72,8 @@ dataSources:
           handler: handleOwnershipTransferred
         - event: SetAgentParams(uint256,uint256,uint256)
           handler: handleSetAgentParams
+
+        # activate and deactivate keeper
         - event: DisableKeeper(indexed uint256)
           handler: handleDisableKeeper
         - event: InitiateKeeperActivation(indexed uint256,uint256)
@@ -86,3 +88,7 @@ dataSources:
           handler: handleJobKeeperChanged
         - event: InitiateSlashing(indexed bytes32,indexed uint256,bool,uint256)
           handler: handleInitiateSlashing
+
+        # Errors and reverts
+        - event: ExecutionReverted(indexed bytes32,indexed uint256,bytes)
+          handler: handleExecutionReverted
