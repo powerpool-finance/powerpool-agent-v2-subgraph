@@ -67,10 +67,11 @@ import {
   commonHandleWithdrawJobOwnerCredits,
 } from "../../../common/helpers/mappings";
 import {BigInt} from "@graphprotocol/graph-ts";
-import {getOrCreateRandaoAgent, getJobByKey, createExecutionRevert} from "./initializers";
+import {getOrCreateRandaoAgent, getJobByKey} from "./initializers";
 import {
   BIG_INT_ONE, BIG_INT_ZERO, getKeeper, ZERO_ADDRESS,
 } from "../../../common/helpers/initializers";
+import { ExecutionRevert } from "../generated/schema";
 
 export function handleExecution(event: ExecuteRandao): void {
   const fakeEvent: ExecuteLight = new ExecuteLight(
@@ -319,8 +320,21 @@ export function handleFinalizeKeeperActivation(event: FinalizeKeeperActivation):
 }
 
 export function handleExecutionReverted(event: ExecutionReverted): void {
-  // const job = getJobByKey(event.params.jobKey.toHexString());
-  const revert = createExecutionRevert(event);
+  const id = event.transaction.hash.toString();
+  const revert = new ExecutionRevert(id);
+
+  revert.txHash = event.transaction.hash;
+  revert.txIndex = event.transaction.index;
+  revert.txNonce = event.transaction.nonce;
+  revert.executionResponse = event.params.executionReturndata;
+
+  revert.job = event.params.jobKey.toString();
+  revert.keeper = event.params.keeperId.toString();
 
   revert.save();
+
+  // const job = getJobByKey(event.params.jobKey.toHexString());
+  // job.credits.minus(event.params.compensation)
+
+  // job.save();
 }

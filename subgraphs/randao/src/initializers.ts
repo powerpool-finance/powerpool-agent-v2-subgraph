@@ -45,18 +45,3 @@ export function getJobByKey(jobKey: string): Job {
   return job
 }
 
-export function createExecutionRevert(event: RevertEvent): ExecutionRevert {
-  const id = event.transaction.hash.toString();
-  const revert = new ExecutionRevert(id);
-
-  revert.txHash = event.transaction.hash;
-  revert.txIndex = event.transaction.index;
-  revert.txNonce = event.transaction.nonce;
-  revert.executionResponse = event.params.executionReturndata;
-
-  revert.job = event.params.jobKey.toString();
-  revert.keeper = event.params.keeperId.toString();
-
-  return revert;
-}
-
