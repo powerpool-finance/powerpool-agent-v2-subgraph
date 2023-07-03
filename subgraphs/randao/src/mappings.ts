@@ -329,7 +329,7 @@ export function handleExecutionReverted(event: ExecutionReverted): void {
   revert.executionResponse = event.params.executionReturndata;
 
   revert.job = event.params.jobKey.toString();
-  revert.keeper = event.params.keeperId.toString();
+  revert.actualKeeper = event.params.keeperId.toString();
 
   revert.save();
 

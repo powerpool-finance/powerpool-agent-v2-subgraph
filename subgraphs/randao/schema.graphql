@@ -87,7 +87,7 @@ type ExecutionRevert @entity {
     executionResponse: Bytes!
 
     job: Job!
-    keeper: Keeper!
+    actualKeeper: Keeper!
 }
 
 type JobDeposit @entity {
@@ -176,7 +176,7 @@ type Keeper @entity {
     redeemInitiated: [KeeperRedeemInit!]! @derivedFrom(field: "keeper")
     redeemFinalized: [KeeperRedeemFinalize!]! @derivedFrom(field: "keeper")
 
-    executionReverts: [ExecutionRevert!]! @derivedFrom(field: "keeper")
+    executionReverts: [ExecutionRevert!]! @derivedFrom(field: "actualKeeper")
 }
 
 type KeeperStake @entity {
