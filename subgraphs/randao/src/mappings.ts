@@ -27,6 +27,7 @@ import {
   DisableKeeper,
   InitiateKeeperActivation,
   FinalizeKeeperActivation,
+  ExecutionReverted,
 } from "subgraph-randao/generated/PPAgentV2Randao/PPAgentV2Randao";
 import {
   Execute as ExecuteLight,
@@ -70,6 +71,7 @@ import {getOrCreateRandaoAgent, getJobByKey} from "./initializers";
 import {
   BIG_INT_ONE, BIG_INT_ZERO, getKeeper, ZERO_ADDRESS,
 } from "../../../common/helpers/initializers";
+import { ExecutionRevert } from "../generated/schema";
 
 export function handleExecution(event: ExecuteRandao): void {
   const fakeEvent: ExecuteLight = new ExecuteLight(
@@ -315,4 +317,25 @@ export function handleFinalizeKeeperActivation(event: FinalizeKeeperActivation):
   keeper.active = true;
 
   keeper.save();
+}
+
+export function handleExecutionReverted(event: ExecutionReverted): void {
+  const id = event.transaction.hash.toString();
+  const revert = new ExecutionRevert(id);
+
+  revert.txHash = event.transaction.hash;
+  revert.txIndex = event.transaction.index;
+  revert.txNonce = event.transaction.nonce;
+  revert.executionResponse = event.params.executionReturndata;
+
+  revert.job = event.params.jobKey.toString();
+  revert.actualKeeper = event.params.keeperId.toString();
+
+  revert.save();
+
+  const job = getJobByKey(event.params.jobKey.toHexString());
+  // TODO: change compesnation -> compensation after typo fixed in contract
+  job.credits = job.credits.minus(event.params.compesnation)
+
+  job.save();
 }

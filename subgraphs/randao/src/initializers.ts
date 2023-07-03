@@ -1,4 +1,5 @@
-import {Agent as RandaoAgent, Job} from "../generated/schema";
+import {Agent as RandaoAgent, Job, ExecutionRevert} from "../generated/schema";
+import { ExecutionReverted as RevertEvent } from "subgraph-randao/generated/PPAgentV2Randao/PPAgentV2Randao";
 import {
   BIG_INT_ONE,
   BIG_INT_ZERO,

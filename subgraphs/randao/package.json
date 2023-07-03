@@ -7,8 +7,6 @@
   "scripts": {
     "codegen": "graph codegen subgraph.goerli.yaml",
     "build": "graph build subgraph.goerli.yaml",
-    "codegen-defibrain88": "graph codegen subgraph.sepolia.defibrain88.yaml",
-    "build-defibrain88": "graph build subgraph.sepolia.defibrain88.yaml",
     "deploy-goerli-dev": "graph deploy --product hosted-service polipaul/agent-v2-goerli-dev-randao subgraph.goerli.yaml",
     "deploy-sepolia-dev": "graph deploy --product hosted-service polipaul/agent-v2-sepolia-dev-randao subgraph.sepolia.yaml",
     "deploy-gnosis-dev": "graph deploy --product hosted-service polipaul/agent-v2-gnosis-dev-randao subgraph.gnosis.yaml",
