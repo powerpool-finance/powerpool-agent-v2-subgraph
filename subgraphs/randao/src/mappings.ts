@@ -335,7 +335,7 @@ export function handleExecutionReverted(event: ExecutionReverted): void {
 
   const job = getJobByKey(event.params.jobKey.toHexString());
   // TODO: change compesnation -> compensation after typo fixed in contract
-  job.credits.minus(event.params.compesnation)
+  job.credits = job.credits.minus(event.params.compesnation)
 
   job.save();
 }
