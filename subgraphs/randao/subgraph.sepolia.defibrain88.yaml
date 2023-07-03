@@ -73,14 +73,6 @@ dataSources:
         - event: SetAgentParams(uint256,uint256,uint256)
           handler: handleSetAgentParams
 
-        # activate and deactivate keeper
-        - event: DisableKeeper(indexed uint256)
-          handler: handleDisableKeeper
-        - event: InitiateKeeperActivation(indexed uint256,uint256)
-          handler: handleInitKeeperActivation
-        - event: FinalizeKeeperActivation(indexed uint256)
-          handler: handleFinalizeKeeperActivation
-
         # Randao events
         - event: SetRdConfig((uint8,uint24,uint16,uint24,uint16,uint16,uint40,uint16,uint32,uint8))
           handler: handleSetRdConfig
@@ -89,6 +81,12 @@ dataSources:
         - event: InitiateSlashing(indexed bytes32,indexed uint256,bool,uint256)
           handler: handleInitiateSlashing
 
-        # Errors and reverts
+        - event: DisableKeeper(indexed uint256)
+          handler: handleDisableKeeper
+        - event: InitiateKeeperActivation(indexed uint256,uint256)
+          handler: handleInitKeeperActivation
+        - event: FinalizeKeeperActivation(indexed uint256)
+          handler: handleFinalizeKeeperActivation
+
         - event: ExecutionReverted(indexed bytes32,indexed uint256,bytes,uint256)
           handler: handleExecutionReverted
