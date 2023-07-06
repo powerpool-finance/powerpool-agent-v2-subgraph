@@ -77,6 +77,7 @@ type Job @entity {
     deposits: [JobDeposit!]! @derivedFrom(field: "job")
     withdrawals: [JobWithdrawal!]! @derivedFrom(field: "job")
     executionReverts: [ExecutionRevert!]! @derivedFrom(field: "job")
+    SlashKeeper: [SlashKeeper!]! @derivedFrom(field: "job")
 }
 
 type ExecutionRevert @entity {
@@ -177,6 +178,22 @@ type Keeper @entity {
     redeemFinalized: [KeeperRedeemFinalize!]! @derivedFrom(field: "keeper")
 
     executionReverts: [ExecutionRevert!]! @derivedFrom(field: "actualKeeper")
+
+    SlashKeeperExpected: [SlashKeeper!]! @derivedFrom(field: "expectedKeeper")
+    SlashKeeperActual: [SlashKeeper!]! @derivedFrom(field: "actualKeeper")
+}
+
+type SlashKeeper @entity {
+    id: ID!
+    txHash: Bytes!
+    txIndex: BigInt!
+    txNonce: BigInt!
+    job: Job!
+    expectedKeeper: Keeper!
+    actualKeeper: Keeper!
+    fixedSlashAmount: BigInt!
+    dynamicSlashAmount: BigInt!
+    slashAmountMissing: BigInt!
 }
 
 type KeeperStake @entity {

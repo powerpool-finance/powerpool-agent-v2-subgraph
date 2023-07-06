@@ -28,6 +28,7 @@ import {
   InitiateKeeperActivation,
   FinalizeKeeperActivation,
   ExecutionReverted,
+  SlashIntervalJob,
 } from "subgraph-randao/generated/PPAgentV2Randao/PPAgentV2Randao";
 import {
   Execute as ExecuteLight,
@@ -338,4 +339,25 @@ export function handleExecutionReverted(event: ExecutionReverted): void {
   job.credits = job.credits.minus(event.params.compesnation)
 
   job.save();
+}
+
+// TODO: change SlashIntervalJob type after event rename
+export function handleSlashKeeper(event: SlashIntervalJob): void {
+  // Not sure about right id. expectedKeeper + actualKeeper might not be unique so i used txHash
+  const id = event.transaction.hash.toString();
+  const slashKeeper = new SlashKeeper(id);
+
+  slashKeeper.txHash = event.transaction.hash;
+  slashKeeper.txIndex = event.transaction.index;
+  slashKeeper.txNonce = event.transaction.nonce;
+
+  slashKeeper.job = event.params.jobKey.toString();
+  slashKeeper.expectedKeeper = event.params.expectedKeeperId.toString();
+  slashKeeper.actualKeeper = event.params.actualKeeperId.toString();
+
+  slashKeeper.fixedSlashAmount = BigInt.fromString(event.params.fixedSlashAmount.toString());
+  slashKeeper.dynamicSlashAmount = BigInt.fromString(event.params.dynamicSlashAmount.toString());
+  slashKeeper.slashAmountMissing = BigInt.fromString(event.params.slashAmountMissing.toString());
+
+  slashKeeper.save();
 }
