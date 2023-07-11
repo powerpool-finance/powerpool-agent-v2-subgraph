@@ -179,8 +179,8 @@ type Keeper @entity {
 
     executionReverts: [ExecutionRevert!]! @derivedFrom(field: "actualKeeper")
 
-    SlashKeeperExpected: [SlashKeeper!]! @derivedFrom(field: "expectedKeeper")
-    SlashKeeperActual: [SlashKeeper!]! @derivedFrom(field: "actualKeeper")
+    SlashKeeperExpected: [SlashKeeper!]! @derivedFrom(field: "slashedKeeper")
+    SlashKeeperActual: [SlashKeeper!]! @derivedFrom(field: "slasherKeeper")
 }
 
 type SlashKeeper @entity {
@@ -189,8 +189,8 @@ type SlashKeeper @entity {
     txIndex: BigInt!
     txNonce: BigInt!
     job: Job!
-    expectedKeeper: Keeper!
-    actualKeeper: Keeper!
+    slashedKeeper: Keeper!
+    slasherKeeper: Keeper!
     fixedSlashAmount: BigInt!
     dynamicSlashAmount: BigInt!
     slashAmountMissing: BigInt!

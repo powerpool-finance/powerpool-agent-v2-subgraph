@@ -68,11 +68,16 @@ import {
   commonHandleWithdrawJobOwnerCredits,
 } from "../../../common/helpers/mappings";
 import {BigInt} from "@graphprotocol/graph-ts";
+import { log } from '@graphprotocol/graph-ts'
 import {getOrCreateRandaoAgent, getJobByKey} from "./initializers";
 import {
   BIG_INT_ONE, BIG_INT_ZERO, getKeeper, ZERO_ADDRESS,
 } from "../../../common/helpers/initializers";
-import { ExecutionRevert } from "../generated/schema";
+
+import {
+  ExecutionRevert,
+  SlashKeeper,
+} from "../generated/schema";
 
 export function handleExecution(event: ExecuteRandao): void {
   const fakeEvent: ExecuteLight = new ExecuteLight(
@@ -321,7 +326,7 @@ export function handleFinalizeKeeperActivation(event: FinalizeKeeperActivation):
 }
 
 export function handleExecutionReverted(event: ExecutionReverted): void {
-  const id = event.transaction.hash.toString();
+  const id = event.transaction.hash.toHexString();
   const revert = new ExecutionRevert(id);
 
   revert.txHash = event.transaction.hash;
@@ -343,8 +348,8 @@ export function handleExecutionReverted(event: ExecutionReverted): void {
 
 // TODO: change SlashIntervalJob type after event rename
 export function handleSlashKeeper(event: SlashIntervalJob): void {
-  // Not sure about right id. expectedKeeper + actualKeeper might not be unique so i used txHash
-  const id = event.transaction.hash.toString();
+  // Not sure about right id. expectedKeeper + actualKeeper might not be unique, so I used txHash
+  const id = event.transaction.hash.toHexString();
   const slashKeeper = new SlashKeeper(id);
 
   slashKeeper.txHash = event.transaction.hash;
@@ -352,12 +357,30 @@ export function handleSlashKeeper(event: SlashIntervalJob): void {
   slashKeeper.txNonce = event.transaction.nonce;
 
   slashKeeper.job = event.params.jobKey.toString();
-  slashKeeper.expectedKeeper = event.params.expectedKeeperId.toString();
-  slashKeeper.actualKeeper = event.params.actualKeeperId.toString();
+  slashKeeper.slashedKeeper = event.params.expectedKeeperId.toString();
+  slashKeeper.slasherKeeper = event.params.actualKeeperId.toString();
 
   slashKeeper.fixedSlashAmount = BigInt.fromString(event.params.fixedSlashAmount.toString());
   slashKeeper.dynamicSlashAmount = BigInt.fromString(event.params.dynamicSlashAmount.toString());
   slashKeeper.slashAmountMissing = BigInt.fromString(event.params.slashAmountMissing.toString());
 
   slashKeeper.save();
+
+
+  const slasherId = event.params.actualKeeperId.toString();
+  const slashedId = event.params.expectedKeeperId.toString();
+
+  if (slashedId != '0' && slasherId != '0') {
+    const totalSlashAmount = slashKeeper.fixedSlashAmount.plus(slashKeeper.dynamicSlashAmount).minus(slashKeeper.slashAmountMissing);
+    const slashedKeeper = getKeeper(slashedId);
+    const slasherKeeper = getKeeper(slasherId);
+
+    slashedKeeper.currentStake.minus(totalSlashAmount);
+    slashedKeeper.slashedStake.plus(totalSlashAmount);
+
+    slasherKeeper.currentStake.plus(totalSlashAmount);
+
+    slashedKeeper.save();
+    slasherKeeper.save();
+  }
 }
