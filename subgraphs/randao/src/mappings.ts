@@ -15,7 +15,7 @@ import {
   SetWorkerAddress as SetWorkerAddressRandao,
   WithdrawCompensation as WithdrawCompensationRandao,
   Stake as StakeRandao,
-  Slash as SlashRandao,
+  OwnerSlash as SlashRandao,
   InitiateRedeem as InitiateRedeemRandao,
   FinalizeRedeem as FinalizeRedeemRandao,
   OwnershipTransferred as OwnershipTransferredRandao,
@@ -23,12 +23,12 @@ import {
   SetRdConfig,
   PPAgentV2Randao,
   JobKeeperChanged,
-  InitiateSlashing,
+  InitiateKeeperSlashing,
   DisableKeeper,
   InitiateKeeperActivation,
   FinalizeKeeperActivation,
   ExecutionReverted,
-  SlashIntervalJob,
+  SlashKeeper,
 } from "subgraph-randao/generated/PPAgentV2Randao/PPAgentV2Randao";
 import {
   Execute as ExecuteLight,
@@ -76,7 +76,7 @@ import {
 
 import {
   ExecutionRevert,
-  SlashKeeper,
+  SlashKeeper as SlashKeeperSchema,
 } from "../generated/schema";
 
 export function handleExecution(event: ExecuteRandao): void {
@@ -295,7 +295,7 @@ export function handleJobKeeperChanged(event: JobKeeperChanged): void {
   job.save();
 }
 
-export function handleInitiateSlashing(event: InitiateSlashing): void {
+export function handleInitiateKeeperSlashing(event: InitiateKeeperSlashing): void {
   const job = getJobByKey(event.params.jobKey.toHexString());
   job.jobReservedSlasherId = event.params.slasherKeeperId;
   job.jobSlashingPossibleAfter = event.params.jobSlashingPossibleAfter;
@@ -335,22 +335,20 @@ export function handleExecutionReverted(event: ExecutionReverted): void {
   revert.executionResponse = event.params.executionReturndata;
 
   revert.job = event.params.jobKey.toString();
-  revert.actualKeeper = event.params.keeperId.toString();
+  revert.actualKeeper = event.params.actualKeeperId.toString();
 
   revert.save();
 
   const job = getJobByKey(event.params.jobKey.toHexString());
-  // TODO: change compesnation -> compensation after typo fixed in contract
-  job.credits = job.credits.minus(event.params.compesnation)
+  job.credits = job.credits.minus(event.params.compensation)
 
   job.save();
 }
 
-// TODO: change SlashIntervalJob type after event rename
-export function handleSlashKeeper(event: SlashIntervalJob): void {
+export function handleSlashKeeper(event: SlashKeeper): void {
   // Not sure about right id. expectedKeeper + actualKeeper might not be unique, so I used txHash
   const id = event.transaction.hash.toHexString();
-  const slashKeeper = new SlashKeeper(id);
+  const slashKeeper = new SlashKeeperSchema(id);
 
   slashKeeper.txHash = event.transaction.hash;
   slashKeeper.txIndex = event.transaction.index;
