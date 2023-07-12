@@ -8,9 +8,9 @@ dataSources:
     name: PPAgentV2Randao
     network: sepolia
     source:
-      address: "0x910c4874260384eb0f068211d6eb04ff5c29441d"
+      address: "0xC83e56D572205671CE7725b1fEdC88670a1Fe308"
       abi: PPAgentV2Randao
-      startBlock: 3680575
+      startBlock: 3870655
 
     mapping:
       kind: ethereum/events
@@ -65,7 +65,7 @@ dataSources:
           handler: handleFinalizeRedeem
         - event:  WithdrawCompensation(indexed uint256,indexed address,uint256)
           handler: handleWithdrawCompensation
-        - event:  Slash(indexed uint256,indexed address,uint256,uint256)
+        - event:  OwnerSlash(indexed uint256,indexed address,uint256,uint256)
           handler: handleSlash
 
         - event: OwnershipTransferred(indexed address,indexed address)
@@ -78,9 +78,9 @@ dataSources:
           handler: handleSetRdConfig
         - event: JobKeeperChanged(indexed bytes32,indexed uint256,indexed uint256)
           handler: handleJobKeeperChanged
-        - event: InitiateSlashing(indexed bytes32,indexed uint256,bool,uint256)
-          handler: handleInitiateSlashing
-        - event: SlashIntervalJob(indexed bytes32,indexed uint256,indexed uint256,uint256,uint256,uint256)
+        - event: InitiateKeeperSlashing(indexed bytes32,indexed uint256,bool,uint256)
+          handler: handleInitiateKeeperSlashing
+        - event: SlashKeeper(indexed bytes32,indexed uint256,indexed uint256,uint256,uint256,uint256)
           handler: handleSlashKeeper
 
         - event: DisableKeeper(indexed uint256)
