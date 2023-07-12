@@ -345,7 +345,6 @@ export function handleExecutionReverted(event: ExecutionReverted): void {
   job.save();
 }
 
-// TODO: change SlashIntervalJob type after event rename
 export function handleSlashKeeper(event: SlashKeeper): void {
   // Not sure about right id. expectedKeeper + actualKeeper might not be unique, so I used txHash
   const id = event.transaction.hash.toHexString();
