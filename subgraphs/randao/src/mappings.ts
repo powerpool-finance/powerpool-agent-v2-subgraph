@@ -358,9 +358,9 @@ export function handleSlashKeeper(event: SlashKeeper): void {
   slashKeeper.slashedKeeper = event.params.expectedKeeperId.toString();
   slashKeeper.slasherKeeper = event.params.actualKeeperId.toString();
 
-  slashKeeper.fixedSlashAmount = BigInt.fromString(event.params.fixedSlashAmount.toString());
-  slashKeeper.dynamicSlashAmount = BigInt.fromString(event.params.dynamicSlashAmount.toString());
-  slashKeeper.slashAmountMissing = BigInt.fromString(event.params.slashAmountMissing.toString());
+  slashKeeper.fixedSlashAmount = event.params.fixedSlashAmount;
+  slashKeeper.dynamicSlashAmount = event.params.dynamicSlashAmount;
+  slashKeeper.slashAmountMissing = event.params.slashAmountMissing;
 
   slashKeeper.save();
 
@@ -368,17 +368,15 @@ export function handleSlashKeeper(event: SlashKeeper): void {
   const slasherId = event.params.actualKeeperId.toString();
   const slashedId = event.params.expectedKeeperId.toString();
 
-  if (slashedId != '0' && slasherId != '0') {
-    const totalSlashAmount = slashKeeper.fixedSlashAmount.plus(slashKeeper.dynamicSlashAmount).minus(slashKeeper.slashAmountMissing);
-    const slashedKeeper = getKeeper(slashedId);
-    const slasherKeeper = getKeeper(slasherId);
+  const totalSlashAmount = slashKeeper.fixedSlashAmount.plus(slashKeeper.dynamicSlashAmount).minus(slashKeeper.slashAmountMissing);
+  const slashedKeeper = getKeeper(slashedId);
+  const slasherKeeper = getKeeper(slasherId);
 
-    slashedKeeper.currentStake.minus(totalSlashAmount);
-    slashedKeeper.slashedStake.plus(totalSlashAmount);
+  slashedKeeper.currentStake.minus(totalSlashAmount);
+  slashedKeeper.slashedStake.plus(totalSlashAmount);
 
-    slasherKeeper.currentStake.plus(totalSlashAmount);
+  slasherKeeper.currentStake.plus(totalSlashAmount);
 
-    slashedKeeper.save();
-    slasherKeeper.save();
-  }
+  slashedKeeper.save();
+  slasherKeeper.save();
 }
