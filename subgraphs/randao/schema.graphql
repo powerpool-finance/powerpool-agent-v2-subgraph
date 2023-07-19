@@ -89,6 +89,7 @@ type ExecutionRevert @entity {
 
     job: Job!
     actualKeeper: Keeper!
+    assignedKeeper: Keeper!
 }
 
 type JobDeposit @entity {
@@ -177,7 +178,8 @@ type Keeper @entity {
     redeemInitiated: [KeeperRedeemInit!]! @derivedFrom(field: "keeper")
     redeemFinalized: [KeeperRedeemFinalize!]! @derivedFrom(field: "keeper")
 
-    executionReverts: [ExecutionRevert!]! @derivedFrom(field: "actualKeeper")
+    executionRevertsActual: [ExecutionRevert!]! @derivedFrom(field: "actualKeeper")
+    executionRevertsAssigned: [ExecutionRevert!]! @derivedFrom(field: "assignedKeeper")
 
     SlashKeeperExpected: [SlashKeeper!]! @derivedFrom(field: "slashedKeeper")
     SlashKeeperActual: [SlashKeeper!]! @derivedFrom(field: "slasherKeeper")

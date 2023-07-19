@@ -336,6 +336,7 @@ export function handleExecutionReverted(event: ExecutionReverted): void {
 
   revert.job = event.params.jobKey.toString();
   revert.actualKeeper = event.params.actualKeeperId.toString();
+  revert.assignedKeeper = event.params.assignedKeeperId.toString();
 
   revert.save();
 
@@ -355,7 +356,7 @@ export function handleSlashKeeper(event: SlashKeeper): void {
   slashKeeper.txNonce = event.transaction.nonce;
 
   slashKeeper.job = event.params.jobKey.toString();
-  slashKeeper.slashedKeeper = event.params.expectedKeeperId.toString();
+  slashKeeper.slashedKeeper = event.params.assignedKeeperId.toString();
   slashKeeper.slasherKeeper = event.params.actualKeeperId.toString();
 
   slashKeeper.fixedSlashAmount = event.params.fixedSlashAmount;
@@ -366,7 +367,7 @@ export function handleSlashKeeper(event: SlashKeeper): void {
 
 
   const slasherId = event.params.actualKeeperId.toString();
-  const slashedId = event.params.expectedKeeperId.toString();
+  const slashedId = event.params.assignedKeeperId.toString();
 
   const totalSlashAmount = slashKeeper.fixedSlashAmount.plus(slashKeeper.dynamicSlashAmount).minus(slashKeeper.slashAmountMissing);
   const slashedKeeper = getKeeper(slashedId);
