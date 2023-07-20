@@ -15,7 +15,7 @@ import {
   SetWorkerAddress as SetWorkerAddressRandao,
   WithdrawCompensation as WithdrawCompensationRandao,
   Stake as StakeRandao,
-  Slash as SlashRandao,
+  OwnerSlash as SlashRandao,
   InitiateRedeem as InitiateRedeemRandao,
   FinalizeRedeem as FinalizeRedeemRandao,
   OwnershipTransferred as OwnershipTransferredRandao,
@@ -23,11 +23,12 @@ import {
   SetRdConfig,
   PPAgentV2Randao,
   JobKeeperChanged,
-  InitiateSlashing,
+  InitiateKeeperSlashing,
   DisableKeeper,
   InitiateKeeperActivation,
   FinalizeKeeperActivation,
   ExecutionReverted,
+  SlashKeeper,
 } from "subgraph-randao/generated/PPAgentV2Randao/PPAgentV2Randao";
 import {
   Execute as ExecuteLight,
@@ -67,11 +68,16 @@ import {
   commonHandleWithdrawJobOwnerCredits,
 } from "../../../common/helpers/mappings";
 import {BigInt} from "@graphprotocol/graph-ts";
+import { log } from '@graphprotocol/graph-ts'
 import {getOrCreateRandaoAgent, getJobByKey} from "./initializers";
 import {
   BIG_INT_ONE, BIG_INT_ZERO, getKeeper, ZERO_ADDRESS,
 } from "../../../common/helpers/initializers";
-import { ExecutionRevert } from "../generated/schema";
+
+import {
+  ExecutionRevert,
+  SlashKeeper as SlashKeeperSchema,
+} from "../generated/schema";
 
 export function handleExecution(event: ExecuteRandao): void {
   const fakeEvent: ExecuteLight = new ExecuteLight(
@@ -289,7 +295,7 @@ export function handleJobKeeperChanged(event: JobKeeperChanged): void {
   job.save();
 }
 
-export function handleInitiateSlashing(event: InitiateSlashing): void {
+export function handleInitiateKeeperSlashing(event: InitiateKeeperSlashing): void {
   const job = getJobByKey(event.params.jobKey.toHexString());
   job.jobReservedSlasherId = event.params.slasherKeeperId;
   job.jobSlashingPossibleAfter = event.params.jobSlashingPossibleAfter;
@@ -320,7 +326,7 @@ export function handleFinalizeKeeperActivation(event: FinalizeKeeperActivation):
 }
 
 export function handleExecutionReverted(event: ExecutionReverted): void {
-  const id = event.transaction.hash.toString();
+  const id = event.transaction.hash.toHexString();
   const revert = new ExecutionRevert(id);
 
   revert.txHash = event.transaction.hash;
@@ -329,13 +335,48 @@ export function handleExecutionReverted(event: ExecutionReverted): void {
   revert.executionResponse = event.params.executionReturndata;
 
   revert.job = event.params.jobKey.toString();
-  revert.actualKeeper = event.params.keeperId.toString();
+  revert.actualKeeper = event.params.actualKeeperId.toString();
+  revert.assignedKeeper = event.params.assignedKeeperId.toString();
 
   revert.save();
 
   const job = getJobByKey(event.params.jobKey.toHexString());
-  // TODO: change compesnation -> compensation after typo fixed in contract
-  job.credits = job.credits.minus(event.params.compesnation)
+  job.credits = job.credits.minus(event.params.compensation)
 
   job.save();
+}
+
+export function handleSlashKeeper(event: SlashKeeper): void {
+  // Not sure about right id. expectedKeeper + actualKeeper might not be unique, so I used txHash
+  const id = event.transaction.hash.toHexString();
+  const slashKeeper = new SlashKeeperSchema(id);
+
+  slashKeeper.txHash = event.transaction.hash;
+  slashKeeper.txIndex = event.transaction.index;
+  slashKeeper.txNonce = event.transaction.nonce;
+
+  slashKeeper.job = event.params.jobKey.toString();
+  slashKeeper.slashedKeeper = event.params.assignedKeeperId.toString();
+  slashKeeper.slasherKeeper = event.params.actualKeeperId.toString();
+
+  slashKeeper.fixedSlashAmount = event.params.fixedSlashAmount;
+  slashKeeper.dynamicSlashAmount = event.params.dynamicSlashAmount;
+  slashKeeper.slashAmountMissing = event.params.slashAmountMissing;
+
+  slashKeeper.save();
+
+
+  const slasherId = event.params.actualKeeperId.toString();
+  const slashedId = event.params.assignedKeeperId.toString();
+
+  const totalSlashAmount = slashKeeper.fixedSlashAmount.plus(slashKeeper.dynamicSlashAmount).minus(slashKeeper.slashAmountMissing);
+  const slashedKeeper = getKeeper(slashedId);
+  const slasherKeeper = getKeeper(slasherId);
+
+  slashedKeeper.currentStake.minus(totalSlashAmount);
+
+  slasherKeeper.currentStake.plus(totalSlashAmount);
+
+  slashedKeeper.save();
+  slasherKeeper.save();
 }

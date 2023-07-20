@@ -8,9 +8,9 @@ dataSources:
     name: PPAgentV2Randao
     network: sepolia
     source:
-      address: "0x4d9bC98452820FD96B2C31741e8C4DdcC795bEce"
+      address: "0xc8E864f12c337Bdf6294a3DCeE0E565D2B1B4d90"
       abi: PPAgentV2Randao
-      startBlock: 3311189
+      startBlock: 3917456
 
     mapping:
       kind: ethereum/events
@@ -45,27 +45,27 @@ dataSources:
           handler: handleWithdrawJobCredits
         - event: DepositJobOwnerCredits(indexed address,indexed address,uint256,uint256)
           handler: handleDepositJobOwnerCredits
-        - event:  WithdrawJobOwnerCredits(indexed address,indexed address,uint256)
+        - event: WithdrawJobOwnerCredits(indexed address,indexed address,uint256)
           handler: handleWithdrawJobOwnerCredits
 
-        - event:  SetJobPreDefinedCalldata(indexed bytes32,bytes)
+        - event: SetJobPreDefinedCalldata(indexed bytes32,bytes)
           handler: handleSetJobPreDefinedCalldata
-        - event:  SetJobResolver(indexed bytes32,address,bytes)
+        - event: SetJobResolver(indexed bytes32,address,bytes)
           handler: handleSetJobResolver
 
-        - event:  RegisterAsKeeper(indexed uint256,indexed address,indexed address)
+        - event: RegisterAsKeeper(indexed uint256,indexed address,indexed address)
           handler: handleRegisterAsKeeper
-        - event:  SetWorkerAddress(indexed uint256,indexed address,indexed address)
+        - event: SetWorkerAddress(indexed uint256,indexed address,indexed address)
           handler: handleSetWorkerAddress
-        - event:  Stake(indexed uint256,uint256,address)
+        - event: Stake(indexed uint256,uint256,address)
           handler: handleStake
-        - event:  InitiateRedeem(indexed uint256,uint256,uint256,uint256)
+        - event: InitiateRedeem(indexed uint256,uint256,uint256,uint256)
           handler: handleInitiateRedeem
-        - event:  FinalizeRedeem(indexed uint256,indexed address,uint256)
+        - event: FinalizeRedeem(indexed uint256,indexed address,uint256)
           handler: handleFinalizeRedeem
-        - event:  WithdrawCompensation(indexed uint256,indexed address,uint256)
+        - event: WithdrawCompensation(indexed uint256,indexed address,uint256)
           handler: handleWithdrawCompensation
-        - event:  Slash(indexed uint256,indexed address,uint256,uint256)
+        - event: OwnerSlash(indexed uint256,indexed address,uint256,uint256)
           handler: handleSlash
 
         - event: OwnershipTransferred(indexed address,indexed address)
@@ -78,5 +78,17 @@ dataSources:
           handler: handleSetRdConfig
         - event: JobKeeperChanged(indexed bytes32,indexed uint256,indexed uint256)
           handler: handleJobKeeperChanged
-        - event: InitiateSlashing(indexed bytes32,indexed uint256,bool,uint256)
-          handler: handleInitiateSlashing
+        - event: InitiateKeeperSlashing(indexed bytes32,indexed uint256,bool,uint256)
+          handler: handleInitiateKeeperSlashing
+        - event: SlashKeeper(indexed bytes32,indexed uint256,indexed uint256,uint256,uint256,uint256)
+          handler: handleSlashKeeper
+
+        - event: DisableKeeper(indexed uint256)
+          handler: handleDisableKeeper
+        - event: InitiateKeeperActivation(indexed uint256,uint256)
+          handler: handleInitKeeperActivation
+        - event: FinalizeKeeperActivation(indexed uint256)
+          handler: handleFinalizeKeeperActivation
+
+        - event: ExecutionReverted(indexed bytes32,indexed uint256,indexed uint256,bytes,uint256)
+          handler: handleExecutionReverted
