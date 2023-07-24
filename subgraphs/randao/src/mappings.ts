@@ -68,7 +68,6 @@ import {
   commonHandleWithdrawJobOwnerCredits,
 } from "../../../common/helpers/mappings";
 import {BigInt} from "@graphprotocol/graph-ts";
-import { log } from '@graphprotocol/graph-ts'
 import {getOrCreateRandaoAgent, getJobByKey} from "./initializers";
 import {
   BIG_INT_ONE, BIG_INT_ZERO, getKeeper, ZERO_ADDRESS,
@@ -256,6 +255,7 @@ export function handleOwnershipTransferred(event: OwnershipTransferredRandao): v
     if (res1.reverted) {
       throw new Error('Init: Unable to fetch CVP');
     }
+    agent.address = event.address;
     agent.cvp = res1.value;
   }
 

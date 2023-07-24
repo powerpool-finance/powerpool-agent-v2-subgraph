@@ -231,6 +231,7 @@ type KeeperRedeemFinalize @entity {
 
 type Agent @entity {
     id: ID!
+    address: Bytes!
     owner: Bytes!
     cvp: Bytes!
 

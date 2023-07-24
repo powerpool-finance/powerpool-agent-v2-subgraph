@@ -1,5 +1,4 @@
 import {Agent as RandaoAgent, Job, ExecutionRevert} from "../generated/schema";
-import { ExecutionReverted as RevertEvent } from "subgraph-randao/generated/PPAgentV2Randao/PPAgentV2Randao";
 import {
   BIG_INT_ONE,
   BIG_INT_ZERO,
@@ -14,6 +13,7 @@ export function getOrCreateRandaoAgent(): RandaoAgent {
     randaoAgent = new RandaoAgent(AGENT_ID);
 
     randaoAgent.jobsCount = BIG_INT_ONE;
+    randaoAgent.address = ZERO_ADDRESS;
     randaoAgent.owner = ZERO_ADDRESS;
     randaoAgent.cvp = ZERO_ADDRESS;
     randaoAgent.feeTotal = BIG_INT_ZERO;

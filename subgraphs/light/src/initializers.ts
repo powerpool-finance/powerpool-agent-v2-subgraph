@@ -10,6 +10,7 @@ export function getOrCreateAgent(): Agent {
   if (!agent) {
     agent = new Agent(AGENT_ID);
     agent.jobsCount = BIG_INT_ONE;
+    agent.address = ZERO_ADDRESS;
     agent.owner = ZERO_ADDRESS;
     agent.cvp = ZERO_ADDRESS;
     agent.feeTotal = BIG_INT_ZERO;

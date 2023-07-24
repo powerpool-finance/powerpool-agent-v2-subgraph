@@ -141,6 +141,7 @@ export function handleOwnershipTransferred(event: OwnershipTransferred): void {
     if (res2.reverted) {
       throw new Error('Init: Unable to fetch config');
     }
+    agent.address = event.address;
     agent.minKeeperCVP = res2.value.getMinKeeperCvp_();
     agent.pendingWithdrawalTimeoutSeconds = res2.value.getPendingWithdrawalTimeoutSeconds_();
     agent.feePpm = res2.value.getFeePpm_();
