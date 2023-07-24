@@ -96,6 +96,9 @@ export function commonHandleExecution(event: Execute): void {
 export function commonHandleRegisterJob(event: RegisterJob): void {
   const jobKey = event.params.jobKey.toHexString();
   const job = createJob(jobKey);
+  const jobOwner = getOrCreateJobOwner(event.params.owner.toHexString());
+
+  jobOwner.save();
 
   job.active = true;
   job.jobAddress = event.params.jobAddress;
