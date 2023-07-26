@@ -94,6 +94,7 @@ type ExecutionRevert @entity {
 
 type JobDeposit @entity {
     id: ID!
+    txHash: Bytes!
     job: Job!
     depositor: Bytes!
     timestamp: BigInt!

@@ -178,6 +178,7 @@ export function commonHandleDepositJobCredits(event: DepositJobCredits): void {
   const depositKey = event.params.jobKey.toHexString().concat("-").concat(job.depositCount.toString());
   const deposit = createJobDeposit(depositKey);
   deposit.job = event.params.jobKey.toHexString();
+  deposit.txHash = event.transaction.hash;
   deposit.depositor = event.params.depositor;
   deposit.amount = event.params.amount;
   deposit.fee = event.params.fee;
