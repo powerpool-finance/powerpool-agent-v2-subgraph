@@ -100,6 +100,8 @@ export function commonHandleRegisterJob(event: RegisterJob): void {
 
   jobOwner.save();
 
+  job.txHash = event.transaction.hash;
+  job.timestamp = event.block.timestamp;
   job.active = true;
   job.jobAddress = event.params.jobAddress;
   job.jobId = event.params.jobId;

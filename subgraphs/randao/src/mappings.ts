@@ -83,6 +83,12 @@ import {
   DisableKeeper as DisableKeeperSchema,
   InitiateKeeperActivation as InitiateKeeperActivationSchema,
   FinalizeKeeperActivation as FinalizeKeeperActivationSchema,
+  JobUpdate as JobUpdateSchema,
+  SetJobPreDefinedCalldata as SetJobPreDefinedCalldataSchema,
+  SetJobResolver as SetJobResolverSchema,
+  SetJobConfig as SetJobConfigSchema,
+  AcceptJobTransfer as AcceptJobTransferSchema,
+  InitiateJobTransfer as InitiateJobTransferSchema,
 } from "../generated/schema";
 
 export function handleExecution(event: ExecuteRandao): void {
@@ -111,6 +117,18 @@ export function handleJobUpdate(event: JobUpdateRandao): void {
     event.parameters, event.receipt
   );
   commonHandleJobUpdate(fakeEvent);
+
+  const jobUpdate = new JobUpdateSchema(event.transaction.hash.toHexString());
+  jobUpdate.txHash = event.transaction.hash;
+  jobUpdate.timestamp = event.block.timestamp;
+  jobUpdate.job = event.params.jobKey.toString();
+  jobUpdate.maxBaseFeeGwei = event.params.maxBaseFeeGwei;
+  jobUpdate.rewardPct = event.params.rewardPct;
+  jobUpdate.fixedReward = event.params.fixedReward;
+  jobUpdate.jobMinCvp = event.params.jobMinCvp;
+  jobUpdate.intervalSeconds = event.params.intervalSeconds;
+
+  jobUpdate.save();
 }
 
 export function handleSetJobConfig(event: SetJobConfigRandao): void {
@@ -119,6 +137,16 @@ export function handleSetJobConfig(event: SetJobConfigRandao): void {
     event.parameters, event.receipt
   );
   commonHandleSetJobConfig(fakeEvent);
+
+  const entity = new SetJobConfigSchema(event.transaction.hash.toHexString());
+  entity.txHash = event.transaction.hash;
+  entity.timestamp = event.block.timestamp;
+  entity.job = event.params.jobKey.toString();
+  entity.isActive = event.params.isActive_;
+  entity.useJobOwnerCredits = event.params.useJobOwnerCredits_;
+  entity.assertResolverSelector = event.params.assertResolverSelector_;
+
+  entity.save();
 }
 
 export function handleInitiateJobTransfer(event: InitiateJobTransferRandao): void {
@@ -127,6 +155,15 @@ export function handleInitiateJobTransfer(event: InitiateJobTransferRandao): voi
     event.parameters, event.receipt
   );
   commonHandleInitiateJobTransfer(fakeEvent);
+
+  const entity = new InitiateJobTransferSchema(event.transaction.hash.toHexString());
+  entity.txHash = event.transaction.hash;
+  entity.timestamp = event.block.timestamp;
+  entity.job = event.params.jobKey.toString();
+  entity.to = event.params.to;
+  entity.from = event.params.from;
+
+  entity.save();
 }
 
 export function handleAcceptJobTransfer(event: AcceptJobTransferRandao): void {
@@ -135,6 +172,14 @@ export function handleAcceptJobTransfer(event: AcceptJobTransferRandao): void {
     event.parameters, event.receipt
   );
   commonHandleAcceptJobTransfer(fakeEvent);
+
+  const entity = new AcceptJobTransferSchema(event.transaction.hash.toHexString());
+  entity.txHash = event.transaction.hash;
+  entity.timestamp = event.block.timestamp;
+  entity.job = event.params.jobKey_.toString();
+  entity.to = event.params.to_;
+
+  entity.save();
 }
 
 
@@ -177,6 +222,14 @@ export function handleSetJobPreDefinedCalldata(event: SetJobPreDefinedCalldataRa
     event.parameters, event.receipt
   );
   commonHandleSetJobPreDefinedCalldata(fakeEvent);
+
+  const entity = new SetJobPreDefinedCalldataSchema(event.transaction.hash.toHexString());
+  entity.txHash = event.transaction.hash;
+  entity.timestamp = event.block.timestamp;
+  entity.job = event.params.jobKey.toString();
+  entity.preDefinedCalldata = event.params.preDefinedCalldata;
+
+  entity.save();
 }
 
 export function handleSetJobResolver(event: SetJobResolverRandao): void {
@@ -185,6 +238,15 @@ export function handleSetJobResolver(event: SetJobResolverRandao): void {
     event.parameters, event.receipt
   );
   commonHandleSetJobResolver(fakeEvent);
+
+  const entity = new SetJobResolverSchema(event.transaction.hash.toHexString());
+  entity.txHash = event.transaction.hash;
+  entity.timestamp = event.block.timestamp;
+  entity.job = event.params.jobKey.toString();
+  entity.resolverAddress = event.params.resolverAddress;
+  entity.resolverCalldata = event.params.resolverCalldata;
+
+  entity.save();
 }
 
 

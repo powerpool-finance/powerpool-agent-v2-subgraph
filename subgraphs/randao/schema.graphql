@@ -33,6 +33,8 @@ type Execution @entity {
 type Job @entity {
     "jobKey"
     id: ID!
+    txHash: Bytes!
+    timestamp: BigInt!
     active: Boolean!
     jobAddress: Bytes!
     jobId: BigInt!
@@ -118,6 +120,62 @@ type JobWithdrawal @entity {
 }
 
 ### JOB DEBUG EVENTS ###
+
+type InitiateJobTransfer @entity {
+    id: ID!
+    txHash: Bytes!
+    timestamp: BigInt!
+    job: Job!
+    to: Bytes!
+    from: Bytes!
+}
+
+type AcceptJobTransfer @entity {
+    id: ID!
+    txHash: Bytes!
+    timestamp: BigInt!
+    job: Job!
+    to: Bytes!
+}
+
+type SetJobConfig @entity {
+    id: ID!
+    txHash: Bytes!
+    timestamp: BigInt!
+    job: Job!
+    isActive: Boolean!
+    useJobOwnerCredits: Boolean!
+    assertResolverSelector: Boolean!
+}
+
+type SetJobPreDefinedCalldata @entity {
+    id: ID!
+    txHash: Bytes!
+    timestamp: BigInt!
+    job: Job!
+    preDefinedCalldata: Bytes!
+}
+
+type SetJobResolver @entity {
+    id: ID!
+    txHash: Bytes!
+    timestamp: BigInt!
+    job: Job!
+    resolverAddress: Bytes!
+    resolverCalldata: Bytes!
+}
+
+type JobUpdate @entity {
+    id: ID!
+    txHash: Bytes!
+    timestamp: BigInt!
+    job: Job!
+    maxBaseFeeGwei: BigInt!
+    rewardPct: BigInt!
+    fixedReward: BigInt!
+    jobMinCvp: BigInt!
+    intervalSeconds: BigInt!
+}
 
 type JobKeeperChanged @entity {
     id: ID!

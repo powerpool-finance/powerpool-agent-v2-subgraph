@@ -33,6 +33,8 @@ type Execution @entity {
 type Job @entity {
     "jobKey"
     id: ID!
+    txHash: Bytes!
+    timestamp: BigInt!
     active: Boolean!
     jobAddress: Bytes!
     jobId: BigInt!
