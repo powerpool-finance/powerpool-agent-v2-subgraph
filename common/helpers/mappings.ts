@@ -197,6 +197,7 @@ export function commonHandleWithdrawJobCredits(event: WithdrawJobCredits): void 
   const withdrawalKey = event.params.jobKey.toHexString().concat("-").concat(job.withdrawalCount.toString());
   const withdrawal = createJobWithdrawal(withdrawalKey);
   withdrawal.job = event.params.jobKey.toHexString();
+  withdrawal.txHash = event.transaction.hash;
   withdrawal.owner = event.params.owner;
   withdrawal.to = event.params.to;
   withdrawal.amount = event.params.amount;
@@ -214,6 +215,7 @@ export function commonHandleDepositJobOwnerCredits(event: DepositJobOwnerCredits
   const depositKey = event.params.jobOwner.toHexString().concat("-").concat(jobOwner.depositCount.toString());
   const deposit = createJobOwnerDeposit(depositKey);
   deposit.jobOwner = event.params.jobOwner.toHexString();
+  deposit.txHash = event.transaction.hash;
   deposit.amount = event.params.amount;
   deposit.fee = event.params.fee;
   deposit.total = event.params.fee.plus(event.params.amount);
@@ -231,6 +233,7 @@ export function commonHandleWithdrawJobOwnerCredits(event: WithdrawJobOwnerCredi
 
   const withdrawalKey = event.params.jobOwner.toHexString().concat("-").concat(jobOwner.withdrawalCount.toString());
   const withdrawal = createJobOwnerWithdrawal(withdrawalKey);
+  withdrawal.txHash = event.transaction.hash;
   withdrawal.jobOwner = event.params.jobOwner.toHexString();
   withdrawal.to = event.params.to;
   withdrawal.amount = event.params.amount;
@@ -261,6 +264,8 @@ export function commonHandleRegisterAsKeeper(event: RegisterAsKeeper): void {
   const keeperId = event.params.keeperId.toString();
   const keeper = createKeeper(keeperId);
 
+  keeper.txHash = event.transaction.hash;
+  keeper.timestamp = event.block.timestamp;
   keeper.active = true;
   keeper.numericalId = BigInt.fromString(keeperId);
   keeper.admin = event.params.keeperAdmin;
@@ -301,6 +306,7 @@ export function commonHandleStake(event: Stake): void {
 
   const stakeKey = event.params.keeperId.toString().concat("-").concat(keeper.stakeCount.toString());
   const stake = createKeeperStake(stakeKey);
+  stake.txHash = event.transaction.hash;
   stake.keeper = event.params.keeperId.toString();
   stake.staker = event.params.staker;
   stake.amount = event.params.amount;
@@ -328,6 +334,8 @@ export function commonHandleInitiateRedeem(event: InitiateRedeem, pendingWithdra
 
   const initKey = keeper.id.toString().concat("-").concat(keeper.redeemInitCount.toString());
   const init = createKeeperRedeemInit(initKey);
+  init.txHash = event.transaction.hash;
+  init.timestamp = event.block.timestamp;
   init.keeper = event.params.keeperId.toString();
   init.inputAmount = event.params.redeemAmount;
   init.slashedStakeReduction = event.params.slashedStakeAmount;
@@ -354,6 +362,7 @@ export function commonHandleFinalizeRedeem(event: FinalizeRedeem): void {
 
   const finalizeKey = keeper.id.toString().concat("-").concat(keeper.redeemFinalizeCount.toString());
   const finalize = createKeeperRedeemFinalize(finalizeKey);
+  finalize.txHash = event.transaction.hash;
   finalize.keeper = event.params.keeperId.toString();
   finalize.to = event.params.beneficiary;
   finalize.amount = event.params.amount;

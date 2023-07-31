@@ -92,6 +92,7 @@ type JobDeposit @entity {
 
 type JobWithdrawal @entity {
     id: ID!
+    txHash: Bytes!
     job: Job!
     owner: Bytes!
     to: Bytes!
@@ -116,6 +117,7 @@ type JobOwner @entity {
 
 type JobOwnerDeposit @entity {
     id: ID!
+    txHash: Bytes!
     jobOwner: JobOwner!
     depositor: Bytes!
     timestamp: BigInt!
@@ -128,6 +130,7 @@ type JobOwnerDeposit @entity {
 
 type JobOwnerWithdrawal @entity {
     id: ID!
+    txHash: Bytes!
     jobOwner: JobOwner!
     to: Bytes!
     timestamp: BigInt!
@@ -139,6 +142,8 @@ type JobOwnerWithdrawal @entity {
 
 type Keeper @entity {
     id: ID!
+    txHash: Bytes!
+    timestamp: BigInt!
     active: Boolean!
     keeperActivationCanBeFinalizedAt: BigInt!
     numericalId: BigInt!
@@ -166,6 +171,7 @@ type Keeper @entity {
 
 type KeeperStake @entity {
     id: ID!
+    txHash: Bytes!
     keeper: Keeper!
     staker: Bytes!
     amount: BigInt!
@@ -174,8 +180,10 @@ type KeeperStake @entity {
 
 type KeeperRedeemInit @entity {
     id: ID!
+    txHash: Bytes!
     keeper: Keeper!
     initiatedAt: BigInt!
+    timestamp: BigInt!
     availableAt: BigInt!
     cooldownSeconds: BigInt!
 
@@ -186,6 +194,7 @@ type KeeperRedeemInit @entity {
 
 type KeeperRedeemFinalize @entity {
     id: ID!
+    txHash: Bytes!
     keeper: Keeper!
     to: Bytes!
     timestamp: BigInt!

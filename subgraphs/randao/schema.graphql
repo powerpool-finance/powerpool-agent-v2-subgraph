@@ -83,6 +83,7 @@ type Job @entity {
 type ExecutionRevert @entity {
     id: ID!
     txHash: Bytes!
+    timestamp: BigInt!
     txIndex: BigInt!
     txNonce: BigInt!
     executionResponse: Bytes!
@@ -107,12 +108,24 @@ type JobDeposit @entity {
 
 type JobWithdrawal @entity {
     id: ID!
+    txHash: Bytes!
     job: Job!
     owner: Bytes!
     to: Bytes!
     timestamp: BigInt!
 
     amount: BigInt!
+}
+
+### JOB DEBUG EVENTS ###
+
+type JobKeeperChanged @entity {
+    id: ID!
+    txHash: Bytes!
+    timestamp: BigInt!
+    job: Job!
+    keeperFrom: Keeper!
+    keeperTo: Keeper!
 }
 
 ### JOB OWNER ###
@@ -131,6 +144,7 @@ type JobOwner @entity {
 
 type JobOwnerDeposit @entity {
     id: ID!
+    txHash: Bytes!
     jobOwner: JobOwner!
     depositor: Bytes!
     timestamp: BigInt!
@@ -143,6 +157,7 @@ type JobOwnerDeposit @entity {
 
 type JobOwnerWithdrawal @entity {
     id: ID!
+    txHash: Bytes!
     jobOwner: JobOwner!
     to: Bytes!
     timestamp: BigInt!
@@ -154,6 +169,8 @@ type JobOwnerWithdrawal @entity {
 
 type Keeper @entity {
     id: ID!
+    txHash: Bytes!
+    timestamp: BigInt!
     active: Boolean!
     keeperActivationCanBeFinalizedAt: BigInt!
     numericalId: BigInt!
@@ -189,6 +206,7 @@ type Keeper @entity {
 type SlashKeeper @entity {
     id: ID!
     txHash: Bytes!
+    timestamp: BigInt!
     txIndex: BigInt!
     txNonce: BigInt!
     job: Job!
@@ -197,10 +215,12 @@ type SlashKeeper @entity {
     fixedSlashAmount: BigInt!
     dynamicSlashAmount: BigInt!
     slashAmountMissing: BigInt!
+    slashAmountResult: BigInt!
 }
 
 type KeeperStake @entity {
     id: ID!
+    txHash: Bytes!
     keeper: Keeper!
     staker: Bytes!
     amount: BigInt!
@@ -209,8 +229,10 @@ type KeeperStake @entity {
 
 type KeeperRedeemInit @entity {
     id: ID!
+    txHash: Bytes!
     keeper: Keeper!
     initiatedAt: BigInt!
+    timestamp: BigInt!
     availableAt: BigInt!
     cooldownSeconds: BigInt!
 
@@ -221,11 +243,74 @@ type KeeperRedeemInit @entity {
 
 type KeeperRedeemFinalize @entity {
     id: ID!
+    txHash: Bytes!
     keeper: Keeper!
     to: Bytes!
     timestamp: BigInt!
 
     amount: BigInt!
+}
+
+### KEEPER DEBUG EVENTS ###
+
+type FinalizeKeeperActivation @entity {
+    id: ID!
+    txHash: Bytes!
+    timestamp: BigInt!
+    keeper: Keeper!
+}
+
+type InitiateKeeperActivation @entity {
+    id: ID!
+    txHash: Bytes!
+    timestamp: BigInt!
+    keeper: Keeper!
+    canBeFinalizedAt: BigInt!
+}
+
+type DisableKeeper @entity {
+    id: ID!
+    txHash: Bytes!
+    timestamp: BigInt!
+    keeper: Keeper!
+}
+
+type KeeperOwnerSlash @entity {
+    id: ID!
+    txHash: Bytes!
+    timestamp: BigInt!
+    keeper: Keeper!
+    to: Bytes!
+    currentAmount: BigInt!
+    pendingAmount: BigInt!
+}
+
+type KeeperCompensation @entity {
+    id: ID!
+    txHash: Bytes!
+    timestamp: BigInt!
+    keeper: Keeper!
+    to: Bytes!
+    amount: BigInt!
+}
+
+type SetKeeperWorkerAddress @entity {
+    id: ID!
+    txHash: Bytes!
+    timestamp: BigInt!
+    keeper: Keeper!
+    prev: Bytes!
+    worker: Bytes!
+}
+
+type InitiateKeeperSlashing @entity {
+    id: ID!
+    txHash: Bytes!
+    timestamp: BigInt!
+    job: Job!
+    slasherKeeper: Keeper!
+    useResolver: Boolean!
+    jobSlashingPossibleAfter: BigInt!
 }
 
 ### AGENT (SINGLETON) ###

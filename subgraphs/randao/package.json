@@ -14,6 +14,7 @@
     "deploy-sepolia-prod": "graph deploy --studio pp-agent-v2-randao-sepolia subgraph.sepolia.yaml",
     "deploy-sepolia-pp-prod": "graph deploy --studio pp-agent-v2-randao-sepolia-pp subgraph.sepolia.pp.yaml",
     "deploy-sepolia-test-defibrain88": "graph deploy --studio ppv2r-sepolia-test-defibrain88 subgraph.sepolia.defibrain88.yaml",
+    "deploy-defibrain88-test": "graph deploy --studio defibrain88_test_graph subgraph.sepolia.defibrain88.yaml",
     "deploy-goerli-prod": "graph deploy --studio pp-agent-v2-randao-goerli subgraph.goerli.yaml"
   }
 }

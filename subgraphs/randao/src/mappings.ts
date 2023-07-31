@@ -74,8 +74,15 @@ import {
 } from "../../../common/helpers/initializers";
 
 import {
-  ExecutionRevert,
+  ExecutionRevert, KeeperCompensation,
   SlashKeeper as SlashKeeperSchema,
+  SetKeeperWorkerAddress,
+  KeeperOwnerSlash,
+  JobKeeperChanged as JobKeeperChangedSchema,
+  InitiateKeeperSlashing as InitiateKeeperSlashingSchema,
+  DisableKeeper as DisableKeeperSchema,
+  InitiateKeeperActivation as InitiateKeeperActivationSchema,
+  FinalizeKeeperActivation as FinalizeKeeperActivationSchema,
 } from "../generated/schema";
 
 export function handleExecution(event: ExecuteRandao): void {
@@ -199,6 +206,15 @@ export function handleSetWorkerAddress(event: SetWorkerAddressRandao): void {
     event.parameters, event.receipt
   );
   commonHandleSetWorkerAddress(fakeEvent);
+
+  const setAddress = new SetKeeperWorkerAddress(event.transaction.hash.toHexString());
+  setAddress.txHash = event.transaction.hash;
+  setAddress.timestamp = event.block.timestamp;
+  setAddress.keeper = event.params.keeperId.toString();
+  setAddress.prev = event.params.prev;
+  setAddress.worker = event.params.worker;
+
+  setAddress.save();
 }
 
 export function handleWithdrawCompensation(event: WithdrawCompensationRandao): void {
@@ -207,6 +223,15 @@ export function handleWithdrawCompensation(event: WithdrawCompensationRandao): v
     event.parameters, event.receipt
   );
   commonHandleWithdrawCompensation(fakeEvent);
+
+  const compensation = new KeeperCompensation(event.transaction.hash.toHexString())
+  compensation.txHash = event.transaction.hash;
+  compensation.timestamp = event.block.timestamp;
+  compensation.keeper = event.params.keeperId.toString();
+  compensation.to = event.params.to;
+  compensation.amount = event.params.amount;
+
+  compensation.save();
 }
 
 export function handleStake(event: StakeRandao): void {
@@ -223,6 +248,16 @@ export function handleSlash(event: SlashRandao): void {
     event.parameters, event.receipt
   );
   commonHandleSlash(fakeEvent);
+
+  const ownerSlash = new KeeperOwnerSlash(event.transaction.hash.toHexString());
+  ownerSlash.txHash = event.transaction.hash;
+  ownerSlash.timestamp = event.block.timestamp;
+  ownerSlash.keeper = event.params.keeperId.toString();
+  ownerSlash.to = event.params.to;
+  ownerSlash.currentAmount = event.params.currentAmount;
+  ownerSlash.pendingAmount = event.params.pendingAmount;
+
+  ownerSlash.save();
 }
 
 export function handleInitiateRedeem(event: InitiateRedeemRandao): void {
@@ -293,6 +328,15 @@ export function handleJobKeeperChanged(event: JobKeeperChanged): void {
   const job = getJobByKey(event.params.jobKey.toHexString());
   job.jobNextKeeperId = event.params.keeperTo;
   job.save();
+
+  const keeperChanged = new JobKeeperChangedSchema(event.transaction.hash.toHexString());
+  keeperChanged.txHash = event.transaction.hash;
+  keeperChanged.timestamp = event.block.timestamp;
+  keeperChanged.job = event.params.jobKey.toString();
+  keeperChanged.keeperFrom = event.params.keeperFrom.toString();
+  keeperChanged.keeperTo = event.params.keeperTo.toString();
+
+  keeperChanged.save();
 }
 
 export function handleInitiateKeeperSlashing(event: InitiateKeeperSlashing): void {
@@ -301,6 +345,16 @@ export function handleInitiateKeeperSlashing(event: InitiateKeeperSlashing): voi
   job.jobSlashingPossibleAfter = event.params.jobSlashingPossibleAfter;
 
   job.save();
+
+  const slashing = new InitiateKeeperSlashingSchema(event.transaction.hash.toHexString());
+  slashing.txHash = event.transaction.hash;
+  slashing.timestamp = event.block.timestamp;
+  slashing.job = event.params.jobKey.toString();
+  slashing.slasherKeeper = event.params.slasherKeeperId.toString();
+  slashing.useResolver = event.params.useResolver;
+  slashing.jobSlashingPossibleAfter = event.params.jobSlashingPossibleAfter;
+
+  slashing.save();
 }
 
 export function handleDisableKeeper(event: DisableKeeper): void {
@@ -308,6 +362,13 @@ export function handleDisableKeeper(event: DisableKeeper): void {
   keeper.active = false;
 
   keeper.save();
+
+  const disableEvent = new DisableKeeperSchema(event.transaction.hash.toHexString());
+  disableEvent.txHash = event.transaction.hash;
+  disableEvent.timestamp = event.block.timestamp;
+  disableEvent.keeper = event.params.keeperId.toString();
+
+  disableEvent.save();
 }
 
 export function handleInitKeeperActivation(event: InitiateKeeperActivation): void {
@@ -315,6 +376,14 @@ export function handleInitKeeperActivation(event: InitiateKeeperActivation): voi
   keeper.keeperActivationCanBeFinalizedAt = event.params.canBeFinalizedAt;
 
   keeper.save();
+
+  const init = new InitiateKeeperActivationSchema(event.transaction.hash.toHexString());
+  init.txHash = event.transaction.hash;
+  init.timestamp = event.block.timestamp;
+  init.keeper = event.params.keeperId.toString();
+  init.canBeFinalizedAt = event.params.canBeFinalizedAt;
+
+  init.save();
 }
 
 export function handleFinalizeKeeperActivation(event: FinalizeKeeperActivation): void {
@@ -323,6 +392,13 @@ export function handleFinalizeKeeperActivation(event: FinalizeKeeperActivation):
   keeper.active = true;
 
   keeper.save();
+
+  const finalize = new FinalizeKeeperActivationSchema(event.transaction.hash.toHexString());
+  finalize.txHash = event.transaction.hash;
+  finalize.timestamp = event.block.timestamp;
+  finalize.keeper = event.params.keeperId.toString();
+
+  finalize.save();
 }
 
 export function handleExecutionReverted(event: ExecutionReverted): void {
@@ -330,6 +406,7 @@ export function handleExecutionReverted(event: ExecutionReverted): void {
   const revert = new ExecutionRevert(id);
 
   revert.txHash = event.transaction.hash;
+  revert.timestamp = event.block.timestamp;
   revert.txIndex = event.transaction.index;
   revert.txNonce = event.transaction.nonce;
   revert.executionResponse = event.params.executionReturndata;
@@ -352,6 +429,7 @@ export function handleSlashKeeper(event: SlashKeeper): void {
   const slashKeeper = new SlashKeeperSchema(id);
 
   slashKeeper.txHash = event.transaction.hash;
+  slashKeeper.timestamp = event.block.timestamp;
   slashKeeper.txIndex = event.transaction.index;
   slashKeeper.txNonce = event.transaction.nonce;
 
@@ -363,13 +441,15 @@ export function handleSlashKeeper(event: SlashKeeper): void {
   slashKeeper.dynamicSlashAmount = event.params.dynamicSlashAmount;
   slashKeeper.slashAmountMissing = event.params.slashAmountMissing;
 
+  const totalSlashAmount = slashKeeper.fixedSlashAmount.plus(slashKeeper.dynamicSlashAmount).minus(slashKeeper.slashAmountMissing);
+  slashKeeper.slashAmountResult = totalSlashAmount;
+
   slashKeeper.save();
 
 
   const slasherId = event.params.actualKeeperId.toString();
   const slashedId = event.params.assignedKeeperId.toString();
 
-  const totalSlashAmount = slashKeeper.fixedSlashAmount.plus(slashKeeper.dynamicSlashAmount).minus(slashKeeper.slashAmountMissing);
   const slashedKeeper = getKeeper(slashedId);
   const slasherKeeper = getKeeper(slasherId);
 
