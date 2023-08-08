@@ -66,6 +66,9 @@ export function commonHandleExecution(event: Execute): void {
 
   const job = getJobByKey(jobKey);
   const jobOwner = getOrCreateJobOwner(job.owner);
+
+  execution.jobOwner = job.owner;
+
   if (job.useJobOwnerCredits) {
     jobOwner.credits = jobOwner.credits.minus(event.params.compensation);
   } else {

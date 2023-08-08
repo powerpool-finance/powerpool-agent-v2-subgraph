@@ -9,6 +9,7 @@ type Execution @entity {
     keeperWorker: Bytes!
 
     job: Job!
+    jobOwner: String!
     jobAddress: Bytes!
     binJobAfter: Bytes!
 

@@ -10,6 +10,7 @@ type Execution @entity {
 
     job: Job!
     jobAddress: Bytes!
+    jobOwner: String!
     binJobAfter: Bytes!
 
     compensation: BigInt!
@@ -91,6 +92,7 @@ type ExecutionRevert @entity {
     executionResponse: Bytes!
 
     job: Job!
+    jobOwner: String!
     actualKeeper: Keeper!
     assignedKeeper: Keeper!
 }

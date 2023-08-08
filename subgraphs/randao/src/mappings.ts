@@ -121,7 +121,7 @@ export function handleJobUpdate(event: JobUpdateRandao): void {
   const jobUpdate = new JobUpdateSchema(event.transaction.hash.toHexString());
   jobUpdate.txHash = event.transaction.hash;
   jobUpdate.timestamp = event.block.timestamp;
-  jobUpdate.job = event.params.jobKey.toString();
+  jobUpdate.job = event.params.jobKey.toHexString();
   jobUpdate.maxBaseFeeGwei = event.params.maxBaseFeeGwei;
   jobUpdate.rewardPct = event.params.rewardPct;
   jobUpdate.fixedReward = event.params.fixedReward;
@@ -141,7 +141,7 @@ export function handleSetJobConfig(event: SetJobConfigRandao): void {
   const entity = new SetJobConfigSchema(event.transaction.hash.toHexString());
   entity.txHash = event.transaction.hash;
   entity.timestamp = event.block.timestamp;
-  entity.job = event.params.jobKey.toString();
+  entity.job = event.params.jobKey.toHexString();
   entity.isActive = event.params.isActive_;
   entity.useJobOwnerCredits = event.params.useJobOwnerCredits_;
   entity.assertResolverSelector = event.params.assertResolverSelector_;
@@ -159,7 +159,7 @@ export function handleInitiateJobTransfer(event: InitiateJobTransferRandao): voi
   const entity = new InitiateJobTransferSchema(event.transaction.hash.toHexString());
   entity.txHash = event.transaction.hash;
   entity.timestamp = event.block.timestamp;
-  entity.job = event.params.jobKey.toString();
+  entity.job = event.params.jobKey.toHexString();
   entity.to = event.params.to;
   entity.from = event.params.from;
 
@@ -176,7 +176,7 @@ export function handleAcceptJobTransfer(event: AcceptJobTransferRandao): void {
   const entity = new AcceptJobTransferSchema(event.transaction.hash.toHexString());
   entity.txHash = event.transaction.hash;
   entity.timestamp = event.block.timestamp;
-  entity.job = event.params.jobKey_.toString();
+  entity.job = event.params.jobKey_.toHexString();
   entity.to = event.params.to_;
 
   entity.save();
@@ -226,7 +226,7 @@ export function handleSetJobPreDefinedCalldata(event: SetJobPreDefinedCalldataRa
   const entity = new SetJobPreDefinedCalldataSchema(event.transaction.hash.toHexString());
   entity.txHash = event.transaction.hash;
   entity.timestamp = event.block.timestamp;
-  entity.job = event.params.jobKey.toString();
+  entity.job = event.params.jobKey.toHexString();
   entity.preDefinedCalldata = event.params.preDefinedCalldata;
 
   entity.save();
@@ -242,7 +242,7 @@ export function handleSetJobResolver(event: SetJobResolverRandao): void {
   const entity = new SetJobResolverSchema(event.transaction.hash.toHexString());
   entity.txHash = event.transaction.hash;
   entity.timestamp = event.block.timestamp;
-  entity.job = event.params.jobKey.toString();
+  entity.job = event.params.jobKey.toHexString();
   entity.resolverAddress = event.params.resolverAddress;
   entity.resolverCalldata = event.params.resolverCalldata;
 
@@ -394,7 +394,7 @@ export function handleJobKeeperChanged(event: JobKeeperChanged): void {
   const keeperChanged = new JobKeeperChangedSchema(event.transaction.hash.toHexString());
   keeperChanged.txHash = event.transaction.hash;
   keeperChanged.timestamp = event.block.timestamp;
-  keeperChanged.job = event.params.jobKey.toString();
+  keeperChanged.job = event.params.jobKey.toHexString();
   keeperChanged.keeperFrom = event.params.keeperFrom.toString();
   keeperChanged.keeperTo = event.params.keeperTo.toString();
 
@@ -411,7 +411,7 @@ export function handleInitiateKeeperSlashing(event: InitiateKeeperSlashing): voi
   const slashing = new InitiateKeeperSlashingSchema(event.transaction.hash.toHexString());
   slashing.txHash = event.transaction.hash;
   slashing.timestamp = event.block.timestamp;
-  slashing.job = event.params.jobKey.toString();
+  slashing.job = event.params.jobKey.toHexString();
   slashing.slasherKeeper = event.params.slasherKeeperId.toString();
   slashing.useResolver = event.params.useResolver;
   slashing.jobSlashingPossibleAfter = event.params.jobSlashingPossibleAfter;
@@ -473,15 +473,15 @@ export function handleExecutionReverted(event: ExecutionReverted): void {
   revert.txNonce = event.transaction.nonce;
   revert.executionResponse = event.params.executionReturndata;
 
-  revert.job = event.params.jobKey.toString();
+  revert.job = event.params.jobKey.toHexString();
   revert.actualKeeper = event.params.actualKeeperId.toString();
   revert.assignedKeeper = event.params.assignedKeeperId.toString();
 
-  revert.save();
-
   const job = getJobByKey(event.params.jobKey.toHexString());
   job.credits = job.credits.minus(event.params.compensation)
+  revert.jobOwner = job.owner;
 
+  revert.save();
   job.save();
 }
 
@@ -495,7 +495,7 @@ export function handleSlashKeeper(event: SlashKeeper): void {
   slashKeeper.txIndex = event.transaction.index;
   slashKeeper.txNonce = event.transaction.nonce;
 
-  slashKeeper.job = event.params.jobKey.toString();
+  slashKeeper.job = event.params.jobKey.toHexString();
   slashKeeper.slashedKeeper = event.params.assignedKeeperId.toString();
   slashKeeper.slasherKeeper = event.params.actualKeeperId.toString();
 
