@@ -119,8 +119,8 @@ export function handleJobUpdate(event: JobUpdateRandao): void {
   commonHandleJobUpdate(fakeEvent);
 
   const jobUpdate = new JobUpdateSchema(event.transaction.hash.toHexString());
-  jobUpdate.txHash = event.transaction.hash;
-  jobUpdate.timestamp = event.block.timestamp;
+  jobUpdate.createTxHash = event.transaction.hash;
+  jobUpdate.createdAt = event.block.timestamp;
   jobUpdate.job = event.params.jobKey.toHexString();
   jobUpdate.maxBaseFeeGwei = event.params.maxBaseFeeGwei;
   jobUpdate.rewardPct = event.params.rewardPct;
@@ -139,8 +139,8 @@ export function handleSetJobConfig(event: SetJobConfigRandao): void {
   commonHandleSetJobConfig(fakeEvent);
 
   const entity = new SetJobConfigSchema(event.transaction.hash.toHexString());
-  entity.txHash = event.transaction.hash;
-  entity.timestamp = event.block.timestamp;
+  entity.createTxHash = event.transaction.hash;
+  entity.createdAt = event.block.timestamp;
   entity.job = event.params.jobKey.toHexString();
   entity.isActive = event.params.isActive_;
   entity.useJobOwnerCredits = event.params.useJobOwnerCredits_;
@@ -157,8 +157,8 @@ export function handleInitiateJobTransfer(event: InitiateJobTransferRandao): voi
   commonHandleInitiateJobTransfer(fakeEvent);
 
   const entity = new InitiateJobTransferSchema(event.transaction.hash.toHexString());
-  entity.txHash = event.transaction.hash;
-  entity.timestamp = event.block.timestamp;
+  entity.createTxHash = event.transaction.hash;
+  entity.createdAt = event.block.timestamp;
   entity.job = event.params.jobKey.toHexString();
   entity.to = event.params.to;
   entity.from = event.params.from;
@@ -174,8 +174,8 @@ export function handleAcceptJobTransfer(event: AcceptJobTransferRandao): void {
   commonHandleAcceptJobTransfer(fakeEvent);
 
   const entity = new AcceptJobTransferSchema(event.transaction.hash.toHexString());
-  entity.txHash = event.transaction.hash;
-  entity.timestamp = event.block.timestamp;
+  entity.createTxHash = event.transaction.hash;
+  entity.createdAt = event.block.timestamp;
   entity.job = event.params.jobKey_.toHexString();
   entity.to = event.params.to_;
 
@@ -224,8 +224,8 @@ export function handleSetJobPreDefinedCalldata(event: SetJobPreDefinedCalldataRa
   commonHandleSetJobPreDefinedCalldata(fakeEvent);
 
   const entity = new SetJobPreDefinedCalldataSchema(event.transaction.hash.toHexString());
-  entity.txHash = event.transaction.hash;
-  entity.timestamp = event.block.timestamp;
+  entity.createTxHash = event.transaction.hash;
+  entity.createdAt = event.block.timestamp;
   entity.job = event.params.jobKey.toHexString();
   entity.preDefinedCalldata = event.params.preDefinedCalldata;
 
@@ -240,8 +240,8 @@ export function handleSetJobResolver(event: SetJobResolverRandao): void {
   commonHandleSetJobResolver(fakeEvent);
 
   const entity = new SetJobResolverSchema(event.transaction.hash.toHexString());
-  entity.txHash = event.transaction.hash;
-  entity.timestamp = event.block.timestamp;
+  entity.createTxHash = event.transaction.hash;
+  entity.createdAt = event.block.timestamp;
   entity.job = event.params.jobKey.toHexString();
   entity.resolverAddress = event.params.resolverAddress;
   entity.resolverCalldata = event.params.resolverCalldata;
@@ -270,8 +270,8 @@ export function handleSetWorkerAddress(event: SetWorkerAddressRandao): void {
   commonHandleSetWorkerAddress(fakeEvent);
 
   const setAddress = new SetKeeperWorkerAddress(event.transaction.hash.toHexString());
-  setAddress.txHash = event.transaction.hash;
-  setAddress.timestamp = event.block.timestamp;
+  setAddress.createTxHash = event.transaction.hash;
+  setAddress.createdAt = event.block.timestamp;
   setAddress.keeper = event.params.keeperId.toString();
   setAddress.prev = event.params.prev;
   setAddress.worker = event.params.worker;
@@ -287,8 +287,8 @@ export function handleWithdrawCompensation(event: WithdrawCompensationRandao): v
   commonHandleWithdrawCompensation(fakeEvent);
 
   const compensation = new KeeperCompensation(event.transaction.hash.toHexString())
-  compensation.txHash = event.transaction.hash;
-  compensation.timestamp = event.block.timestamp;
+  compensation.createTxHash = event.transaction.hash;
+  compensation.createdAt = event.block.timestamp;
   compensation.keeper = event.params.keeperId.toString();
   compensation.to = event.params.to;
   compensation.amount = event.params.amount;
@@ -312,8 +312,8 @@ export function handleSlash(event: SlashRandao): void {
   commonHandleSlash(fakeEvent);
 
   const ownerSlash = new KeeperOwnerSlash(event.transaction.hash.toHexString());
-  ownerSlash.txHash = event.transaction.hash;
-  ownerSlash.timestamp = event.block.timestamp;
+  ownerSlash.createTxHash = event.transaction.hash;
+  ownerSlash.createdAt = event.block.timestamp;
   ownerSlash.keeper = event.params.keeperId.toString();
   ownerSlash.to = event.params.to;
   ownerSlash.currentAmount = event.params.currentAmount;
@@ -392,8 +392,8 @@ export function handleJobKeeperChanged(event: JobKeeperChanged): void {
   job.save();
 
   const keeperChanged = new JobKeeperChangedSchema(event.transaction.hash.toHexString());
-  keeperChanged.txHash = event.transaction.hash;
-  keeperChanged.timestamp = event.block.timestamp;
+  keeperChanged.createTxHash = event.transaction.hash;
+  keeperChanged.createdAt = event.block.timestamp;
   keeperChanged.job = event.params.jobKey.toHexString();
   keeperChanged.keeperFrom = event.params.keeperFrom.toString();
   keeperChanged.keeperTo = event.params.keeperTo.toString();
@@ -409,8 +409,8 @@ export function handleInitiateKeeperSlashing(event: InitiateKeeperSlashing): voi
   job.save();
 
   const slashing = new InitiateKeeperSlashingSchema(event.transaction.hash.toHexString());
-  slashing.txHash = event.transaction.hash;
-  slashing.timestamp = event.block.timestamp;
+  slashing.createTxHash = event.transaction.hash;
+  slashing.createdAt = event.block.timestamp;
   slashing.job = event.params.jobKey.toHexString();
   slashing.slasherKeeper = event.params.slasherKeeperId.toString();
   slashing.useResolver = event.params.useResolver;
@@ -426,8 +426,8 @@ export function handleDisableKeeper(event: DisableKeeper): void {
   keeper.save();
 
   const disableEvent = new DisableKeeperSchema(event.transaction.hash.toHexString());
-  disableEvent.txHash = event.transaction.hash;
-  disableEvent.timestamp = event.block.timestamp;
+  disableEvent.createTxHash = event.transaction.hash;
+  disableEvent.createdAt = event.block.timestamp;
   disableEvent.keeper = event.params.keeperId.toString();
 
   disableEvent.save();
@@ -440,8 +440,8 @@ export function handleInitKeeperActivation(event: InitiateKeeperActivation): voi
   keeper.save();
 
   const init = new InitiateKeeperActivationSchema(event.transaction.hash.toHexString());
-  init.txHash = event.transaction.hash;
-  init.timestamp = event.block.timestamp;
+  init.createTxHash = event.transaction.hash;
+  init.createdAt = event.block.timestamp;
   init.keeper = event.params.keeperId.toString();
   init.canBeFinalizedAt = event.params.canBeFinalizedAt;
 
@@ -456,8 +456,8 @@ export function handleFinalizeKeeperActivation(event: FinalizeKeeperActivation):
   keeper.save();
 
   const finalize = new FinalizeKeeperActivationSchema(event.transaction.hash.toHexString());
-  finalize.txHash = event.transaction.hash;
-  finalize.timestamp = event.block.timestamp;
+  finalize.createTxHash = event.transaction.hash;
+  finalize.createdAt = event.block.timestamp;
   finalize.keeper = event.params.keeperId.toString();
 
   finalize.save();
@@ -467,8 +467,8 @@ export function handleExecutionReverted(event: ExecutionReverted): void {
   const id = event.transaction.hash.toHexString();
   const revert = new ExecutionRevert(id);
 
-  revert.txHash = event.transaction.hash;
-  revert.timestamp = event.block.timestamp;
+  revert.createTxHash = event.transaction.hash;
+  revert.createdAt = event.block.timestamp;
   revert.txIndex = event.transaction.index;
   revert.txNonce = event.transaction.nonce;
   revert.executionResponse = event.params.executionReturndata;
@@ -490,8 +490,8 @@ export function handleSlashKeeper(event: SlashKeeper): void {
   const id = event.transaction.hash.toHexString();
   const slashKeeper = new SlashKeeperSchema(id);
 
-  slashKeeper.txHash = event.transaction.hash;
-  slashKeeper.timestamp = event.block.timestamp;
+  slashKeeper.createTxHash = event.transaction.hash;
+  slashKeeper.createdAt = event.block.timestamp;
   slashKeeper.txIndex = event.transaction.index;
   slashKeeper.txNonce = event.transaction.nonce;
 

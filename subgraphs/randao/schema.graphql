@@ -2,9 +2,9 @@
 
 type Execution @entity {
     id: ID!
-    timestamp: BigInt!
+    createdAt: BigInt!
     block: BigInt!
-    txHash: Bytes!
+    createTxHash: Bytes!
     keeper: Keeper!
     keeperWorker: Bytes!
 
@@ -34,8 +34,8 @@ type Execution @entity {
 type Job @entity {
     "jobKey"
     id: ID!
-    txHash: Bytes!
-    timestamp: BigInt!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     active: Boolean!
     jobAddress: Bytes!
     jobId: BigInt!
@@ -85,8 +85,8 @@ type Job @entity {
 
 type ExecutionRevert @entity {
     id: ID!
-    txHash: Bytes!
-    timestamp: BigInt!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     txIndex: BigInt!
     txNonce: BigInt!
     executionResponse: Bytes!
@@ -99,10 +99,10 @@ type ExecutionRevert @entity {
 
 type JobDeposit @entity {
     id: ID!
-    txHash: Bytes!
+    createTxHash: Bytes!
     job: Job!
     depositor: Bytes!
-    timestamp: BigInt!
+    createdAt: BigInt!
 
     amount: BigInt!
     fee: BigInt!
@@ -112,11 +112,11 @@ type JobDeposit @entity {
 
 type JobWithdrawal @entity {
     id: ID!
-    txHash: Bytes!
+    createTxHash: Bytes!
     job: Job!
     owner: Bytes!
     to: Bytes!
-    timestamp: BigInt!
+    createdAt: BigInt!
 
     amount: BigInt!
 }
@@ -125,8 +125,8 @@ type JobWithdrawal @entity {
 
 type InitiateJobTransfer @entity {
     id: ID!
-    txHash: Bytes!
-    timestamp: BigInt!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     job: Job!
     to: Bytes!
     from: Bytes!
@@ -134,16 +134,16 @@ type InitiateJobTransfer @entity {
 
 type AcceptJobTransfer @entity {
     id: ID!
-    txHash: Bytes!
-    timestamp: BigInt!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     job: Job!
     to: Bytes!
 }
 
 type SetJobConfig @entity {
     id: ID!
-    txHash: Bytes!
-    timestamp: BigInt!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     job: Job!
     isActive: Boolean!
     useJobOwnerCredits: Boolean!
@@ -152,16 +152,16 @@ type SetJobConfig @entity {
 
 type SetJobPreDefinedCalldata @entity {
     id: ID!
-    txHash: Bytes!
-    timestamp: BigInt!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     job: Job!
     preDefinedCalldata: Bytes!
 }
 
 type SetJobResolver @entity {
     id: ID!
-    txHash: Bytes!
-    timestamp: BigInt!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     job: Job!
     resolverAddress: Bytes!
     resolverCalldata: Bytes!
@@ -169,8 +169,8 @@ type SetJobResolver @entity {
 
 type JobUpdate @entity {
     id: ID!
-    txHash: Bytes!
-    timestamp: BigInt!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     job: Job!
     maxBaseFeeGwei: BigInt!
     rewardPct: BigInt!
@@ -181,8 +181,8 @@ type JobUpdate @entity {
 
 type JobKeeperChanged @entity {
     id: ID!
-    txHash: Bytes!
-    timestamp: BigInt!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     job: Job!
     keeperFrom: Keeper!
     keeperTo: Keeper!
@@ -204,10 +204,10 @@ type JobOwner @entity {
 
 type JobOwnerDeposit @entity {
     id: ID!
-    txHash: Bytes!
+    createTxHash: Bytes!
     jobOwner: JobOwner!
     depositor: Bytes!
-    timestamp: BigInt!
+    createdAt: BigInt!
 
     amount: BigInt!
     fee: BigInt!
@@ -217,10 +217,10 @@ type JobOwnerDeposit @entity {
 
 type JobOwnerWithdrawal @entity {
     id: ID!
-    txHash: Bytes!
+    createTxHash: Bytes!
     jobOwner: JobOwner!
     to: Bytes!
-    timestamp: BigInt!
+    createdAt: BigInt!
 
     amount: BigInt!
 }
@@ -229,8 +229,8 @@ type JobOwnerWithdrawal @entity {
 
 type Keeper @entity {
     id: ID!
-    txHash: Bytes!
-    timestamp: BigInt!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     active: Boolean!
     keeperActivationCanBeFinalizedAt: BigInt!
     numericalId: BigInt!
@@ -265,8 +265,8 @@ type Keeper @entity {
 
 type SlashKeeper @entity {
     id: ID!
-    txHash: Bytes!
-    timestamp: BigInt!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     txIndex: BigInt!
     txNonce: BigInt!
     job: Job!
@@ -280,19 +280,19 @@ type SlashKeeper @entity {
 
 type KeeperStake @entity {
     id: ID!
-    txHash: Bytes!
+    createTxHash: Bytes!
     keeper: Keeper!
     staker: Bytes!
     amount: BigInt!
-    timestamp: BigInt!
+    createdAt: BigInt!
 }
 
 type KeeperRedeemInit @entity {
     id: ID!
-    txHash: Bytes!
+    createTxHash: Bytes!
     keeper: Keeper!
     initiatedAt: BigInt!
-    timestamp: BigInt!
+    createdAt: BigInt!
     availableAt: BigInt!
     cooldownSeconds: BigInt!
 
@@ -303,10 +303,10 @@ type KeeperRedeemInit @entity {
 
 type KeeperRedeemFinalize @entity {
     id: ID!
-    txHash: Bytes!
+    createTxHash: Bytes!
     keeper: Keeper!
     to: Bytes!
-    timestamp: BigInt!
+    createdAt: BigInt!
 
     amount: BigInt!
 }
@@ -315,30 +315,30 @@ type KeeperRedeemFinalize @entity {
 
 type FinalizeKeeperActivation @entity {
     id: ID!
-    txHash: Bytes!
-    timestamp: BigInt!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     keeper: Keeper!
 }
 
 type InitiateKeeperActivation @entity {
     id: ID!
-    txHash: Bytes!
-    timestamp: BigInt!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     keeper: Keeper!
     canBeFinalizedAt: BigInt!
 }
 
 type DisableKeeper @entity {
     id: ID!
-    txHash: Bytes!
-    timestamp: BigInt!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     keeper: Keeper!
 }
 
 type KeeperOwnerSlash @entity {
     id: ID!
-    txHash: Bytes!
-    timestamp: BigInt!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     keeper: Keeper!
     to: Bytes!
     currentAmount: BigInt!
@@ -347,8 +347,8 @@ type KeeperOwnerSlash @entity {
 
 type KeeperCompensation @entity {
     id: ID!
-    txHash: Bytes!
-    timestamp: BigInt!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     keeper: Keeper!
     to: Bytes!
     amount: BigInt!
@@ -356,8 +356,8 @@ type KeeperCompensation @entity {
 
 type SetKeeperWorkerAddress @entity {
     id: ID!
-    txHash: Bytes!
-    timestamp: BigInt!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     keeper: Keeper!
     prev: Bytes!
     worker: Bytes!
@@ -365,8 +365,8 @@ type SetKeeperWorkerAddress @entity {
 
 type InitiateKeeperSlashing @entity {
     id: ID!
-    txHash: Bytes!
-    timestamp: BigInt!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     job: Job!
     slasherKeeper: Keeper!
     useResolver: Boolean!

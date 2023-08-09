@@ -2,9 +2,9 @@
 
 type Execution @entity {
     id: ID!
-    timestamp: BigInt!
+    createdAt: BigInt!
     block: BigInt!
-    txHash: Bytes!
+    createTxHash: Bytes!
     keeper: Keeper!
     keeperWorker: Bytes!
 
@@ -34,8 +34,8 @@ type Execution @entity {
 type Job @entity {
     "jobKey"
     id: ID!
-    txHash: Bytes!
-    timestamp: BigInt!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     active: Boolean!
     jobAddress: Bytes!
     jobId: BigInt!
@@ -82,10 +82,10 @@ type Job @entity {
 
 type JobDeposit @entity {
     id: ID!
-    txHash: Bytes!
+    createTxHash: Bytes!
     job: Job!
     depositor: Bytes!
-    timestamp: BigInt!
+    createdAt: BigInt!
 
     amount: BigInt!
     fee: BigInt!
@@ -95,11 +95,11 @@ type JobDeposit @entity {
 
 type JobWithdrawal @entity {
     id: ID!
-    txHash: Bytes!
+    createTxHash: Bytes!
     job: Job!
     owner: Bytes!
     to: Bytes!
-    timestamp: BigInt!
+    createdAt: BigInt!
 
     amount: BigInt!
 }
@@ -120,10 +120,10 @@ type JobOwner @entity {
 
 type JobOwnerDeposit @entity {
     id: ID!
-    txHash: Bytes!
+    createTxHash: Bytes!
     jobOwner: JobOwner!
     depositor: Bytes!
-    timestamp: BigInt!
+    createdAt: BigInt!
 
     amount: BigInt!
     fee: BigInt!
@@ -133,10 +133,10 @@ type JobOwnerDeposit @entity {
 
 type JobOwnerWithdrawal @entity {
     id: ID!
-    txHash: Bytes!
+    createTxHash: Bytes!
     jobOwner: JobOwner!
     to: Bytes!
-    timestamp: BigInt!
+    createdAt: BigInt!
 
     amount: BigInt!
 }
@@ -145,8 +145,8 @@ type JobOwnerWithdrawal @entity {
 
 type Keeper @entity {
     id: ID!
-    txHash: Bytes!
-    timestamp: BigInt!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     active: Boolean!
     keeperActivationCanBeFinalizedAt: BigInt!
     numericalId: BigInt!
@@ -174,19 +174,19 @@ type Keeper @entity {
 
 type KeeperStake @entity {
     id: ID!
-    txHash: Bytes!
+    createTxHash: Bytes!
     keeper: Keeper!
     staker: Bytes!
     amount: BigInt!
-    timestamp: BigInt!
+    createdAt: BigInt!
 }
 
 type KeeperRedeemInit @entity {
     id: ID!
-    txHash: Bytes!
+    createTxHash: Bytes!
     keeper: Keeper!
     initiatedAt: BigInt!
-    timestamp: BigInt!
+    createdAt: BigInt!
     availableAt: BigInt!
     cooldownSeconds: BigInt!
 
@@ -197,10 +197,10 @@ type KeeperRedeemInit @entity {
 
 type KeeperRedeemFinalize @entity {
     id: ID!
-    txHash: Bytes!
+    createTxHash: Bytes!
     keeper: Keeper!
     to: Bytes!
-    timestamp: BigInt!
+    createdAt: BigInt!
 
     amount: BigInt!
 }
