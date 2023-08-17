@@ -70,7 +70,7 @@ import {
 import {BigInt} from "@graphprotocol/graph-ts";
 import {getOrCreateRandaoAgent, getJobByKey} from "./initializers";
 import {
-  BIG_INT_ONE, BIG_INT_ZERO, getKeeper, ZERO_ADDRESS,
+  BIG_INT_ONE, BIG_INT_ZERO, getKeeper, getOrCreateJobOwner, ZERO_ADDRESS,
 } from "../../../common/helpers/initializers";
 
 import {
@@ -479,10 +479,18 @@ export function handleExecutionReverted(event: ExecutionReverted): void {
   revert.assignedKeeper = event.params.assignedKeeperId.toString();
 
   const job = getJobByKey(event.params.jobKey.toHexString());
-  job.credits = job.credits.minus(event.params.compensation)
-  revert.jobOwner = job.owner;
 
+  revert.jobOwner = job.owner;
   revert.save();
+
+  if (job.useJobOwnerCredits) {
+    const jobOwner = getOrCreateJobOwner(job.owner);
+    jobOwner.credits = jobOwner.credits.minus(event.params.compensation);
+    jobOwner.save();
+  } else {
+    job.credits = job.credits.minus(event.params.compensation);
+  }
+
   job.save();
 }
 
