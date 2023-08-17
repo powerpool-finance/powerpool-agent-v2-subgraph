@@ -471,6 +471,7 @@ export function handleExecutionReverted(event: ExecutionReverted): void {
   revert.createdAt = event.block.timestamp;
   revert.txIndex = event.transaction.index;
   revert.txNonce = event.transaction.nonce;
+  revert.compensation = event.params.compensation;
   revert.executionResponse = event.params.executionReturndata;
   revert.compensation = event.params.compensation;
 

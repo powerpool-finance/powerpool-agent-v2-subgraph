@@ -90,6 +90,7 @@ type ExecutionRevert @entity {
     createdAt: BigInt!
     txIndex: BigInt!
     txNonce: BigInt!
+    compensation: BigInt!
     executionResponse: Bytes!
     compensation: BigInt!
 
