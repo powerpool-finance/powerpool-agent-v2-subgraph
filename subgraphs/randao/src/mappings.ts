@@ -491,6 +491,8 @@ export function handleExecutionReverted(event: ExecutionReverted): void {
     job.credits = job.credits.minus(event.params.compensation);
   }
 
+  job.executionRevertCount = job.executionRevertCount.plus(BIG_INT_ONE);
+
   job.save();
 }
 
