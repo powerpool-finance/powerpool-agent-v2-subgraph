@@ -2,14 +2,15 @@
 
 type Execution @entity {
     id: ID!
-    timestamp: BigInt!
+    createdAt: BigInt!
     block: BigInt!
-    txHash: Bytes!
+    createTxHash: Bytes!
     keeper: Keeper!
     keeperWorker: Bytes!
 
     job: Job!
     jobAddress: Bytes!
+    jobOwner: String!
     binJobAfter: Bytes!
 
     compensation: BigInt!
@@ -33,6 +34,8 @@ type Execution @entity {
 type Job @entity {
     "jobKey"
     id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     active: Boolean!
     jobAddress: Bytes!
     jobId: BigInt!
@@ -82,21 +85,24 @@ type Job @entity {
 
 type ExecutionRevert @entity {
     id: ID!
-    txHash: Bytes!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     txIndex: BigInt!
     txNonce: BigInt!
     executionResponse: Bytes!
 
     job: Job!
+    jobOwner: String!
     actualKeeper: Keeper!
     assignedKeeper: Keeper!
 }
 
 type JobDeposit @entity {
     id: ID!
+    createTxHash: Bytes!
     job: Job!
     depositor: Bytes!
-    timestamp: BigInt!
+    createdAt: BigInt!
 
     amount: BigInt!
     fee: BigInt!
@@ -106,12 +112,80 @@ type JobDeposit @entity {
 
 type JobWithdrawal @entity {
     id: ID!
+    createTxHash: Bytes!
     job: Job!
     owner: Bytes!
     to: Bytes!
-    timestamp: BigInt!
+    createdAt: BigInt!
 
     amount: BigInt!
+}
+
+### JOB DEBUG EVENTS ###
+
+type InitiateJobTransfer @entity {
+    id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
+    job: Job!
+    to: Bytes!
+    from: Bytes!
+}
+
+type AcceptJobTransfer @entity {
+    id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
+    job: Job!
+    to: Bytes!
+}
+
+type SetJobConfig @entity {
+    id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
+    job: Job!
+    isActive: Boolean!
+    useJobOwnerCredits: Boolean!
+    assertResolverSelector: Boolean!
+}
+
+type SetJobPreDefinedCalldata @entity {
+    id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
+    job: Job!
+    preDefinedCalldata: Bytes!
+}
+
+type SetJobResolver @entity {
+    id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
+    job: Job!
+    resolverAddress: Bytes!
+    resolverCalldata: Bytes!
+}
+
+type JobUpdate @entity {
+    id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
+    job: Job!
+    maxBaseFeeGwei: BigInt!
+    rewardPct: BigInt!
+    fixedReward: BigInt!
+    jobMinCvp: BigInt!
+    intervalSeconds: BigInt!
+}
+
+type JobKeeperChanged @entity {
+    id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
+    job: Job!
+    keeperFrom: Keeper!
+    keeperTo: Keeper!
 }
 
 ### JOB OWNER ###
@@ -130,9 +204,10 @@ type JobOwner @entity {
 
 type JobOwnerDeposit @entity {
     id: ID!
+    createTxHash: Bytes!
     jobOwner: JobOwner!
     depositor: Bytes!
-    timestamp: BigInt!
+    createdAt: BigInt!
 
     amount: BigInt!
     fee: BigInt!
@@ -142,9 +217,10 @@ type JobOwnerDeposit @entity {
 
 type JobOwnerWithdrawal @entity {
     id: ID!
+    createTxHash: Bytes!
     jobOwner: JobOwner!
     to: Bytes!
-    timestamp: BigInt!
+    createdAt: BigInt!
 
     amount: BigInt!
 }
@@ -153,6 +229,8 @@ type JobOwnerWithdrawal @entity {
 
 type Keeper @entity {
     id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     active: Boolean!
     keeperActivationCanBeFinalizedAt: BigInt!
     numericalId: BigInt!
@@ -187,7 +265,8 @@ type Keeper @entity {
 
 type SlashKeeper @entity {
     id: ID!
-    txHash: Bytes!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     txIndex: BigInt!
     txNonce: BigInt!
     job: Job!
@@ -196,20 +275,24 @@ type SlashKeeper @entity {
     fixedSlashAmount: BigInt!
     dynamicSlashAmount: BigInt!
     slashAmountMissing: BigInt!
+    slashAmountResult: BigInt!
 }
 
 type KeeperStake @entity {
     id: ID!
+    createTxHash: Bytes!
     keeper: Keeper!
     staker: Bytes!
     amount: BigInt!
-    timestamp: BigInt!
+    createdAt: BigInt!
 }
 
 type KeeperRedeemInit @entity {
     id: ID!
+    createTxHash: Bytes!
     keeper: Keeper!
     initiatedAt: BigInt!
+    createdAt: BigInt!
     availableAt: BigInt!
     cooldownSeconds: BigInt!
 
@@ -220,11 +303,74 @@ type KeeperRedeemInit @entity {
 
 type KeeperRedeemFinalize @entity {
     id: ID!
+    createTxHash: Bytes!
     keeper: Keeper!
     to: Bytes!
-    timestamp: BigInt!
+    createdAt: BigInt!
 
     amount: BigInt!
+}
+
+### KEEPER DEBUG EVENTS ###
+
+type FinalizeKeeperActivation @entity {
+    id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
+    keeper: Keeper!
+}
+
+type InitiateKeeperActivation @entity {
+    id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
+    keeper: Keeper!
+    canBeFinalizedAt: BigInt!
+}
+
+type DisableKeeper @entity {
+    id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
+    keeper: Keeper!
+}
+
+type KeeperOwnerSlash @entity {
+    id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
+    keeper: Keeper!
+    to: Bytes!
+    currentAmount: BigInt!
+    pendingAmount: BigInt!
+}
+
+type KeeperCompensation @entity {
+    id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
+    keeper: Keeper!
+    to: Bytes!
+    amount: BigInt!
+}
+
+type SetKeeperWorkerAddress @entity {
+    id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
+    keeper: Keeper!
+    prev: Bytes!
+    worker: Bytes!
+}
+
+type InitiateKeeperSlashing @entity {
+    id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
+    job: Job!
+    slasherKeeper: Keeper!
+    useResolver: Boolean!
+    jobSlashingPossibleAfter: BigInt!
 }
 
 ### AGENT (SINGLETON) ###
