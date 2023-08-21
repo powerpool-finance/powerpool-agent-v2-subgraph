@@ -471,7 +471,19 @@ export function handleExecutionReverted(event: ExecutionReverted): void {
   revert.createdAt = event.block.timestamp;
   revert.txIndex = event.transaction.index;
   revert.txNonce = event.transaction.nonce;
+
+  revert.txGasUsed = event.receipt!.gasUsed;
+  revert.txGasLimit = event.transaction.gasLimit;
+
+  revert.baseFee = event.block.baseFeePerGas as BigInt;
+  revert.gasPrice = event.transaction.gasPrice as BigInt;
   revert.compensation = event.params.compensation;
+  revert.profit = BIG_INT_ZERO;
+  if (revert.txGasUsed.gt(BIG_INT_ZERO)) {
+    revert.expenses = revert.gasPrice.times(revert.txGasUsed);
+    revert.profit = event.params.compensation.minus(revert.expenses);
+  }
+
   revert.executionResponse = event.params.executionReturndata;
   revert.compensation = event.params.compensation;
 
@@ -493,6 +505,7 @@ export function handleExecutionReverted(event: ExecutionReverted): void {
   }
 
   job.executionRevertCount = job.executionRevertCount.plus(BIG_INT_ONE);
+  job.totalCompensations = job.totalCompensations.plus(revert.compensation);
 
   job.save();
 }

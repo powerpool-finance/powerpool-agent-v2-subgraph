@@ -63,6 +63,7 @@ type Job @entity {
     resolverCalldata: Bytes
 
     executionCount: BigInt!
+    executionRevertCount: BigInt!
     depositCount: BigInt!
     withdrawalCount: BigInt!
 

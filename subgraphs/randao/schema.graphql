@@ -86,13 +86,22 @@ type Job @entity {
 
 type ExecutionRevert @entity {
     id: ID!
+
     createTxHash: Bytes!
     createdAt: BigInt!
     txIndex: BigInt!
     txNonce: BigInt!
+
+    txGasUsed: BigInt!
+    txGasLimit: BigInt!
+
+    baseFee: BigInt!
+    gasPrice: BigInt!
     compensation: BigInt!
+    profit: BigInt!
+    expenses: BigInt!
+
     executionResponse: Bytes!
-    compensation: BigInt!
 
     job: Job!
     jobOwner: String!
