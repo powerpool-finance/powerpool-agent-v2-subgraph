@@ -81,7 +81,7 @@ type Job @entity {
     deposits: [JobDeposit!]! @derivedFrom(field: "job")
     withdrawals: [JobWithdrawal!]! @derivedFrom(field: "job")
     executionReverts: [ExecutionRevert!]! @derivedFrom(field: "job")
-    SlashKeeper: [SlashKeeper!]! @derivedFrom(field: "job")
+    keeperSlashings: [SlashKeeper!]! @derivedFrom(field: "job")
 }
 
 type ExecutionRevert @entity {
@@ -271,8 +271,8 @@ type Keeper @entity {
     executionRevertsActual: [ExecutionRevert!]! @derivedFrom(field: "actualKeeper")
     executionRevertsAssigned: [ExecutionRevert!]! @derivedFrom(field: "assignedKeeper")
 
-    SlashKeeperExpected: [SlashKeeper!]! @derivedFrom(field: "slashedKeeper")
-    SlashKeeperActual: [SlashKeeper!]! @derivedFrom(field: "slasherKeeper")
+    wasSlashed: [SlashKeeper!]! @derivedFrom(field: "slashedKeeper")
+    slashedOthers: [SlashKeeper!]! @derivedFrom(field: "slasherKeeper")
 }
 
 type SlashKeeper @entity {
