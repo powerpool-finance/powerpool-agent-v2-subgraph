@@ -90,6 +90,7 @@ type ExecutionRevert @entity {
     txIndex: BigInt!
     txNonce: BigInt!
     executionResponse: Bytes!
+    compensation: BigInt!
 
     job: Job!
     jobOwner: String!
@@ -345,7 +346,7 @@ type KeeperOwnerSlash @entity {
     pendingAmount: BigInt!
 }
 
-type KeeperCompensation @entity {
+type WithdrawKeeperCompensation @entity {
     id: ID!
     createTxHash: Bytes!
     createdAt: BigInt!

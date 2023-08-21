@@ -74,7 +74,7 @@ import {
 } from "../../../common/helpers/initializers";
 
 import {
-  ExecutionRevert, KeeperCompensation,
+  ExecutionRevert, WithdrawKeeperCompensation,
   SlashKeeper as SlashKeeperSchema,
   SetKeeperWorkerAddress,
   KeeperOwnerSlash,
@@ -286,7 +286,7 @@ export function handleWithdrawCompensation(event: WithdrawCompensationRandao): v
   );
   commonHandleWithdrawCompensation(fakeEvent);
 
-  const compensation = new KeeperCompensation(event.transaction.hash.toHexString())
+  const compensation = new WithdrawKeeperCompensation(event.transaction.hash.toHexString())
   compensation.createTxHash = event.transaction.hash;
   compensation.createdAt = event.block.timestamp;
   compensation.keeper = event.params.keeperId.toString();
@@ -472,6 +472,7 @@ export function handleExecutionReverted(event: ExecutionReverted): void {
   revert.txIndex = event.transaction.index;
   revert.txNonce = event.transaction.nonce;
   revert.executionResponse = event.params.executionReturndata;
+  revert.compensation = event.params.compensation;
 
   revert.job = event.params.jobKey.toHexString();
   revert.actualKeeper = event.params.actualKeeperId.toString();
