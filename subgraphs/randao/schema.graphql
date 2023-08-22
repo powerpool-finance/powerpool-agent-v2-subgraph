@@ -63,6 +63,7 @@ type Job @entity {
     resolverCalldata: Bytes
 
     executionCount: BigInt!
+    executionRevertCount: BigInt!
     depositCount: BigInt!
     withdrawalCount: BigInt!
 
@@ -80,17 +81,27 @@ type Job @entity {
     deposits: [JobDeposit!]! @derivedFrom(field: "job")
     withdrawals: [JobWithdrawal!]! @derivedFrom(field: "job")
     executionReverts: [ExecutionRevert!]! @derivedFrom(field: "job")
-    SlashKeeper: [SlashKeeper!]! @derivedFrom(field: "job")
+    keeperSlashings: [SlashKeeper!]! @derivedFrom(field: "job")
 }
 
 type ExecutionRevert @entity {
     id: ID!
+
     createTxHash: Bytes!
     createdAt: BigInt!
     txIndex: BigInt!
     txNonce: BigInt!
-    executionResponse: Bytes!
+
+    txGasUsed: BigInt!
+    txGasLimit: BigInt!
+
+    baseFee: BigInt!
+    gasPrice: BigInt!
     compensation: BigInt!
+    profit: BigInt!
+    expenses: BigInt!
+
+    executionResponse: Bytes!
 
     job: Job!
     jobOwner: String!
@@ -260,8 +271,8 @@ type Keeper @entity {
     executionRevertsActual: [ExecutionRevert!]! @derivedFrom(field: "actualKeeper")
     executionRevertsAssigned: [ExecutionRevert!]! @derivedFrom(field: "assignedKeeper")
 
-    SlashKeeperExpected: [SlashKeeper!]! @derivedFrom(field: "slashedKeeper")
-    SlashKeeperActual: [SlashKeeper!]! @derivedFrom(field: "slasherKeeper")
+    wasSlashed: [SlashKeeper!]! @derivedFrom(field: "slashedKeeper")
+    slashedOthers: [SlashKeeper!]! @derivedFrom(field: "slasherKeeper")
 }
 
 type SlashKeeper @entity {
