@@ -89,6 +89,7 @@ import {
   SetJobConfig as SetJobConfigSchema,
   AcceptJobTransfer as AcceptJobTransferSchema,
   InitiateJobTransfer as InitiateJobTransferSchema,
+  Execution,
 } from "../generated/schema";
 
 export function handleExecution(event: ExecuteRandao): void {
@@ -531,8 +532,23 @@ export function handleSlashKeeper(event: SlashKeeper): void {
   const totalSlashAmount = slashKeeper.fixedSlashAmount.plus(slashKeeper.dynamicSlashAmount).minus(slashKeeper.slashAmountMissing);
   slashKeeper.slashAmountResult = totalSlashAmount;
 
-  slashKeeper.save();
+  // Link either to execution or executionRevert
+  {
+    const txHash = event.transaction.hash.toHexString();
 
+    // Try execution first
+    let execution = Execution.load(txHash);
+    if (!execution) {
+      // Then it should be executionRevert
+      let executionRevert = ExecutionRevert.load(txHash);
+      if (!executionRevert) {
+        throw new Error(`Neither execution nor execution revert found for tx ${txHash}.`);
+      }
+      slashKeeper.executionRevert = txHash;
+    }
+    slashKeeper.execution = txHash;
+  }
+  slashKeeper.save();
 
   const slasherId = event.params.actualKeeperId.toString();
   const slashedId = event.params.assignedKeeperId.toString();

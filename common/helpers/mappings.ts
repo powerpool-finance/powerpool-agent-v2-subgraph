@@ -30,7 +30,7 @@ import {BigInt, ByteArray, Bytes} from "@graphprotocol/graph-ts";
 const FLAG_ACCRUE_REWARD = BIG_INT_TWO;
 
 export function commonHandleExecution(event: Execute): void {
-  const id = event.block.timestamp.toString().concat("-").concat(event.transaction.hash.toHexString());
+  const id = event.transaction.hash.toHexString();
   let execution = new Execution(id);
   const jobKey = event.params.jobKey.toHexString();
   execution.txCalldata = event.transaction.input;
