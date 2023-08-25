@@ -546,4 +546,8 @@ export function handleSlashKeeper(event: SlashKeeper): void {
 
   slashedKeeper.save();
   slasherKeeper.save();
+
+  const job = getJobByKey(event.params.jobKey.toHexString());
+  job.slashingCount = job.slashingCount.plus(BIG_INT_ONE);
+  job.save();
 }

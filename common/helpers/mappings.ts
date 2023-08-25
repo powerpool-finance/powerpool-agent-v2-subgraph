@@ -130,6 +130,7 @@ export function commonHandleRegisterJob(event: RegisterJob): void {
 
   job.executionCount = BIG_INT_ZERO;
   job.executionRevertCount = BIG_INT_ZERO;
+  job.slashingCount = BIG_INT_ZERO;
   job.depositCount = BIG_INT_ZERO;
   job.withdrawalCount = BIG_INT_ZERO;
 
