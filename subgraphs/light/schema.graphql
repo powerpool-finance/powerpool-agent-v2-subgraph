@@ -64,6 +64,7 @@ type Job @entity {
 
     executionCount: BigInt!
     executionRevertCount: BigInt!
+    slashingCount: BigInt!
     depositCount: BigInt!
     withdrawalCount: BigInt!
 

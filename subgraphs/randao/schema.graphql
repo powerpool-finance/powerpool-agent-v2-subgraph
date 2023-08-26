@@ -29,6 +29,8 @@ type Execution @entity {
     txCalldata: Bytes!
     jobCalldata: Bytes!
     keeperConfig: BigInt!
+
+    correspondingSlashing: SlashKeeper @derivedFrom(field: "execution")
 }
 
 type Job @entity {
@@ -64,6 +66,7 @@ type Job @entity {
 
     executionCount: BigInt!
     executionRevertCount: BigInt!
+    slashingCount: BigInt!
     depositCount: BigInt!
     withdrawalCount: BigInt!
 
@@ -107,6 +110,8 @@ type ExecutionRevert @entity {
     jobOwner: String!
     actualKeeper: Keeper!
     assignedKeeper: Keeper!
+
+    correspondingSlashing: SlashKeeper @derivedFrom(field: "executionRevert")
 }
 
 type JobDeposit @entity {
@@ -284,6 +289,8 @@ type SlashKeeper @entity {
     job: Job!
     slashedKeeper: Keeper!
     slasherKeeper: Keeper!
+    execution: Execution
+    executionRevert: ExecutionRevert
     fixedSlashAmount: BigInt!
     dynamicSlashAmount: BigInt!
     slashAmountMissing: BigInt!
