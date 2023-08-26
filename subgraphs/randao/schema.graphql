@@ -29,6 +29,8 @@ type Execution @entity {
     txCalldata: Bytes!
     jobCalldata: Bytes!
     keeperConfig: BigInt!
+
+    correspondingSlashing: SlashKeeper @derivedFrom(field: "execution")
 }
 
 type Job @entity {
@@ -63,6 +65,8 @@ type Job @entity {
     resolverCalldata: Bytes
 
     executionCount: BigInt!
+    executionRevertCount: BigInt!
+    slashingCount: BigInt!
     depositCount: BigInt!
     withdrawalCount: BigInt!
 
@@ -80,15 +84,26 @@ type Job @entity {
     deposits: [JobDeposit!]! @derivedFrom(field: "job")
     withdrawals: [JobWithdrawal!]! @derivedFrom(field: "job")
     executionReverts: [ExecutionRevert!]! @derivedFrom(field: "job")
-    SlashKeeper: [SlashKeeper!]! @derivedFrom(field: "job")
+    keeperSlashings: [SlashKeeper!]! @derivedFrom(field: "job")
 }
 
 type ExecutionRevert @entity {
     id: ID!
+
     createTxHash: Bytes!
     createdAt: BigInt!
     txIndex: BigInt!
     txNonce: BigInt!
+
+    txGasUsed: BigInt!
+    txGasLimit: BigInt!
+
+    baseFee: BigInt!
+    gasPrice: BigInt!
+    compensation: BigInt!
+    profit: BigInt!
+    expenses: BigInt!
+
     executionResponse: Bytes!
     compensation: BigInt!
 
@@ -96,6 +111,8 @@ type ExecutionRevert @entity {
     jobOwner: String!
     actualKeeper: Keeper!
     assignedKeeper: Keeper!
+
+    correspondingSlashing: SlashKeeper @derivedFrom(field: "executionRevert")
 }
 
 type JobDeposit @entity {
@@ -260,8 +277,8 @@ type Keeper @entity {
     executionRevertsActual: [ExecutionRevert!]! @derivedFrom(field: "actualKeeper")
     executionRevertsAssigned: [ExecutionRevert!]! @derivedFrom(field: "assignedKeeper")
 
-    SlashKeeperExpected: [SlashKeeper!]! @derivedFrom(field: "slashedKeeper")
-    SlashKeeperActual: [SlashKeeper!]! @derivedFrom(field: "slasherKeeper")
+    wasSlashed: [SlashKeeper!]! @derivedFrom(field: "slashedKeeper")
+    slashedOthers: [SlashKeeper!]! @derivedFrom(field: "slasherKeeper")
 }
 
 type SlashKeeper @entity {
@@ -273,6 +290,8 @@ type SlashKeeper @entity {
     job: Job!
     slashedKeeper: Keeper!
     slasherKeeper: Keeper!
+    execution: Execution
+    executionRevert: ExecutionRevert
     fixedSlashAmount: BigInt!
     dynamicSlashAmount: BigInt!
     slashAmountMissing: BigInt!
