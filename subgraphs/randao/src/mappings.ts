@@ -477,8 +477,6 @@ export function handleExecutionReverted(event: ExecutionReverted): void {
   revert.txIndex = event.transaction.index;
   revert.txNonce = event.transaction.nonce;
   revert.executionResponse = event.params.executionReturndata;
-  revert.compensation = event.params.compensation;
-
   revert.job = event.params.jobKey.toHexString();
   revert.actualKeeper = event.params.actualKeeperId.toString();
   revert.assignedKeeper = event.params.assignedKeeperId.toString();
