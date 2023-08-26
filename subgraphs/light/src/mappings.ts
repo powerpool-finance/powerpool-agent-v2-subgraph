@@ -35,6 +35,10 @@ import {
 
 export function handleExecution(event: Execute): void {
   commonHandleExecution(event);
+
+  const agent = getOrCreateAgent();
+  agent.executionsCount = agent.executionsCount.plus(BIG_INT_ONE);
+  agent.save();
 }
 
 export function handleRegisterJob(event: RegisterJob): void {
@@ -92,6 +96,7 @@ export function handleRegisterAsKeeper(event: RegisterAsKeeper): void {
   commonHandleRegisterAsKeeper(event);
 
   const agent = getOrCreateAgent();
+  agent.keepersCount = agent.keepersCount.plus(BIG_INT_ONE);
   agent.lastKeeperId = event.params.keeperId;
   agent.save();
 }

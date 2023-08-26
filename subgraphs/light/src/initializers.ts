@@ -9,7 +9,9 @@ export function getOrCreateAgent(): Agent {
   let agent = Agent.load(AGENT_ID);
   if (!agent) {
     agent = new Agent(AGENT_ID);
-    agent.jobsCount = BIG_INT_ONE;
+    agent.jobsCount = BIG_INT_ZERO;
+    agent.keepersCount = BIG_INT_ZERO;
+    agent.executionsCount = BIG_INT_ZERO;
     agent.address = ZERO_ADDRESS;
     agent.owner = ZERO_ADDRESS;
     agent.cvp = ZERO_ADDRESS;

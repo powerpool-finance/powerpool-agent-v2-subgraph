@@ -1,6 +1,5 @@
 import {Address, BigInt, Bytes} from "@graphprotocol/graph-ts";
 import {
-  Agent,
   Job,
   JobDeposit,
   JobOwner,
@@ -17,8 +16,6 @@ export const BIG_INT_ZERO = BigInt.zero();
 export const BIG_INT_ONE = BigInt.fromI32(1);
 export const BIG_INT_TWO = BigInt.fromI32(2);
 export const ZERO_ADDRESS = Address.zero();
-
-const AGENT_ID = "Agent";
 
 export function createJob(jobKey: string): Job {
   let job = Job.load(jobKey)

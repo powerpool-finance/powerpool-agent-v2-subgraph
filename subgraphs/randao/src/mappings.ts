@@ -98,6 +98,10 @@ export function handleExecution(event: ExecuteRandao): void {
     event.parameters, event.receipt
   );
   commonHandleExecution(fakeEvent);
+
+  const agent = getOrCreateRandaoAgent();
+  agent.executionsCount = agent.executionsCount.plus(BIG_INT_ONE);
+  agent.save();
 }
 
 export function handleRegisterJob(event: RegisterJobRandao): void {
@@ -259,6 +263,7 @@ export function handleRegisterAsKeeper(event: RegisterAsKeeperRandao): void {
   commonHandleRegisterAsKeeper(fakeEvent);
 
   const agent = getOrCreateRandaoAgent();
+  agent.keepersCount = agent.keepersCount.plus(BIG_INT_ONE);
   agent.lastKeeperId = event.params.keeperId;
   agent.save();
 }
@@ -486,7 +491,6 @@ export function handleExecutionReverted(event: ExecutionReverted): void {
   }
 
   revert.executionResponse = event.params.executionReturndata;
-  revert.compensation = event.params.compensation;
 
   revert.job = event.params.jobKey.toHexString();
   revert.actualKeeper = event.params.actualKeeperId.toString();
