@@ -105,7 +105,6 @@ type ExecutionRevert @entity {
     expenses: BigInt!
 
     executionResponse: Bytes!
-    compensation: BigInt!
 
     job: Job!
     jobOwner: String!

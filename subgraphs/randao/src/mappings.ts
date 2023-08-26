@@ -485,6 +485,7 @@ export function handleExecutionReverted(event: ExecutionReverted): void {
   revert.gasPrice = event.transaction.gasPrice as BigInt;
   revert.compensation = event.params.compensation;
   revert.profit = BIG_INT_ZERO;
+  revert.expenses = BIG_INT_ZERO;
   if (revert.txGasUsed.gt(BIG_INT_ZERO)) {
     revert.expenses = revert.gasPrice.times(revert.txGasUsed);
     revert.profit = event.params.compensation.minus(revert.expenses);

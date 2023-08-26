@@ -8,9 +8,9 @@ dataSources:
     name: PPAgentV2Randao
     network: sepolia
     source:
-      address: "0xec344c76EF6cd1D329CB98CFa896ED9Badedb1CD"
+      address: "0xc8E864f12c337Bdf6294a3DCeE0E565D2B1B4d90"
       abi: PPAgentV2Randao
-      startBlock: 3917469
+      startBlock: 3917456
 
     mapping:
       kind: ethereum/events
@@ -92,3 +92,4 @@ dataSources:
 
         - event: ExecutionReverted(indexed bytes32,indexed uint256,indexed uint256,bytes,uint256)
           handler: handleExecutionReverted
+          receipt: true
