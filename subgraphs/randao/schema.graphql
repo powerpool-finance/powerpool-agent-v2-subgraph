@@ -388,7 +388,9 @@ type Agent @entity {
     feePpm: BigInt!
     feeTotal: BigInt!
 
+    keepersCount: BigInt!
     jobsCount: BigInt!
+    executionsCount: BigInt!
     lastKeeperId: BigInt!
 
     # Randao field

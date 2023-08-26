@@ -12,7 +12,9 @@ export function getOrCreateRandaoAgent(): RandaoAgent {
   if (!randaoAgent) {
     randaoAgent = new RandaoAgent(AGENT_ID);
 
-    randaoAgent.jobsCount = BIG_INT_ONE;
+    randaoAgent.jobsCount = BIG_INT_ZERO;
+    randaoAgent.keepersCount = BIG_INT_ZERO;
+    randaoAgent.executionsCount = BIG_INT_ZERO;
     randaoAgent.address = ZERO_ADDRESS;
     randaoAgent.owner = ZERO_ADDRESS;
     randaoAgent.cvp = ZERO_ADDRESS;
