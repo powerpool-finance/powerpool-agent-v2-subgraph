@@ -8,9 +8,9 @@ dataSources:
     name: PPAgentV2Randao
     network: sepolia
     source:
-      address: "0xc8E864f12c337Bdf6294a3DCeE0E565D2B1B4d90"
+      address: "0x935a8a75CDAB2946cCC5BC4a282b3F2b03e29283"
       abi: PPAgentV2Randao
-      startBlock: 3917456
+      startBlock: 4159272
 
     mapping:
       kind: ethereum/events
@@ -74,7 +74,7 @@ dataSources:
           handler: handleSetAgentParams
 
         # Randao events
-        - event: SetRdConfig((uint8,uint24,uint16,uint24,uint16,uint16,uint40,uint16,uint32,uint8))
+        - event: SetRdConfig((uint8,uint24,uint16,uint24,uint16,uint16,uint40,uint16,uint32,uint8,uint16))
           handler: handleSetRdConfig
         - event: JobKeeperChanged(indexed bytes32,indexed uint256,indexed uint256)
           handler: handleJobKeeperChanged
