@@ -561,9 +561,8 @@ export function handleSlashKeeper(event: SlashKeeper): void {
   const slashedKeeper = getKeeper(slashedId);
   const slasherKeeper = getKeeper(slasherId);
 
-  slashedKeeper.currentStake.minus(totalSlashAmount);
-
-  slasherKeeper.currentStake.plus(totalSlashAmount);
+  slashedKeeper.currentStake = slashedKeeper.currentStake.minus(totalSlashAmount);
+  slasherKeeper.currentStake = slasherKeeper.currentStake.plus(totalSlashAmount);
 
   slashedKeeper.save();
   slasherKeeper.save();
