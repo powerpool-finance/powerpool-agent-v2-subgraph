@@ -10,7 +10,7 @@ dataSources:
     source:
       address: "0xf4583fc017D82c3462944A5d7E7aD380e5bfAD74"
       abi: PPAgentV2Randao
-      startBlock: 3917456
+      startBlock: 4172470
 
     mapping:
       kind: ethereum/events
