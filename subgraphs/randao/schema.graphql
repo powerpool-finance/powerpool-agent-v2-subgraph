@@ -105,7 +105,6 @@ type ExecutionRevert @entity {
     expenses: BigInt!
 
     executionResponse: Bytes!
-    compensation: BigInt!
 
     job: Job!
     jobOwner: String!
@@ -423,4 +422,5 @@ type Agent @entity {
     jobCompensationMultiplierBps: BigInt!
     stakeDivisor: BigInt!
     keeperActivationTimeoutHours: BigInt!
+    jobFixedReward: BigInt!
 }

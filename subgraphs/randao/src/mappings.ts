@@ -389,6 +389,7 @@ export function handleSetRdConfig(event: SetRdConfig): void {
   randaoAgent.jobCompensationMultiplierBps = BigInt.fromI32(event.params.rdConfig.jobCompensationMultiplierBps);
   randaoAgent.stakeDivisor = event.params.rdConfig.stakeDivisor;
   randaoAgent.keeperActivationTimeoutHours = BigInt.fromI32(event.params.rdConfig.keeperActivationTimeoutHours);
+  randaoAgent.jobFixedReward = BigInt.fromI32(event.params.rdConfig.jobFixedReward);
   randaoAgent.save();
 }
 
@@ -485,6 +486,7 @@ export function handleExecutionReverted(event: ExecutionReverted): void {
   revert.gasPrice = event.transaction.gasPrice as BigInt;
   revert.compensation = event.params.compensation;
   revert.profit = BIG_INT_ZERO;
+  revert.expenses = BIG_INT_ZERO;
   if (revert.txGasUsed.gt(BIG_INT_ZERO)) {
     revert.expenses = revert.gasPrice.times(revert.txGasUsed);
     revert.profit = event.params.compensation.minus(revert.expenses);
@@ -560,9 +562,8 @@ export function handleSlashKeeper(event: SlashKeeper): void {
   const slashedKeeper = getKeeper(slashedId);
   const slasherKeeper = getKeeper(slasherId);
 
-  slashedKeeper.currentStake.minus(totalSlashAmount);
-
-  slasherKeeper.currentStake.plus(totalSlashAmount);
+  slashedKeeper.currentStake = slashedKeeper.currentStake.minus(totalSlashAmount);
+  slasherKeeper.currentStake = slasherKeeper.currentStake.plus(totalSlashAmount);
 
   slashedKeeper.save();
   slasherKeeper.save();
