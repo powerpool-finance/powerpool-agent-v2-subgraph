@@ -34,7 +34,7 @@ export function getOrCreateRandaoAgent(): RandaoAgent {
     randaoAgent.jobCompensationMultiplierBps = BIG_INT_ZERO;
     randaoAgent.stakeDivisor = BIG_INT_ZERO;
     randaoAgent.keeperActivationTimeoutHours = BIG_INT_ZERO;
-    randaoAgent.jobFixedReward = BIG_INT_ZERO;
+    randaoAgent.jobFixedRewardFinney = BIG_INT_ZERO;
   }
 
   return randaoAgent;

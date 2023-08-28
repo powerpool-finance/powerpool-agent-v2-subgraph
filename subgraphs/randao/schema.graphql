@@ -422,5 +422,5 @@ type Agent @entity {
     jobCompensationMultiplierBps: BigInt!
     stakeDivisor: BigInt!
     keeperActivationTimeoutHours: BigInt!
-    jobFixedReward: BigInt!
+    jobFixedRewardFinney: BigInt!
 }
