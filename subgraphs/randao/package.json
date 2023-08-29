@@ -11,9 +11,10 @@
     "deploy-goerli-dev": "graph deploy --product hosted-service polipaul/agent-v2-goerli-dev-randao subgraph.goerli.yaml",
     "deploy-sepolia-dev": "graph deploy --product hosted-service polipaul/agent-v2-sepolia-dev-randao subgraph.sepolia.yaml",
     "deploy-gnosis-dev": "graph deploy --product hosted-service polipaul/agent-v2-gnosis-dev-randao subgraph.gnosis.yaml",
-    "deploy-sepolia-prod": "graph deploy --studio sepolia-production subgraph.sepolia.yaml",
-    "deploy-sepolia-pp-prod": "graph deploy --studio pp-agent-v2-randao-sepolia-pp subgraph.sepolia.pp.yaml",
-    "deploy-sepolia-pp-local": "graph deploy --node http://127.0.0.1:8020/ polipaul/agent-v2-sepolia-dev-randao-pp subgraph.sepolia.pp.yaml",
+    "deploy-sepolia-ui": "graph deploy --studio sepolia-production subgraph.sepolia.yaml",
+    "deploy-sepolia": "graph deploy --studio pp-agentv2-rd-sepolia subgraph.sepolia.yaml",
+    "deploy-sepolia-pp": "graph deploy --studio pp-agentv2-rd-sepolia-pp subgraph.sepolia.pp.yaml",
+    "deploy-sepolia-pp-local": "graph deploy --node http://127.0.0.1:8020/ pp-agentv2-rd-sepolia-pp subgraph.sepolia.pp.yaml",
     "deploy-sepolia-test-defibrain88": "graph deploy --studio ppv2r-sepolia-test-defibrain88 subgraph.sepolia.defibrain88.yaml",
     "deploy-defibrain88-test": "graph deploy --studio defibrain88_test_graph subgraph.sepolia.defibrain88.yaml",
     "deploy-goerli-prod": "graph deploy --studio pp-agent-v2-randao-goerli subgraph.goerli.yaml"
