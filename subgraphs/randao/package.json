@@ -15,7 +15,7 @@
     "deploy-sepolia-pp": "graph deploy --studio ppav2-rd-sepolia-pp subgraph.sepolia.pp.yaml",
 
     "deploy-gnosis-prod": "graph deploy --product hosted-service polipaul/ppav2-rd-gnosis subgraph.gnosis.pp.yaml",
-    "deploy-gnosis-pp-prod": "graph deploy --product hosted-service polipaul/ppav2-rd-gnosis-pp subgraph.gnosis.pp.yaml",
+    "deploy-gnosis-pp": "graph deploy --product hosted-service polipaul/ppav2-rd-gnosis-pp subgraph.gnosis.pp.yaml",
 
     "deploy-defibrain88-test": "graph deploy --studio defibrain88_test_graph subgraph.sepolia.defibrain88.yaml"
   }
