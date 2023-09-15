@@ -300,6 +300,10 @@ export function handleWithdrawCompensation(event: WithdrawCompensationRandao): v
   compensation.amount = event.params.amount;
 
   compensation.save();
+
+  const keeper = getKeeper(event.params.keeperId.toString());
+  keeper.compensationWithdrawalCount = keeper.compensationWithdrawalCount.plus(BIG_INT_ONE);
+  keeper.save();
 }
 
 export function handleStake(event: StakeRandao): void {

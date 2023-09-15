@@ -292,6 +292,7 @@ export function commonHandleRegisterAsKeeper(event: RegisterAsKeeper): void {
   keeper.stakeCount = BIG_INT_ZERO;
   keeper.redeemInitCount = BIG_INT_ZERO;
   keeper.redeemFinalizeCount = BIG_INT_ZERO;
+  keeper.compensationWithdrawalCount = BIG_INT_ZERO;
 
   keeper.save();
 }
