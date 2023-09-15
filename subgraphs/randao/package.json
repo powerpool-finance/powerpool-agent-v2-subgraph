@@ -6,21 +6,17 @@
   ],
   "scripts": {
     "codegen": "graph codegen subgraph.sepolia.yaml",
-    "codegen-defibrain-88": "graph codegen subgraph.sepolia.defibrain88.yaml",
-    "build": "graph build subgraph.goerli.yaml",
-    "build-defibrain-88": "graph build subgraph.sepolia.defibrain88.yaml",
+    "build": "graph build subgraph.sepolia.yaml",
 
-    "deploy-goerli-dev": "graph deploy --product hosted-service polipaul/agent-v2-goerli-dev-randao subgraph.goerli.yaml",
-    "deploy-gnosis-dev": "graph deploy --product hosted-service polipaul/agent-v2-gnosis-dev-randao subgraph.gnosis.yaml",
-
-    "deploy-sepolia": "graph deploy --studio ppav2-rd-sepolia-b11 subgraph.sepolia.yaml",
-    "deploy-sepolia-ui": "graph deploy --studio ppav2-rd-sepolia-b11-ui subgraph.sepolia.yaml",
-
-    "deploy-sepolia-pp": "graph deploy --studio ppav2-rd-sepolia-pp subgraph.sepolia.pp.yaml",
+    "deploy-sepolia-b11": "graph deploy --studio ppav2-rd-sepolia-b11 subgraph.sepolia.yaml",
+    "deploy-sepolia-b11-ui": "graph deploy --studio ppav2-rd-sepolia-b11-ui subgraph.sepolia.yaml",
+    "deploy-sepolia-defibrain88-dev": "graph deploy --studio ppv2r-sepolia-test-defibrain88 subgraph.sepolia.defibrain88.yaml",
     "deploy-sepolia-pp-local": "graph deploy --node http://127.0.0.1:8020/ ppav2-rd-sepolia-pp subgraph.sepolia.pp.yaml",
-    "deploy-sepolia-test-defibrain88": "graph deploy --studio ppv2r-sepolia-test-defibrain88 subgraph.sepolia.defibrain88.yaml",
+    "deploy-sepolia-pp": "graph deploy --studio ppav2-rd-sepolia-pp subgraph.sepolia.pp.yaml",
 
-    "deploy-defibrain88-test": "graph deploy --studio defibrain88_test_graph subgraph.sepolia.defibrain88.yaml",
-    "deploy-goerli-prod": "graph deploy --studio pp-agent-v2-randao-goerli subgraph.goerli.yaml"
+    "deploy-gnosis-prod": "graph deploy --product hosted-service polipaul/ppav2-rd-gnosis subgraph.gnosis.pp.yaml",
+    "deploy-gnosis-pp": "graph deploy --product hosted-service polipaul/ppav2-rd-gnosis-pp subgraph.gnosis.pp.yaml",
+
+    "deploy-defibrain88-test": "graph deploy --studio defibrain88_test_graph subgraph.sepolia.defibrain88.yaml"
   }
 }
