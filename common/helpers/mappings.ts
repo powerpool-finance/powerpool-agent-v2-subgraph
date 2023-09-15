@@ -35,7 +35,7 @@ export function commonHandleExecution(event: Execute): void {
   const jobKey = event.params.jobKey.toHexString();
   execution.txCalldata = event.transaction.input;
   const inputString = event.transaction.input.toHexString();
-  execution.keeperConfig = BigInt.fromByteArray(ByteArray.fromHexString(inputString.slice(54, 56)));
+  execution.keeperConfig = BigInt.fromByteArray(ByteArray.fromHexString(inputString.slice(56, 58)));
   execution.txCalldata = event.transaction.input;
   execution.jobCalldata = Bytes.fromHexString(inputString.slice(64, inputString.length));
 
