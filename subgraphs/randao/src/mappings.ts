@@ -70,26 +70,32 @@ import {
 import {BigInt} from "@graphprotocol/graph-ts";
 import {getOrCreateRandaoAgent, getJobByKey} from "./initializers";
 import {
-  BIG_INT_ONE, BIG_INT_ZERO, getKeeper, getOrCreateJobOwner, ZERO_ADDRESS,
+    BIG_INT_ONE,
+    BIG_INT_ZERO,
+    getCertainExecution,
+    getKeeper,
+    getOrCreateJobOwner,
+    ZERO_ADDRESS,
 } from "../../../common/helpers/initializers";
 
 import {
-  ExecutionRevert, WithdrawKeeperCompensation,
-  SlashKeeper as SlashKeeperSchema,
-  SetKeeperWorkerAddress,
-  KeeperOwnerSlash,
-  JobKeeperChanged as JobKeeperChangedSchema,
-  InitiateKeeperSlashing as InitiateKeeperSlashingSchema,
-  DisableKeeper as DisableKeeperSchema,
-  InitiateKeeperActivation as InitiateKeeperActivationSchema,
-  FinalizeKeeperActivation as FinalizeKeeperActivationSchema,
-  JobUpdate as JobUpdateSchema,
-  SetJobPreDefinedCalldata as SetJobPreDefinedCalldataSchema,
-  SetJobResolver as SetJobResolverSchema,
-  SetJobConfig as SetJobConfigSchema,
-  AcceptJobTransfer as AcceptJobTransferSchema,
-  InitiateJobTransfer as InitiateJobTransferSchema,
-  Execution,
+    ExecutionRevert, WithdrawKeeperCompensation,
+    SlashKeeper as SlashKeeperSchema,
+    SetKeeperWorkerAddress,
+    KeeperOwnerSlash,
+    JobKeeperChanged as JobKeeperChangedSchema,
+    InitiateKeeperSlashing as InitiateKeeperSlashingSchema,
+    DisableKeeper as DisableKeeperSchema,
+    InitiateKeeperActivation as InitiateKeeperActivationSchema,
+    FinalizeKeeperActivation as FinalizeKeeperActivationSchema,
+    JobUpdate as JobUpdateSchema,
+    SetJobPreDefinedCalldata as SetJobPreDefinedCalldataSchema,
+    SetJobResolver as SetJobResolverSchema,
+    SetJobConfig as SetJobConfigSchema,
+    AcceptJobTransfer as AcceptJobTransferSchema,
+    InitiateJobTransfer as InitiateJobTransferSchema,
+    Execution,
+    JobOwner,
 } from "../generated/schema";
 
 export function handleExecution(event: ExecuteRandao): void {
@@ -99,20 +105,30 @@ export function handleExecution(event: ExecuteRandao): void {
   );
   commonHandleExecution(fakeEvent);
 
+  // count statistics after execution
   const agent = getOrCreateRandaoAgent();
+  const execution = getCertainExecution(event.transaction.hash.toHexString());
   agent.executionsCount = agent.executionsCount.plus(BIG_INT_ONE);
+  agent.paidCount = agent.paidCount.plus(event.params.compensation);
+  agent.profitCount = agent.profitCount.plus(execution.profit);
   agent.save();
 }
 
 export function handleRegisterJob(event: RegisterJobRandao): void {
+  const agent = getOrCreateRandaoAgent();
   const fakeEvent: RegisterJobLight = new RegisterJobLight(
     event.address, event.logIndex, event.transactionLogIndex, event.logType, event.block, event.transaction,
     event.parameters, event.receipt
   );
+  // If job owner not exist here, he will be created at next step. So we can legally increment jow owners counter here.
+  if (JobOwner.load(event.params.owner.toHexString()) === null) {
+    agent.jobOwnersCount = agent.jobOwnersCount.plus(BIG_INT_ONE);
+  }
+
   commonHandleRegisterJob(fakeEvent);
 
-  const agent = getOrCreateRandaoAgent();
   agent.jobsCount = agent.jobsCount.plus(BIG_INT_ONE);
+  agent.activeJobsCount = agent.activeJobsCount.plus(BIG_INT_ONE);
   agent.save();
 }
 
@@ -137,10 +153,21 @@ export function handleJobUpdate(event: JobUpdateRandao): void {
 }
 
 export function handleSetJobConfig(event: SetJobConfigRandao): void {
+  const agent = getOrCreateRandaoAgent();
   const fakeEvent: SetJobConfigLight = new SetJobConfigLight(
     event.address, event.logIndex, event.transactionLogIndex, event.logType, event.block, event.transaction,
     event.parameters, event.receipt
   );
+
+  // if config wants to change job active state, we should handle activeJobsCount
+  const job = getJobByKey(event.params.jobKey.toHexString());
+  if (!job.active && event.params.isActive_) {
+    agent.activeJobsCount = agent.activeJobsCount.plus(BIG_INT_ONE);
+  } else if (job.active && !event.params.isActive_) {
+    agent.activeJobsCount = agent.activeJobsCount.minus(BIG_INT_ONE);
+  }
+  agent.save();
+
   commonHandleSetJobConfig(fakeEvent);
 
   const entity = new SetJobConfigSchema(event.transaction.hash.toHexString());
@@ -194,6 +221,10 @@ export function handleDepositJobCredits(event: DepositJobCreditsRandao): void {
     event.parameters, event.receipt
   );
   commonHandleDepositJobCredits(fakeEvent);
+
+  const agent = getOrCreateRandaoAgent();
+  agent.jobsBalanceCount = agent.jobsBalanceCount.plus(event.params.amount);
+  agent.save();
 }
 
 export function handleWithdrawJobCredits(event: WithdrawJobCreditsRandao): void {
@@ -202,6 +233,10 @@ export function handleWithdrawJobCredits(event: WithdrawJobCreditsRandao): void 
     event.parameters, event.receipt
   );
   commonHandleWithdrawJobCredits(fakeEvent);
+
+  const agent = getOrCreateRandaoAgent();
+  agent.jobsBalanceCount = agent.jobsBalanceCount.minus(event.params.amount);
+  agent.save();
 }
 
 export function handleDepositJobOwnerCredits(event: DepositJobOwnerCreditsRandao): void {
@@ -210,6 +245,10 @@ export function handleDepositJobOwnerCredits(event: DepositJobOwnerCreditsRandao
     event.parameters, event.receipt
   );
   commonHandleDepositJobOwnerCredits(fakeEvent);
+
+  const agent = getOrCreateRandaoAgent();
+  agent.jobsBalanceCount = agent.jobsBalanceCount.plus(event.params.amount);
+  agent.save();
 }
 
 export function handleWithdrawJobOwnerCredits(event: WithdrawJobOwnerCreditsRandao): void {
@@ -218,6 +257,10 @@ export function handleWithdrawJobOwnerCredits(event: WithdrawJobOwnerCreditsRand
     event.parameters, event.receipt
   );
   commonHandleWithdrawJobOwnerCredits(fakeEvent);
+
+  const agent = getOrCreateRandaoAgent();
+  agent.jobsBalanceCount = agent.jobsBalanceCount.minus(event.params.amount);
+  agent.save();
 }
 
 
@@ -312,6 +355,11 @@ export function handleStake(event: StakeRandao): void {
     event.parameters, event.receipt
   );
   commonHandleStake(fakeEvent);
+
+  // adds stake to total counter
+  const agent = getOrCreateRandaoAgent();
+  agent.stakeCount = agent.stakeCount.plus(event.params.amount);
+  agent.save();
 }
 
 export function handleSlash(event: SlashRandao): void {
@@ -338,7 +386,11 @@ export function handleInitiateRedeem(event: InitiateRedeemRandao): void {
     event.parameters, event.receipt
   );
   const agent = getOrCreateRandaoAgent();
-  commonHandleInitiateRedeem(fakeEvent, agent.pendingWithdrawalTimeoutSeconds);
+  const stakeToReduce = commonHandleInitiateRedeem(fakeEvent, agent.pendingWithdrawalTimeoutSeconds);
+
+  // removes stake from total counter
+  agent.stakeCount = agent.stakeCount.minus(stakeToReduce);
+  agent.save();
 }
 
 export function handleFinalizeRedeem(event: FinalizeRedeemRandao): void {

@@ -410,8 +410,21 @@ type Agent @entity {
     feeTotal: BigInt!
 
     keepersCount: BigInt!
+    "All jobs counter. Regardless it's active status."
     jobsCount: BigInt!
+    "Only active jobs counter."
+    activeJobsCount: BigInt!
+    "All jobs balances. Calculated as all job credits + all jobOwners credits."
+    jobsBalanceCount: BigInt!
+    "Simple counter for job owners."
+    jobOwnersCount: BigInt!
     executionsCount: BigInt!
+    "Total stake across all keepers"
+    stakeCount: BigInt!
+    "All compensations paid to keepers. Ignores slashing as total amount of compensations stays the same."
+    paidCount: BigInt!
+    "Counter for profit made around all keepers."
+    profitCount: BigInt!
     lastKeeperId: BigInt!
 
     # Randao field

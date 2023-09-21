@@ -337,7 +337,7 @@ export function commonHandleSlash(event: Slash): void {
   keeper.save();
 }
 
-export function commonHandleInitiateRedeem(event: InitiateRedeem, pendingWithdrawalTimeoutSeconds: BigInt): void {
+export function commonHandleInitiateRedeem(event: InitiateRedeem, pendingWithdrawalTimeoutSeconds: BigInt): BigInt {
   const keeper = getKeeper(event.params.keeperId.toString());
 
   const initKey = keeper.id.toString().concat("-").concat(keeper.redeemInitCount.toString());
@@ -363,6 +363,8 @@ export function commonHandleInitiateRedeem(event: InitiateRedeem, pendingWithdra
   keeper.redeemInitCount = keeper.redeemInitCount.plus(BIG_INT_ONE);
 
   keeper.save();
+
+  return stakeOfToReduceAmount;
 }
 
 export function commonHandleFinalizeRedeem(event: FinalizeRedeem): void {
