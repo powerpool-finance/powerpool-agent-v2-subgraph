@@ -76,6 +76,7 @@ export function commonHandleExecution(event: Execute): void {
   }
   job.totalCompensations = job.totalCompensations.plus(event.params.compensation);
   job.totalExpenses = job.totalExpenses.plus(execution.expenses);
+  job.lastExecutionAt = event.block.timestamp;
   job.totalProfit = job.totalProfit.plus(execution.profit);
   job.executionCount = job.executionCount.plus(BIG_INT_ONE);
   job.save();
