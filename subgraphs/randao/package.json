@@ -10,6 +10,7 @@
 
     "deploy-sepolia-b11": "graph deploy --studio ppav2-rd-sepolia-b11 subgraph.sepolia.yaml",
     "deploy-sepolia-b11-ui": "graph deploy --studio ppav2-rd-sepolia-b11-ui subgraph.sepolia.yaml",
+    "deploy-sepolia-b12-ui": "graph deploy --studio ppav2-rd-sepolia-b12-ui subgraph.sepolia.defibrain88.yaml",
     "deploy-sepolia-defibrain88-dev": "graph deploy --studio defibrain88_test_graph subgraph.sepolia.defibrain88.yaml",
     "deploy-sepolia-pp-local": "graph deploy --node http://127.0.0.1:8020/ ppav2-rd-sepolia-pp subgraph.sepolia.pp.yaml",
     "deploy-sepolia-pp": "graph deploy --studio ppav2-rd-sepolia-pp subgraph.sepolia.pp.yaml",

@@ -8,9 +8,9 @@ dataSources:
     name: PPAgentV2Randao
     network: sepolia
     source:
-      address: "0xf4583fc017D82c3462944A5d7E7aD380e5bfAD74"
+      address: "0xE3a715dA343fb4d91668d1967D69bbBDB9b1805A"
       abi: PPAgentV2Randao
-      startBlock: 4159272
+      startBlock: 4422538
 
     mapping:
       kind: ethereum/events
