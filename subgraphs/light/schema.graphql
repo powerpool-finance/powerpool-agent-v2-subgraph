@@ -223,6 +223,7 @@ type Agent @entity {
     feeTotal: BigInt!
 
     keepersCount: BigInt!
+    activeKeepersCount: BigInt!
     jobsCount: BigInt!
     executionsCount: BigInt!
     lastKeeperId: BigInt!

@@ -410,6 +410,7 @@ type Agent @entity {
     feeTotal: BigInt!
 
     keepersCount: BigInt!
+    activeKeepersCount: BigInt!
     "All jobs counter. Regardless it's active status."
     jobsCount: BigInt!
     "Only active jobs counter."

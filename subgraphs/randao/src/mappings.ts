@@ -494,6 +494,10 @@ export function handleDisableKeeper(event: DisableKeeper): void {
   disableEvent.keeper = event.params.keeperId.toString();
 
   disableEvent.save();
+
+  const agent = getOrCreateRandaoAgent();
+  agent.activeKeepersCount = agent.activeKeepersCount.minus(BIG_INT_ONE);
+  agent.save();
 }
 
 export function handleInitKeeperActivation(event: InitiateKeeperActivation): void {
@@ -524,6 +528,10 @@ export function handleFinalizeKeeperActivation(event: FinalizeKeeperActivation):
   finalize.keeper = event.params.keeperId.toString();
 
   finalize.save();
+
+  const agent = getOrCreateRandaoAgent();
+  agent.activeKeepersCount = agent.activeKeepersCount.plus(BIG_INT_ONE);
+  agent.save();
 }
 
 export function handleExecutionReverted(event: ExecutionReverted): void {

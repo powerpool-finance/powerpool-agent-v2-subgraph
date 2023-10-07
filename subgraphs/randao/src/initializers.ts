@@ -14,6 +14,7 @@ export function getOrCreateRandaoAgent(): RandaoAgent {
 
     randaoAgent.jobsCount = BIG_INT_ZERO;
     randaoAgent.keepersCount = BIG_INT_ZERO;
+    randaoAgent.activeKeepersCount = BIG_INT_ZERO;
     randaoAgent.executionsCount = BIG_INT_ZERO;
     randaoAgent.stakeCount = BIG_INT_ZERO;
     randaoAgent.activeJobsCount = BIG_INT_ZERO;
