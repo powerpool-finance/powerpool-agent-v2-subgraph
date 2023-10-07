@@ -274,7 +274,7 @@ export function commonHandleRegisterAsKeeper(event: RegisterAsKeeper): void {
 
   keeper.createTxHash = event.transaction.hash;
   keeper.createdAt = event.block.timestamp;
-  keeper.active = true;
+  keeper.active = false;
   keeper.numericalId = BigInt.fromString(keeperId);
   keeper.admin = event.params.keeperAdmin;
   keeper.worker = event.params.keeperWorker;
