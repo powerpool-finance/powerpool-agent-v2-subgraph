@@ -155,7 +155,14 @@ type Keeper @entity {
     admin: Bytes!
     worker: Bytes!
     currentStake: BigInt!
+    "How much stake lost with slash"
     slashedStake: BigInt!
+    "How much stake acquired with slash"
+    getBySlashStake: BigInt!
+    "How many times keeper were slashed"
+    slashedStakeCounter: BigInt!
+    "How many times keeper did slash others"
+    getBySlashStakeCounter: BigInt!
     compensationsToWithdraw: BigInt!
     pendingWithdrawalAmount: BigInt!
     pendingWithdrawalEndsAt: BigInt!

@@ -629,6 +629,11 @@ export function handleSlashKeeper(event: SlashKeeper): void {
   slashedKeeper.currentStake = slashedKeeper.currentStake.minus(totalSlashAmount);
   slasherKeeper.currentStake = slasherKeeper.currentStake.plus(totalSlashAmount);
 
+  slashedKeeper.slashedStake = slashedKeeper.slashedStake.plus(totalSlashAmount);
+  slashedKeeper.slashedStakeCounter = slashedKeeper.slashedStakeCounter.plus(BIG_INT_ONE);
+  slasherKeeper.getBySlashStake = slashedKeeper.getBySlashStake.plus(totalSlashAmount);
+  slasherKeeper.getBySlashStakeCounter = slashedKeeper.getBySlashStakeCounter.plus(BIG_INT_ONE);
+
   slashedKeeper.save();
   slasherKeeper.save();
 

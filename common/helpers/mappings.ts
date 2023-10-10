@@ -280,6 +280,9 @@ export function commonHandleRegisterAsKeeper(event: RegisterAsKeeper): void {
   keeper.worker = event.params.keeperWorker;
 
   keeper.slashedStake = BIG_INT_ZERO;
+  keeper.getBySlashStake = BIG_INT_ZERO;
+  keeper.slashedStakeCounter = BIG_INT_ZERO;
+  keeper.getBySlashStakeCounter = BIG_INT_ZERO;
   keeper.currentStake = BIG_INT_ZERO;
   keeper.compensationsToWithdraw = BIG_INT_ZERO;
   keeper.compensations = BIG_INT_ZERO;
@@ -327,11 +330,16 @@ export function commonHandleStake(event: Stake): void {
   keeper.save();
 }
 
+/**
+ * This handler used when keeper gets slashed by system, not another keeper
+ * @param event
+ */
 export function commonHandleSlash(event: Slash): void {
   const keeper = getKeeper(event.params.keeperId.toString());
 
   keeper.currentStake = keeper.currentStake.minus(event.params.currentAmount);
   keeper.slashedStake = keeper.slashedStake.plus(event.params.currentAmount);
+  keeper.slashedStakeCounter = keeper.slashedStakeCounter.plus(BIG_INT_ONE);
 
   keeper.pendingWithdrawalAmount = keeper.pendingWithdrawalAmount.minus(event.params.pendingAmount);
 
