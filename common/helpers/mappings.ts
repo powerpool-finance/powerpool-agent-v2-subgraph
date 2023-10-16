@@ -101,6 +101,8 @@ export function commonHandleRegisterJob(event: RegisterJob): void {
   const jobKey = event.params.jobKey.toHexString();
   const job = createJob(jobKey);
   const jobOwner = getOrCreateJobOwner(event.params.owner.toHexString());
+  jobOwner.createTxHash = event.transaction.hash;
+  jobOwner.createdAt = event.block.timestamp;
 
   jobOwner.save();
 

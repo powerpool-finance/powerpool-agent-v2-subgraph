@@ -209,6 +209,8 @@ type JobKeeperChanged @entity {
 
 type JobOwner @entity {
     id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     credits: BigInt!
 
     depositCount: BigInt!

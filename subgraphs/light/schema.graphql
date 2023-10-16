@@ -110,6 +110,8 @@ type JobWithdrawal @entity {
 
 type JobOwner @entity {
     id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     credits: BigInt!
 
     depositCount: BigInt!
