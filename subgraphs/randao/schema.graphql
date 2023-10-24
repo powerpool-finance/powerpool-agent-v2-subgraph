@@ -140,6 +140,25 @@ type JobWithdrawal @entity {
 
 ### JOB DEBUG EVENTS ###
 
+type CreateJob @entity {
+    id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
+    jobKey: Bytes!
+    jobAddress: Bytes!
+    jobId: BigInt!
+    owner: Bytes!
+    jobSelector: Bytes!
+    useJobOwnerCredits: Boolean!
+    assertResolverSelector: Boolean!
+    maxBaseFeeGwei: BigInt!
+    rewardPct: BigInt!
+    fixedReward: BigInt!
+    jobMinCvp: BigInt!
+    calldataSource: BigInt!
+    intervalSeconds: BigInt!
+}
+
 type InitiateJobTransfer @entity {
     id: ID!
     createTxHash: Bytes!
@@ -343,6 +362,15 @@ type KeeperRedeemFinalize @entity {
 }
 
 ### KEEPER DEBUG EVENTS ###
+
+type CreateKeeper @entity {
+    id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
+    keeper: Keeper!
+    keeperAdmin: Bytes!
+    keeperWorker: Bytes!
+}
 
 type FinalizeKeeperActivation @entity {
     id: ID!
