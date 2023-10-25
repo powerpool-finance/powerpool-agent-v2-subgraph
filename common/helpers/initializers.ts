@@ -63,7 +63,7 @@ export function getOrCreateJobOwner(ownerAddress: string): JobOwner {
 }
 
 export function createKeeper(id: string): Keeper {
-  let keeper = Keeper.load(id)
+  let keeper = Keeper.load(id);
   if (keeper) {
     throw new Error(`Keeper with address ${id} already exists`);
   }

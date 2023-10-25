@@ -484,6 +484,18 @@ export function handleJobKeeperChanged(event: JobKeeperChanged): void {
   job.jobNextKeeperId = event.params.keeperTo;
   job.save();
 
+  // Add and substract assigned job counter from a keeper if its exist
+  if (event.params.keeperFrom.toString() != '0') {
+    const keeperFrom = getKeeper(event.params.keeperFrom.toString());
+    keeperFrom.assignedJobsCount = keeperFrom.assignedJobsCount.minus(BIG_INT_ONE);
+    keeperFrom.save();
+  }
+  if (event.params.keeperTo.toString() != '0') {
+    const keeperTo = getKeeper(event.params.keeperTo.toString());
+    keeperTo.assignedJobsCount = keeperTo.assignedJobsCount.plus(BIG_INT_ONE);
+    keeperTo.save();
+  }
+
   const keeperChanged = new JobKeeperChangedSchema(event.transaction.hash.toHexString());
   keeperChanged.createTxHash = event.transaction.hash;
   keeperChanged.createdAt = event.block.timestamp;

@@ -289,6 +289,7 @@ export function commonHandleRegisterAsKeeper(event: RegisterAsKeeper): void {
   keeper.compensationsToWithdraw = BIG_INT_ZERO;
   keeper.compensations = BIG_INT_ZERO;
   keeper.expenses = BIG_INT_ZERO;
+  keeper.assignedJobsCount = BIG_INT_ZERO;
   keeper.profit = BIG_INT_ZERO;
   keeper.pendingWithdrawalAmount = BIG_INT_ZERO;
   keeper.pendingWithdrawalEndsAt = BIG_INT_ZERO;

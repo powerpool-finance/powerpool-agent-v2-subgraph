@@ -165,6 +165,8 @@ type Keeper @entity {
     slashedStakeCounter: BigInt!
     "How many times keeper did slash others"
     getBySlashStakeCounter: BigInt!
+    "How many jobs currently assigned for that keeper"
+    assignedJobsCount: BigInt!
     compensationsToWithdraw: BigInt!
     pendingWithdrawalAmount: BigInt!
     pendingWithdrawalEndsAt: BigInt!
