@@ -55,6 +55,8 @@ export function getOrCreateJobOwner(ownerAddress: string): JobOwner {
   let jobOwner = JobOwner.load(ownerAddress)
   if (!jobOwner) {
     jobOwner = new JobOwner(ownerAddress);
+    jobOwner.createTxHash = Bytes.empty();
+    jobOwner.createdAt = BIG_INT_ZERO;
     jobOwner.credits = BIG_INT_ZERO;
     jobOwner.depositCount = BIG_INT_ZERO;
     jobOwner.withdrawalCount = BIG_INT_ZERO;

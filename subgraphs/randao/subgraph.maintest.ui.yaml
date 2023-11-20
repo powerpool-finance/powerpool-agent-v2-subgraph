@@ -1,16 +1,16 @@
 specVersion: 0.0.5
-description: PowerPool Agent V2 Randao Sepolia Subgraph
+description: PowerPool Agent V2 Randao maintest Subgraph
 repository: https://github.com/powerpool-finance/powerpool-agent-v2-subgraph
 schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
     name: PPAgentV2Randao
-    network: sepolia
+    network: mainnet
     source:
-      address: "0x32a24237Fca2B439C76e40a3ddA871d5bE51630D"
+      address: "0xc9ce4CdA5897707546F3904C0FfCC6e429bC4546"
       abi: PPAgentV2Randao
-      startBlock: 4606553
+      startBlock: 18533829
 
     mapping:
       kind: ethereum/events
@@ -45,27 +45,27 @@ dataSources:
           handler: handleWithdrawJobCredits
         - event: DepositJobOwnerCredits(indexed address,indexed address,uint256,uint256)
           handler: handleDepositJobOwnerCredits
-        - event:  WithdrawJobOwnerCredits(indexed address,indexed address,uint256)
+        - event: WithdrawJobOwnerCredits(indexed address,indexed address,uint256)
           handler: handleWithdrawJobOwnerCredits
 
-        - event:  SetJobPreDefinedCalldata(indexed bytes32,bytes)
+        - event: SetJobPreDefinedCalldata(indexed bytes32,bytes)
           handler: handleSetJobPreDefinedCalldata
-        - event:  SetJobResolver(indexed bytes32,address,bytes)
+        - event: SetJobResolver(indexed bytes32,address,bytes)
           handler: handleSetJobResolver
 
-        - event:  RegisterAsKeeper(indexed uint256,indexed address,indexed address)
+        - event: RegisterAsKeeper(indexed uint256,indexed address,indexed address)
           handler: handleRegisterAsKeeper
-        - event:  SetWorkerAddress(indexed uint256,indexed address,indexed address)
+        - event: SetWorkerAddress(indexed uint256,indexed address,indexed address)
           handler: handleSetWorkerAddress
-        - event:  Stake(indexed uint256,uint256,address)
+        - event: Stake(indexed uint256,uint256,address)
           handler: handleStake
-        - event:  InitiateRedeem(indexed uint256,uint256,uint256,uint256)
+        - event: InitiateRedeem(indexed uint256,uint256,uint256,uint256)
           handler: handleInitiateRedeem
-        - event:  FinalizeRedeem(indexed uint256,indexed address,uint256)
+        - event: FinalizeRedeem(indexed uint256,indexed address,uint256)
           handler: handleFinalizeRedeem
-        - event:  WithdrawCompensation(indexed uint256,indexed address,uint256)
+        - event: WithdrawCompensation(indexed uint256,indexed address,uint256)
           handler: handleWithdrawCompensation
-        - event:  OwnerSlash(indexed uint256,indexed address,uint256,uint256)
+        - event: OwnerSlash(indexed uint256,indexed address,uint256,uint256)
           handler: handleSlash
 
         - event: OwnershipTransferred(indexed address,indexed address)

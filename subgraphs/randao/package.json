@@ -19,6 +19,8 @@
     "deploy-gnosis-pp": "graph deploy --product hosted-service polipaul/ppav2-rd-gnosis-pp subgraph.gnosis.pp.yaml",
     "deploy-gnosis-b12-ui": "graph deploy --studio ppav2-rd-gnosis-b12-ui subgraph.gnosis.ui.yaml",
 
+    "deploy-maintest-ui": "graph deploy --studio ppav2-rd-maintest-ui subgraph.maintest.ui.yaml",
+
     "deploy-defibrain88-test": "graph deploy --studio defibrain88_test_graph subgraph.sepolia.defibrain88.yaml"
   }
 }

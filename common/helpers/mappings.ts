@@ -233,6 +233,10 @@ export function commonHandleDepositJobOwnerCredits(event: DepositJobOwnerCredits
   deposit.depositor = event.params.depositor;
   deposit.save();
 
+  if (jobOwner.createdAt === BIG_INT_ZERO) {
+    jobOwner.createTxHash = event.transaction.hash;
+    jobOwner.createdAt = event.block.timestamp;
+  }
   jobOwner.credits = jobOwner.credits.plus(event.params.amount);
   jobOwner.depositCount = jobOwner.depositCount.plus(BIG_INT_ONE);
   jobOwner.save();
