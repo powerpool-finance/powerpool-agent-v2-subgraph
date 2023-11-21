@@ -51,6 +51,11 @@ export function getJobOwner(ownerAddress: string): JobOwner {
   return jobOwner;
 }
 
+export function isJobOwnerExist(ownerAddress: string): boolean {
+  const jobOwner = JobOwner.load(ownerAddress)
+  return !!jobOwner;
+}
+
 export function getOrCreateJobOwner(ownerAddress: string): JobOwner {
   let jobOwner = JobOwner.load(ownerAddress)
   if (!jobOwner) {

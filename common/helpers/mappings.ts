@@ -22,7 +22,8 @@ import {
   createKeeper, createKeeperRedeemFinalize, createKeeperRedeemInit, createKeeperStake,
   getJobByKey,
   getKeeper,
-  getOrCreateJobOwner
+  getOrCreateJobOwner,
+  isJobOwnerExist,
 } from "./initializers";
 import {Execution} from "subgraph-light/generated/schema";
 import {BigInt, ByteArray, Bytes} from "@graphprotocol/graph-ts";
@@ -168,6 +169,13 @@ export function commonHandleSetJobConfig(event: SetJobConfig): void {
 }
 
 export function commonHandleInitiateJobTransfer(event: InitiateJobTransfer): void {
+  if (!isJobOwnerExist(event.params.to.toHexString())) {
+    const jobOwner = getOrCreateJobOwner(event.params.to.toHexString());
+    jobOwner.createTxHash = event.transaction.hash;
+    jobOwner.createdAt = event.block.timestamp;
+    jobOwner.save();
+  }
+
   const job = getJobByKey(event.params.jobKey.toHexString());
   job.pendingOwner = event.params.to.toHexString();
   job.save();
