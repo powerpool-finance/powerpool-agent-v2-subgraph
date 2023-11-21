@@ -69,6 +69,16 @@ export function getOrCreateJobOwner(ownerAddress: string): JobOwner {
   return jobOwner;
 }
 
+export function createJobOwner(ownerAddress: string): JobOwner {
+  const jobOwner = new JobOwner(ownerAddress);
+  jobOwner.createTxHash = Bytes.empty();
+  jobOwner.createdAt = BIG_INT_ZERO;
+  jobOwner.credits = BIG_INT_ZERO;
+  jobOwner.depositCount = BIG_INT_ZERO;
+  jobOwner.withdrawalCount = BIG_INT_ZERO;
+  return jobOwner;
+}
+
 export function createKeeper(id: string): Keeper {
   let keeper = Keeper.load(id);
   if (keeper) {

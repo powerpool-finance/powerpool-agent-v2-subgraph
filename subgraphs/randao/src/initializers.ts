@@ -1,7 +1,8 @@
-import {Agent as RandaoAgent, Job, ExecutionRevert} from "../generated/schema";
+import {Agent as RandaoAgent, Job} from "../generated/schema";
 import {
   BIG_INT_ONE,
   BIG_INT_ZERO,
+  createJobOwner,
   ZERO_ADDRESS
 } from "../../../common/helpers/initializers";
 
@@ -42,6 +43,12 @@ export function getOrCreateRandaoAgent(): RandaoAgent {
     randaoAgent.stakeDivisor = BIG_INT_ZERO;
     randaoAgent.keeperActivationTimeoutHours = BIG_INT_ZERO;
     randaoAgent.jobFixedRewardFinney = BIG_INT_ZERO;
+
+    // Creating zero job owners when creating randao agent
+    const zeroJobOwner = createJobOwner(ZERO_ADDRESS.toHexString());
+    const simpleZeroJobOwner = createJobOwner('0');
+    zeroJobOwner.save();
+    simpleZeroJobOwner.save();
   }
 
   return randaoAgent;
