@@ -46,9 +46,7 @@ export function getOrCreateRandaoAgent(): RandaoAgent {
 
     // Creating zero job owners when creating randao agent
     const zeroJobOwner = createJobOwner(ZERO_ADDRESS.toHexString());
-    const simpleZeroJobOwner = createJobOwner('0');
     zeroJobOwner.save();
-    simpleZeroJobOwner.save();
   }
 
   return randaoAgent;
