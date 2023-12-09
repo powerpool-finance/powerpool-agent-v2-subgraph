@@ -1,0 +1,95 @@
+specVersion: 0.0.5
+description: PowerPool Agent V2 Randao Gnosis Subgraph
+repository: https://github.com/powerpool-finance/powerpool-agent-v2-subgraph
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: PPAgentV2Randao
+    network: arbitrum-one
+    source:
+      address: "0xad1e507f8A0cB1B91421F3bb86BBE29f001CbcC6"
+      abi: PPAgentV2Randao
+      startBlock: 157531675
+
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/mappings.ts
+      entities:
+        - Execution
+      abis:
+        - name: PPAgentV2Light
+          file: ../../abis/PPAgentV2Light.json
+        - name: PPAgentV2Randao
+          file: ../../abis/PPAgentV2Randao.json
+      eventHandlers:
+        - event: Execute(indexed bytes32,indexed address,indexed uint256,uint256,uint256,uint256,uint256,bytes32)
+          handler: handleExecution
+          receipt: true
+        - event: RegisterJob(indexed bytes32,indexed address,indexed uint256,address,(address,bytes4,bool,bool,uint16,uint16,uint32,uint256,uint8,uint24))
+          handler: handleRegisterJob
+        - event: JobUpdate(indexed bytes32,uint256,uint256,uint256,uint256,uint256)
+          handler: handleJobUpdate
+        - event: SetJobConfig(indexed bytes32,bool,bool,bool)
+          handler: handleSetJobConfig
+        - event: InitiateJobTransfer(indexed bytes32,indexed address,indexed address)
+          handler: handleInitiateJobTransfer
+        - event: AcceptJobTransfer(indexed bytes32,indexed address)
+          handler: handleAcceptJobTransfer
+
+        - event: DepositJobCredits(indexed bytes32,indexed address,uint256,uint256)
+          handler: handleDepositJobCredits
+        - event: WithdrawJobCredits(indexed bytes32,indexed address,indexed address,uint256)
+          handler: handleWithdrawJobCredits
+        - event: DepositJobOwnerCredits(indexed address,indexed address,uint256,uint256)
+          handler: handleDepositJobOwnerCredits
+        - event:  WithdrawJobOwnerCredits(indexed address,indexed address,uint256)
+          handler: handleWithdrawJobOwnerCredits
+
+        - event:  SetJobPreDefinedCalldata(indexed bytes32,bytes)
+          handler: handleSetJobPreDefinedCalldata
+        - event:  SetJobResolver(indexed bytes32,address,bytes)
+          handler: handleSetJobResolver
+
+        - event:  RegisterAsKeeper(indexed uint256,indexed address,indexed address)
+          handler: handleRegisterAsKeeper
+        - event:  SetWorkerAddress(indexed uint256,indexed address,indexed address)
+          handler: handleSetWorkerAddress
+        - event:  Stake(indexed uint256,uint256,address)
+          handler: handleStake
+        - event:  InitiateRedeem(indexed uint256,uint256,uint256,uint256)
+          handler: handleInitiateRedeem
+        - event:  FinalizeRedeem(indexed uint256,indexed address,uint256)
+          handler: handleFinalizeRedeem
+        - event:  WithdrawCompensation(indexed uint256,indexed address,uint256)
+          handler: handleWithdrawCompensation
+        - event:  OwnerSlash(indexed uint256,indexed address,uint256,uint256)
+          handler: handleSlash
+
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: SetAgentParams(uint256,uint256,uint256)
+          handler: handleSetAgentParams
+
+        # Randao events
+        - event: SetRdConfig((uint8,uint24,uint16,uint24,uint16,uint16,uint40,uint16,uint32,uint8,uint16))
+          handler: handleSetRdConfig
+        - event: JobKeeperChanged(indexed bytes32,indexed uint256,indexed uint256)
+          handler: handleJobKeeperChanged
+        - event: InitiateKeeperSlashing(indexed bytes32,indexed uint256,bool,uint256)
+          handler: handleInitiateKeeperSlashing
+        - event: SlashKeeper(indexed bytes32,indexed uint256,indexed uint256,uint256,uint256,uint256)
+          handler: handleSlashKeeper
+
+        - event: DisableKeeper(indexed uint256)
+          handler: handleDisableKeeper
+        - event: InitiateKeeperActivation(indexed uint256,uint256)
+          handler: handleInitKeeperActivation
+        - event: FinalizeKeeperActivation(indexed uint256)
+          handler: handleFinalizeKeeperActivation
+
+        - event: ExecutionReverted(indexed bytes32,indexed uint256,indexed uint256,bytes,uint256)
+          handler: handleExecutionReverted
+          receipt: true
