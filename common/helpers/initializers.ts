@@ -1,5 +1,6 @@
 import {Address, BigInt, Bytes} from "@graphprotocol/graph-ts";
 import {
+  Execution,
   Job,
   JobDeposit,
   JobOwner,
@@ -33,10 +34,34 @@ export function getJobByKey(jobKey: string): Job {
   return job
 }
 
+export function getCertainJobByKey(jobKey: string): Job {
+  // load in block used when we are certain entity created in the same block, so graph won't try access database and save time while indexing
+  let job = Job.loadInBlock(jobKey)
+  if (!job) {
+    throw new Error(`Job with a key ${jobKey} should exist`);
+  }
+  return job
+}
+
+export function getJobOwner(ownerAddress: string): JobOwner {
+  const jobOwner = JobOwner.load(ownerAddress)
+  if (!jobOwner) {
+    throw new Error(`JobOwner with a key ${ownerAddress} should exist`);
+  }
+  return jobOwner;
+}
+
+export function isJobOwnerExist(ownerAddress: string): boolean {
+  const jobOwner = JobOwner.load(ownerAddress)
+  return !!jobOwner;
+}
+
 export function getOrCreateJobOwner(ownerAddress: string): JobOwner {
   let jobOwner = JobOwner.load(ownerAddress)
   if (!jobOwner) {
     jobOwner = new JobOwner(ownerAddress);
+    jobOwner.createTxHash = Bytes.empty();
+    jobOwner.createdAt = BIG_INT_ZERO;
     jobOwner.credits = BIG_INT_ZERO;
     jobOwner.depositCount = BIG_INT_ZERO;
     jobOwner.withdrawalCount = BIG_INT_ZERO;
@@ -44,16 +69,52 @@ export function getOrCreateJobOwner(ownerAddress: string): JobOwner {
   return jobOwner;
 }
 
+export function createJobOwner(ownerAddress: string): JobOwner {
+  const jobOwner = new JobOwner(ownerAddress);
+  jobOwner.createTxHash = Bytes.empty();
+  jobOwner.createdAt = BIG_INT_ZERO;
+  jobOwner.credits = BIG_INT_ZERO;
+  jobOwner.depositCount = BIG_INT_ZERO;
+  jobOwner.withdrawalCount = BIG_INT_ZERO;
+  return jobOwner;
+}
+
 export function createKeeper(id: string): Keeper {
-  let keeper = Keeper.load(id)
+  let keeper = Keeper.load(id);
   if (keeper) {
     throw new Error(`Keeper with address ${id} already exists`);
   }
   return new Keeper(id);
 }
 
+export function getExecution(id: string): Execution {
+  let execution = Execution.load(id)
+  if (!execution) {
+    throw new Error(`Execution with address ${id} does not exists`);
+  }
+  return execution;
+}
+
+export function getCertainExecution(id: string): Execution {
+  // load in block used when we are certain entity created in the same block, so graph won't try access database and save time while indexing
+  let execution = Execution.loadInBlock(id);
+  if (!execution) {
+    throw new Error(`Execution with address ${id} does not exists`);
+  }
+  return execution;
+}
+
 export function getKeeper(id: string): Keeper {
   let keeper = Keeper.load(id)
+  if (!keeper) {
+    throw new Error(`Keeper with address ${id} does not exists`);
+  }
+  return keeper;
+}
+
+export function getCertainKeeper(id: string): Keeper {
+  // load in block used when we are certain entity created in the same block, so graph won't try access database and save time while indexing
+  let keeper = Keeper.loadInBlock(id)
   if (!keeper) {
     throw new Error(`Keeper with address ${id} does not exists`);
   }

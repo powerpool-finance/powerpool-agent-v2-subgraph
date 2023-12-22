@@ -140,6 +140,25 @@ type JobWithdrawal @entity {
 
 ### JOB DEBUG EVENTS ###
 
+type CreateJob @entity {
+    id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
+    jobKey: Bytes!
+    jobAddress: Bytes!
+    jobId: BigInt!
+    owner: Bytes!
+    jobSelector: Bytes!
+    useJobOwnerCredits: Boolean!
+    assertResolverSelector: Boolean!
+    maxBaseFeeGwei: BigInt!
+    rewardPct: BigInt!
+    fixedReward: BigInt!
+    jobMinCvp: BigInt!
+    calldataSource: BigInt!
+    intervalSeconds: BigInt!
+}
+
 type InitiateJobTransfer @entity {
     id: ID!
     createTxHash: Bytes!
@@ -209,6 +228,8 @@ type JobKeeperChanged @entity {
 
 type JobOwner @entity {
     id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     credits: BigInt!
 
     depositCount: BigInt!
@@ -254,7 +275,16 @@ type Keeper @entity {
     admin: Bytes!
     worker: Bytes!
     currentStake: BigInt!
+    "How much stake lost with slash"
     slashedStake: BigInt!
+    "How much stake acquired with slash"
+    getBySlashStake: BigInt!
+    "How many times keeper were slashed"
+    slashedStakeCounter: BigInt!
+    "How many times keeper did slash others"
+    getBySlashStakeCounter: BigInt!
+    "How many jobs currently assigned for that keeper"
+    assignedJobsCount: BigInt!
     compensationsToWithdraw: BigInt!
     pendingWithdrawalAmount: BigInt!
     pendingWithdrawalEndsAt: BigInt!
@@ -335,6 +365,15 @@ type KeeperRedeemFinalize @entity {
 
 ### KEEPER DEBUG EVENTS ###
 
+type CreateKeeper @entity {
+    id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
+    keeper: Keeper!
+    keeperAdmin: Bytes!
+    keeperWorker: Bytes!
+}
+
 type FinalizeKeeperActivation @entity {
     id: ID!
     createTxHash: Bytes!
@@ -410,8 +449,22 @@ type Agent @entity {
     feeTotal: BigInt!
 
     keepersCount: BigInt!
+    activeKeepersCount: BigInt!
+    "All jobs counter. Regardless it's active status."
     jobsCount: BigInt!
+    "Only active jobs counter."
+    activeJobsCount: BigInt!
+    "All jobs balances. Calculated as all job credits + all jobOwners credits."
+    jobsBalanceCount: BigInt!
+    "Simple counter for job owners."
+    jobOwnersCount: BigInt!
     executionsCount: BigInt!
+    "Total stake across all keepers"
+    stakeCount: BigInt!
+    "All compensations paid to keepers. Ignores slashing as total amount of compensations stays the same."
+    paidCount: BigInt!
+    "Counter for profit made around all keepers."
+    profitCount: BigInt!
     lastKeeperId: BigInt!
 
     # Randao field

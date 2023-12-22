@@ -22,7 +22,8 @@ import {
   createKeeper, createKeeperRedeemFinalize, createKeeperRedeemInit, createKeeperStake,
   getJobByKey,
   getKeeper,
-  getOrCreateJobOwner
+  getOrCreateJobOwner,
+  isJobOwnerExist,
 } from "./initializers";
 import {Execution} from "subgraph-light/generated/schema";
 import {BigInt, ByteArray, Bytes} from "@graphprotocol/graph-ts";
@@ -76,6 +77,7 @@ export function commonHandleExecution(event: Execute): void {
   }
   job.totalCompensations = job.totalCompensations.plus(event.params.compensation);
   job.totalExpenses = job.totalExpenses.plus(execution.expenses);
+  job.lastExecutionAt = event.block.timestamp;
   job.totalProfit = job.totalProfit.plus(execution.profit);
   job.executionCount = job.executionCount.plus(BIG_INT_ONE);
   job.save();
@@ -100,6 +102,8 @@ export function commonHandleRegisterJob(event: RegisterJob): void {
   const jobKey = event.params.jobKey.toHexString();
   const job = createJob(jobKey);
   const jobOwner = getOrCreateJobOwner(event.params.owner.toHexString());
+  jobOwner.createTxHash = event.transaction.hash;
+  jobOwner.createdAt = event.block.timestamp;
 
   jobOwner.save();
 
@@ -165,6 +169,13 @@ export function commonHandleSetJobConfig(event: SetJobConfig): void {
 }
 
 export function commonHandleInitiateJobTransfer(event: InitiateJobTransfer): void {
+  if (!isJobOwnerExist(event.params.to.toHexString())) {
+    const jobOwner = getOrCreateJobOwner(event.params.to.toHexString());
+    jobOwner.createTxHash = event.transaction.hash;
+    jobOwner.createdAt = event.block.timestamp;
+    jobOwner.save();
+  }
+
   const job = getJobByKey(event.params.jobKey.toHexString());
   job.pendingOwner = event.params.to.toHexString();
   job.save();
@@ -230,6 +241,10 @@ export function commonHandleDepositJobOwnerCredits(event: DepositJobOwnerCredits
   deposit.depositor = event.params.depositor;
   deposit.save();
 
+  if (jobOwner.createdAt === BIG_INT_ZERO) {
+    jobOwner.createTxHash = event.transaction.hash;
+    jobOwner.createdAt = event.block.timestamp;
+  }
   jobOwner.credits = jobOwner.credits.plus(event.params.amount);
   jobOwner.depositCount = jobOwner.depositCount.plus(BIG_INT_ONE);
   jobOwner.save();
@@ -273,16 +288,20 @@ export function commonHandleRegisterAsKeeper(event: RegisterAsKeeper): void {
 
   keeper.createTxHash = event.transaction.hash;
   keeper.createdAt = event.block.timestamp;
-  keeper.active = true;
+  keeper.active = false;
   keeper.numericalId = BigInt.fromString(keeperId);
   keeper.admin = event.params.keeperAdmin;
   keeper.worker = event.params.keeperWorker;
 
   keeper.slashedStake = BIG_INT_ZERO;
+  keeper.getBySlashStake = BIG_INT_ZERO;
+  keeper.slashedStakeCounter = BIG_INT_ZERO;
+  keeper.getBySlashStakeCounter = BIG_INT_ZERO;
   keeper.currentStake = BIG_INT_ZERO;
   keeper.compensationsToWithdraw = BIG_INT_ZERO;
   keeper.compensations = BIG_INT_ZERO;
   keeper.expenses = BIG_INT_ZERO;
+  keeper.assignedJobsCount = BIG_INT_ZERO;
   keeper.profit = BIG_INT_ZERO;
   keeper.pendingWithdrawalAmount = BIG_INT_ZERO;
   keeper.pendingWithdrawalEndsAt = BIG_INT_ZERO;
@@ -326,18 +345,23 @@ export function commonHandleStake(event: Stake): void {
   keeper.save();
 }
 
+/**
+ * This handler used when keeper gets slashed by system, not another keeper
+ * @param event
+ */
 export function commonHandleSlash(event: Slash): void {
   const keeper = getKeeper(event.params.keeperId.toString());
 
   keeper.currentStake = keeper.currentStake.minus(event.params.currentAmount);
   keeper.slashedStake = keeper.slashedStake.plus(event.params.currentAmount);
+  keeper.slashedStakeCounter = keeper.slashedStakeCounter.plus(BIG_INT_ONE);
 
   keeper.pendingWithdrawalAmount = keeper.pendingWithdrawalAmount.minus(event.params.pendingAmount);
 
   keeper.save();
 }
 
-export function commonHandleInitiateRedeem(event: InitiateRedeem, pendingWithdrawalTimeoutSeconds: BigInt): void {
+export function commonHandleInitiateRedeem(event: InitiateRedeem, pendingWithdrawalTimeoutSeconds: BigInt): BigInt {
   const keeper = getKeeper(event.params.keeperId.toString());
 
   const initKey = keeper.id.toString().concat("-").concat(keeper.redeemInitCount.toString());
@@ -363,6 +387,8 @@ export function commonHandleInitiateRedeem(event: InitiateRedeem, pendingWithdra
   keeper.redeemInitCount = keeper.redeemInitCount.plus(BIG_INT_ONE);
 
   keeper.save();
+
+  return stakeOfToReduceAmount;
 }
 
 export function commonHandleFinalizeRedeem(event: FinalizeRedeem): void {

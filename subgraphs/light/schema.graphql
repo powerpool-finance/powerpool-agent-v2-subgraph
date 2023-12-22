@@ -110,6 +110,8 @@ type JobWithdrawal @entity {
 
 type JobOwner @entity {
     id: ID!
+    createTxHash: Bytes!
+    createdAt: BigInt!
     credits: BigInt!
 
     depositCount: BigInt!
@@ -155,7 +157,16 @@ type Keeper @entity {
     admin: Bytes!
     worker: Bytes!
     currentStake: BigInt!
+    "How much stake lost with slash"
     slashedStake: BigInt!
+    "How much stake acquired with slash"
+    getBySlashStake: BigInt!
+    "How many times keeper were slashed"
+    slashedStakeCounter: BigInt!
+    "How many times keeper did slash others"
+    getBySlashStakeCounter: BigInt!
+    "How many jobs currently assigned for that keeper"
+    assignedJobsCount: BigInt!
     compensationsToWithdraw: BigInt!
     pendingWithdrawalAmount: BigInt!
     pendingWithdrawalEndsAt: BigInt!
@@ -223,6 +234,7 @@ type Agent @entity {
     feeTotal: BigInt!
 
     keepersCount: BigInt!
+    activeKeepersCount: BigInt!
     jobsCount: BigInt!
     executionsCount: BigInt!
     lastKeeperId: BigInt!

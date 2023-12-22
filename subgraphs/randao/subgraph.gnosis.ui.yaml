@@ -1,16 +1,16 @@
 specVersion: 0.0.5
-description: PowerPool Agent V2 Randao Sepolia Subgraph
+description: PowerPool Agent V2 Randao Gnosis Subgraph
 repository: https://github.com/powerpool-finance/powerpool-agent-v2-subgraph
 schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
     name: PPAgentV2Randao
-    network: sepolia
+    network: gnosis
     source:
-      address: "0xbdE2Aed54521000DC033B67FB522034e0F93A7e5"
+      address: "0x071412e301C2087A4DAA055CF4aFa2683cE1e499"
       abi: PPAgentV2Randao
-      startBlock: 4443028
+      startBlock: 30393444
 
     mapping:
       kind: ethereum/events
