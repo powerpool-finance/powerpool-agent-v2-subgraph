@@ -2,7 +2,7 @@ specVersion: 0.0.8
 description: PowerPool Agent V2 Randao Sepolia Subgraph
 repository: https://github.com/powerpool-finance/powerpool-agent-v2-subgraph
 schema:
-  file: ./schema.graphql
+  file: ../schema.graphql
 dataSources:
   - kind: ethereum/contract
     name: PPAgentV2Randao
@@ -16,14 +16,14 @@ dataSources:
       kind: ethereum/events
       apiVersion: 0.0.9
       language: wasm/assemblyscript
-      file: ./src/mappings.ts
+      file: ../src/mappings.ts
       entities:
         - Execution
       abis:
         - name: PPAgentV2Light
-          file: ../../abis/PPAgentV2Light.json
+          file: ../../../abis/PPAgentV2Light.json
         - name: PPAgentV2Randao
-          file: ../../abis/PPAgentV2Randao.json
+          file: ../../../abis/PPAgentV2Randao.json
       eventHandlers:
         - event: Execute(indexed bytes32,indexed address,indexed uint256,uint256,uint256,uint256,uint256,bytes32)
           handler: handleExecution

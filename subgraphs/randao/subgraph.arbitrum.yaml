@@ -6,12 +6,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: PPAgentV2Randao
-    network: gnosis
+    network: arbitrum-one
     source:
-      address: "0xa39bCa92537de3922B7a874143101C398Ef7DeC9"
+      address: "0xad1e507f8A0cB1B91421F3bb86BBE29f001CbcC6"
       abi: PPAgentV2Randao
-      startBlock: 29860921
-
+      startBlock: 157531675
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.9
@@ -45,27 +44,27 @@ dataSources:
           handler: handleWithdrawJobCredits
         - event: DepositJobOwnerCredits(indexed address,indexed address,uint256,uint256)
           handler: handleDepositJobOwnerCredits
-        - event: WithdrawJobOwnerCredits(indexed address,indexed address,uint256)
+        - event:  WithdrawJobOwnerCredits(indexed address,indexed address,uint256)
           handler: handleWithdrawJobOwnerCredits
 
-        - event: SetJobPreDefinedCalldata(indexed bytes32,bytes)
+        - event:  SetJobPreDefinedCalldata(indexed bytes32,bytes)
           handler: handleSetJobPreDefinedCalldata
-        - event: SetJobResolver(indexed bytes32,address,bytes)
+        - event:  SetJobResolver(indexed bytes32,address,bytes)
           handler: handleSetJobResolver
 
-        - event: RegisterAsKeeper(indexed uint256,indexed address,indexed address)
+        - event:  RegisterAsKeeper(indexed uint256,indexed address,indexed address)
           handler: handleRegisterAsKeeper
-        - event: SetWorkerAddress(indexed uint256,indexed address,indexed address)
+        - event:  SetWorkerAddress(indexed uint256,indexed address,indexed address)
           handler: handleSetWorkerAddress
-        - event: Stake(indexed uint256,uint256,address)
+        - event:  Stake(indexed uint256,uint256,address)
           handler: handleStake
-        - event: InitiateRedeem(indexed uint256,uint256,uint256,uint256)
+        - event:  InitiateRedeem(indexed uint256,uint256,uint256,uint256)
           handler: handleInitiateRedeem
-        - event: FinalizeRedeem(indexed uint256,indexed address,uint256)
+        - event:  FinalizeRedeem(indexed uint256,indexed address,uint256)
           handler: handleFinalizeRedeem
-        - event: WithdrawCompensation(indexed uint256,indexed address,uint256)
+        - event:  WithdrawCompensation(indexed uint256,indexed address,uint256)
           handler: handleWithdrawCompensation
-        - event: OwnerSlash(indexed uint256,indexed address,uint256,uint256)
+        - event:  OwnerSlash(indexed uint256,indexed address,uint256,uint256)
           handler: handleSlash
 
         - event: OwnershipTransferred(indexed address,indexed address)

@@ -1,16 +1,16 @@
 specVersion: 0.0.8
-description: PowerPool Agent V2 Randao Gnosis Subgraph
+description: PowerPool Agent V2 Randao Polygon Subgraph
 repository: https://github.com/powerpool-finance/powerpool-agent-v2-subgraph
 schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
     name: PPAgentV2Randao
-    network: gnosis
+    network: matic
     source:
-      address: "0x071412e301C2087A4DAA055CF4aFa2683cE1e499"
+      address: "0x20D4029c783D5c9f47569940c656Af4189e53799"
       abi: PPAgentV2Randao
-      startBlock: 30393444
+      startBlock: 52818115
 
     mapping:
       kind: ethereum/events

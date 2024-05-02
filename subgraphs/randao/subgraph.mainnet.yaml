@@ -1,5 +1,5 @@
 specVersion: 0.0.8
-description: PowerPool Agent V2 Randao maintest Subgraph
+description: PowerPool Agent V2 Randao Ethereum Mainnet Subgraph
 repository: https://github.com/powerpool-finance/powerpool-agent-v2-subgraph
 schema:
   file: ./schema.graphql

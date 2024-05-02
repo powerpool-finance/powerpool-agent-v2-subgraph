@@ -1,29 +1,29 @@
 specVersion: 0.0.8
-description: PowerPool Agent V2 Randao Gnosis Subgraph
+description: PowerPool Agent V2 Randao Sepolia Subgraph
 repository: https://github.com/powerpool-finance/powerpool-agent-v2-subgraph
 schema:
-  file: ./schema.graphql
+  file: ../schema.graphql
 dataSources:
   - kind: ethereum/contract
     name: PPAgentV2Randao
-    network: arbitrum-one
+    network: sepolia
     source:
-      address: "0xad1e507f8A0cB1B91421F3bb86BBE29f001CbcC6"
+      address: "0xd544691ddB1E996AaC7dA4246701Da2D5e3064D7"
       abi: PPAgentV2Randao
-      startBlock: 157531675
+      startBlock: 5331053
 
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.9
       language: wasm/assemblyscript
-      file: ./src/mappings.ts
+      file: ../src/mappings.ts
       entities:
         - Execution
       abis:
         - name: PPAgentV2Light
-          file: ../../abis/PPAgentV2Light.json
+          file: ../../../abis/PPAgentV2Light.json
         - name: PPAgentV2Randao
-          file: ../../abis/PPAgentV2Randao.json
+          file: ../../../abis/PPAgentV2Randao.json
       eventHandlers:
         - event: Execute(indexed bytes32,indexed address,indexed uint256,uint256,uint256,uint256,uint256,bytes32)
           handler: handleExecution
@@ -45,27 +45,27 @@ dataSources:
           handler: handleWithdrawJobCredits
         - event: DepositJobOwnerCredits(indexed address,indexed address,uint256,uint256)
           handler: handleDepositJobOwnerCredits
-        - event:  WithdrawJobOwnerCredits(indexed address,indexed address,uint256)
+        - event: WithdrawJobOwnerCredits(indexed address,indexed address,uint256)
           handler: handleWithdrawJobOwnerCredits
 
-        - event:  SetJobPreDefinedCalldata(indexed bytes32,bytes)
+        - event: SetJobPreDefinedCalldata(indexed bytes32,bytes)
           handler: handleSetJobPreDefinedCalldata
-        - event:  SetJobResolver(indexed bytes32,address,bytes)
+        - event: SetJobResolver(indexed bytes32,address,bytes)
           handler: handleSetJobResolver
 
-        - event:  RegisterAsKeeper(indexed uint256,indexed address,indexed address)
+        - event: RegisterAsKeeper(indexed uint256,indexed address,indexed address)
           handler: handleRegisterAsKeeper
-        - event:  SetWorkerAddress(indexed uint256,indexed address,indexed address)
+        - event: SetWorkerAddress(indexed uint256,indexed address,indexed address)
           handler: handleSetWorkerAddress
-        - event:  Stake(indexed uint256,uint256,address)
+        - event: Stake(indexed uint256,uint256,address)
           handler: handleStake
-        - event:  InitiateRedeem(indexed uint256,uint256,uint256,uint256)
+        - event: InitiateRedeem(indexed uint256,uint256,uint256,uint256)
           handler: handleInitiateRedeem
-        - event:  FinalizeRedeem(indexed uint256,indexed address,uint256)
+        - event: FinalizeRedeem(indexed uint256,indexed address,uint256)
           handler: handleFinalizeRedeem
-        - event:  WithdrawCompensation(indexed uint256,indexed address,uint256)
+        - event: WithdrawCompensation(indexed uint256,indexed address,uint256)
           handler: handleWithdrawCompensation
-        - event:  OwnerSlash(indexed uint256,indexed address,uint256,uint256)
+        - event: OwnerSlash(indexed uint256,indexed address,uint256,uint256)
           handler: handleSlash
 
         - event: OwnershipTransferred(indexed address,indexed address)
