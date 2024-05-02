@@ -164,6 +164,7 @@ export function commonHandleSetJobConfig(event: SetJobConfig): void {
   job.active = event.params.isActive_;
   job.useJobOwnerCredits = event.params.useJobOwnerCredits_;
   job.assertResolverSelector = event.params.assertResolverSelector_;
+  job.callResolverBeforeExecute = event.params.callResolverBeforeExecute_;
 
   job.save();
 }

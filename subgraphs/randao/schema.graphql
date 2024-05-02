@@ -58,6 +58,7 @@ type Job @entity {
     # Flags
     useJobOwnerCredits: Boolean!
     assertResolverSelector: Boolean!
+    callResolverBeforeExecute: Boolean!
 
     # Optinal
     preDefinedCalldata: Bytes
