@@ -127,6 +127,7 @@ export function commonHandleRegisterJob(event: RegisterJob): void {
 
   job.useJobOwnerCredits = event.params.params.useJobOwnerCredits;
   job.assertResolverSelector = event.params.params.assertResolverSelector;
+  job.callResolverBeforeExecute = false;
 
   job.totalCompensations = BIG_INT_ZERO;
   job.totalProfit = BIG_INT_ZERO;
