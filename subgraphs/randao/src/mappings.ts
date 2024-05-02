@@ -475,7 +475,7 @@ export function handleSetRdConfig(event: SetRdConfig): void {
   randaoAgent.jobCompensationMultiplierBps = BigInt.fromI32(event.params.rdConfig.jobCompensationMultiplierBps);
   randaoAgent.stakeDivisor = event.params.rdConfig.stakeDivisor;
   randaoAgent.keeperActivationTimeoutHours = BigInt.fromI32(event.params.rdConfig.keeperActivationTimeoutHours);
-  randaoAgent.jobFixedRewardFinney = BigInt.fromI32(event.params.rdConfig.jobFixedReward);
+  randaoAgent.jobFixedRewardFinney = BigInt.fromI32(event.params.rdConfig.jobFixedRewardFinney);
   randaoAgent.save();
 }
 
