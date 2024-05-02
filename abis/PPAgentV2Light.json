@@ -762,6 +762,11 @@
         "internalType": "bool",
         "name": "assertResolverSelector_",
         "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "callResolverBeforeExecute_",
+        "type": "bool"
       }
     ],
     "name": "SetJobConfig",

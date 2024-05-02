@@ -105,11 +105,6 @@
   },
   {
     "inputs": [],
-    "name": "InitiateSlashingUnexpectedError",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "InsufficientAmount",
     "type": "error"
   },
@@ -264,6 +259,11 @@
     "type": "error"
   },
   {
+    "inputs": [],
+    "name": "JobCheckCalldataError",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes",
@@ -288,6 +288,11 @@
   {
     "inputs": [],
     "name": "JobCheckResolverReturnedFalse",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JobCheckUnexpectedError",
     "type": "error"
   },
   {
@@ -1249,6 +1254,12 @@
         "indexed": false,
         "internalType": "bool",
         "name": "assertResolverSelector_",
+        "type": "bool"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "callResolverBeforeExecute_",
         "type": "bool"
       }
     ],
@@ -2846,6 +2857,11 @@
       {
         "internalType": "bool",
         "name": "assertResolverSelector_",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "callResolverBeforeExecute_",
         "type": "bool"
       }
     ],
