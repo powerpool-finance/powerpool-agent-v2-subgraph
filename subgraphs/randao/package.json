@@ -8,21 +8,24 @@
     "codegen": "graph codegen subgraph.sepolia.yaml",
     "build": "graph build subgraph.sepolia.yaml",
 
+    "deploy-mainnet": "graph deploy --studio ppav2-rd-mainnet subgraph.mainnet.yaml",
+    "deploy-arbitrum": "graph deploy --studio ppav2-rd-arbitrum subgraph.arbitrum.yaml",
+    "deploy-polygon": "graph deploy --studio ppav2-rd-polygon subgraph.polygon.yaml",
+    "deploy-gnosis": "graph deploy --studio ppav2-rd-gnosis subgraph.gnosis.yaml",
+    "deploy-sepolia": "graph deploy --studio ppav2-rd-sepolia subgraph.sepolia.yaml",
+
     "deploy-sepolia-b11": "graph deploy --studio ppav2-rd-sepolia-b11 subgraph.sepolia.yaml",
     "deploy-sepolia-b11-ui": "graph deploy --studio ppav2-rd-sepolia-b11-ui subgraph.sepolia.yaml",
     "deploy-sepolia-b12-ui": "graph deploy --studio ppav2-rd-sepolia-b12-ui subgraph.sepolia.defibrain88.yaml",
     "deploy-sepolia-defibrain88-dev": "graph deploy --studio defibrain88_test_graph subgraph.sepolia.defibrain88.yaml",
     "deploy-sepolia-pp-local": "graph deploy --node http://127.0.0.1:8020/ ppav2-rd-sepolia-pp subgraph.sepolia.pp.yaml",
-    "deploy-sepolia-pp": "graph deploy --studio ppav2-rd-sepolia-pp subgraph.sepolia.pp.yaml",
-
+    "deploy-sepolia-pp": "graph deploy --studio ppav2-rd-sepolia-pp dev/subgraph.sepolia.pp.yaml",
     "deploy-gnosis-prod": "graph deploy --product hosted-service polipaul/ppav2-rd-gnosis subgraph.gnosis.pp.yaml",
     "deploy-arbitrum-prod": "graph deploy --studio ppav2-rd-arbitrum-ui subgraph.arbitrum.ui.yaml",
     "deploy-arbitrum-test": "graph deploy --studio ppav2-rd-arbi-ui subgraph.arbitrum.ui.yaml",
     "deploy-gnosis-pp": "graph deploy --product hosted-service polipaul/ppav2-rd-gnosis-pp subgraph.gnosis.pp.yaml",
     "deploy-gnosis-b12-ui": "graph deploy --studio ppav2-rd-gnosis-b12-ui subgraph.gnosis.ui.yaml",
-
     "deploy-maintest-ui": "graph deploy --studio ppav2-rd-maintest-ui subgraph.maintest.ui.yaml",
-
     "deploy-defibrain88-test": "graph deploy --studio defibrain88_test_graph subgraph.sepolia.defibrain88.yaml"
   }
 }
