@@ -11,6 +11,11 @@
     "type": "constructor"
   },
   {
+    "inputs": [],
+    "name": "ActivationNotInitiated",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -340,6 +345,11 @@
       }
     ],
     "name": "KeeperIsAssignedToJobs",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "KeeperShouldBeDisabledForStakeLTMinKeeperCvp",
     "type": "error"
   },
   {
@@ -1346,7 +1356,7 @@
           },
           {
             "internalType": "uint16",
-            "name": "jobFixedReward",
+            "name": "jobFixedRewardFinney",
             "type": "uint16"
           }
         ],
@@ -2199,7 +2209,7 @@
           },
           {
             "internalType": "uint16",
-            "name": "jobFixedReward",
+            "name": "jobFixedRewardFinney",
             "type": "uint16"
           }
         ],
@@ -2342,7 +2352,7 @@
           },
           {
             "internalType": "uint16",
-            "name": "jobFixedReward",
+            "name": "jobFixedRewardFinney",
             "type": "uint16"
           }
         ],
@@ -2614,6 +2624,39 @@
       }
     ],
     "name": "ownerSlash",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "keeperId_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "to_",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "currentAmount_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pendingAmount_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "disable_",
+        "type": "bool"
+      }
+    ],
+    "name": "ownerSlashDisable",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -2915,7 +2958,7 @@
           },
           {
             "internalType": "uint16",
-            "name": "jobFixedReward",
+            "name": "jobFixedRewardFinney",
             "type": "uint16"
           }
         ],
