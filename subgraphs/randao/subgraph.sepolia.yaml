@@ -1,4 +1,4 @@
-specVersion: 0.0.5
+specVersion: 0.0.8
 description: PowerPool Agent V2 Randao Sepolia Subgraph
 repository: https://github.com/powerpool-finance/powerpool-agent-v2-subgraph
 schema:
@@ -8,13 +8,13 @@ dataSources:
     name: PPAgentV2Randao
     network: sepolia
     source:
-      address: "0x32a24237Fca2B439C76e40a3ddA871d5bE51630D"
+      address: "0xbdE2Aed54521000DC033B67FB522034e0F93A7e5"
       abi: PPAgentV2Randao
-      startBlock: 4606553
+      startBlock: 4443031
 
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.7
+      apiVersion: 0.0.9
       language: wasm/assemblyscript
       file: ./src/mappings.ts
       entities:
@@ -32,7 +32,7 @@ dataSources:
           handler: handleRegisterJob
         - event: JobUpdate(indexed bytes32,uint256,uint256,uint256,uint256,uint256)
           handler: handleJobUpdate
-        - event: SetJobConfig(indexed bytes32,bool,bool,bool)
+        - event: SetJobConfig(indexed bytes32,bool,bool,bool,bool)
           handler: handleSetJobConfig
         - event: InitiateJobTransfer(indexed bytes32,indexed address,indexed address)
           handler: handleInitiateJobTransfer

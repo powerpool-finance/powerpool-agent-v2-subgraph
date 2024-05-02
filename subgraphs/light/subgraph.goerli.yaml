@@ -1,4 +1,4 @@
-specVersion: 0.0.5
+specVersion: 0.0.8
 description: PowerPool Agent V2 Goerli Subgraph
 repository: https://github.com/powerpool-finance/powerpool-agent-v2-subgraph
 schema:
@@ -13,7 +13,7 @@ dataSources:
       startBlock: 7977609
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.7
+      apiVersion: 0.0.9
       language: wasm/assemblyscript
       file: ./src/mappings-light.ts
       entities:
@@ -29,7 +29,7 @@ dataSources:
           handler: handleRegisterJob
         - event: JobUpdate(indexed bytes32,uint256,uint256,uint256,uint256,uint256)
           handler: handleJobUpdate
-        - event: SetJobConfig(indexed bytes32,bool,bool,bool)
+        - event: SetJobConfig(indexed bytes32,bool,bool,bool,bool)
           handler: handleSetJobConfig
         - event: InitiateJobTransfer(indexed bytes32,indexed address,indexed address)
           handler: handleInitiateJobTransfer

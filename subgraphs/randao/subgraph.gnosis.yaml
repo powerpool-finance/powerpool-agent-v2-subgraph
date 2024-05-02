@@ -1,4 +1,4 @@
-specVersion: 0.0.5
+specVersion: 0.0.8
 description: PowerPool Agent V2 Randao Gnosis Subgraph
 repository: https://github.com/powerpool-finance/powerpool-agent-v2-subgraph
 schema:
@@ -8,13 +8,12 @@ dataSources:
     name: PPAgentV2Randao
     network: gnosis
     source:
-      address: "0xa39bCa92537de3922B7a874143101C398Ef7DeC9"
+      address: "0x071412e301C2087A4DAA055CF4aFa2683cE1e499"
       abi: PPAgentV2Randao
-      startBlock: 29860921
-
+      startBlock: 30393450
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.7
+      apiVersion: 0.0.9
       language: wasm/assemblyscript
       file: ./src/mappings.ts
       entities:
@@ -32,7 +31,7 @@ dataSources:
           handler: handleRegisterJob
         - event: JobUpdate(indexed bytes32,uint256,uint256,uint256,uint256,uint256)
           handler: handleJobUpdate
-        - event: SetJobConfig(indexed bytes32,bool,bool,bool)
+        - event: SetJobConfig(indexed bytes32,bool,bool,bool,bool)
           handler: handleSetJobConfig
         - event: InitiateJobTransfer(indexed bytes32,indexed address,indexed address)
           handler: handleInitiateJobTransfer
