@@ -14,6 +14,9 @@
     "deploy-gnosis": "graph deploy --studio ppav2-rd-gnosis subgraph.gnosis.yaml",
     "deploy-sepolia": "graph deploy --studio ppav2-rd-sepolia subgraph.sepolia.yaml",
 
+    "deploy-arbitrum-test": "graph deploy --studio power-agent-v2-arbitrum-test dev/subgraph.arbitrum.test.yaml",
+    "deploy-gnosis-test": "graph deploy --studio power-agent-v2-gnosis-test dev/subgraph.gnosis.test.yaml",
+
     "deploy-sepolia-b11": "graph deploy --studio ppav2-rd-sepolia-b11 subgraph.sepolia.yaml",
     "deploy-sepolia-b11-ui": "graph deploy --studio ppav2-rd-sepolia-b11-ui subgraph.sepolia.yaml",
     "deploy-sepolia-b12-ui": "graph deploy --studio ppav2-rd-sepolia-b12-ui subgraph.sepolia.defibrain88.yaml",
@@ -22,7 +25,7 @@
     "deploy-sepolia-pp": "graph deploy --studio ppav2-rd-sepolia-pp dev/subgraph.sepolia.pp.yaml",
     "deploy-gnosis-prod": "graph deploy --product hosted-service polipaul/ppav2-rd-gnosis subgraph.gnosis.pp.yaml",
     "deploy-arbitrum-prod": "graph deploy --studio ppav2-rd-arbitrum-ui subgraph.arbitrum.ui.yaml",
-    "deploy-arbitrum-test": "graph deploy --studio ppav2-rd-arbi-ui subgraph.arbitrum.ui.yaml",
+    "deploy-arbitrum-ui": "graph deploy --studio ppav2-rd-arbi-ui subgraph.arbitrum.ui.yaml",
     "deploy-gnosis-pp": "graph deploy --product hosted-service polipaul/ppav2-rd-gnosis-pp subgraph.gnosis.pp.yaml",
     "deploy-gnosis-b12-ui": "graph deploy --studio ppav2-rd-gnosis-b12-ui subgraph.gnosis.ui.yaml",
     "deploy-maintest-ui": "graph deploy --studio ppav2-rd-maintest-ui subgraph.maintest.ui.yaml",
