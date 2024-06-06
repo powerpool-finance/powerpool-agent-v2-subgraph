@@ -13,6 +13,7 @@
     "deploy-polygon": "graph deploy --studio ppav2-rd-polygon subgraph.polygon.yaml",
     "deploy-gnosis": "graph deploy --studio ppav2-rd-gnosis subgraph.gnosis.yaml",
     "deploy-sepolia": "graph deploy --studio ppav2-rd-sepolia subgraph.sepolia.yaml",
+    "deploy-base": "graph deploy --studio power-agent-v2-base subgraph.base.yaml",
 
     "deploy-arbitrum-test": "graph deploy --studio power-agent-v2-arbitrum-test dev/subgraph.arbitrum.test.yaml",
     "deploy-gnosis-test": "graph deploy --studio power-agent-v2-gnosis-test dev/subgraph.gnosis.test.yaml",
