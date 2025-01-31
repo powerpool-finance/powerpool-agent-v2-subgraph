@@ -7,6 +7,8 @@
   "scripts": {
     "codegen": "graph codegen subgraph.sepolia.yaml",
     "build": "graph build subgraph.sepolia.yaml",
+    "neon-dev-prebuild": "graph codegen subgraph.neon-dev.yaml && graph build subgraph.neon-dev.yaml",
+    "deploy-neon-dev": "graph deploy powerpool-neon --node https://graph-secured.neontest.xyz/deploy --ipfs https://ipfs-secured.neontest.xyz  --headers='{\"Authorization\": \"Bearer laiquahgh5Woeche8bahy5Ookiqui9ie\"}' subgraph.neon-dev.yaml",
 
     "deploy-mainnet": "graph deploy --studio ppav2-rd-mainnet subgraph.mainnet.yaml",
     "deploy-arbitrum": "graph deploy --studio ppav2-rd-arbitrum subgraph.arbitrum.yaml",
